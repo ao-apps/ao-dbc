@@ -22,6 +22,8 @@
  */
 package com.aoindustries.dbc.meta;
 
+import com.aoindustries.dbc.meta.Table;
+
 /**
  * A friendly wrapper around database meta data.
  *

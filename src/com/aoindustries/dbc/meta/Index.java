@@ -22,6 +22,7 @@
  */
 package com.aoindustries.dbc.meta;
 
+import com.aoindustries.dbc.meta.Table;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.StringUtility;
