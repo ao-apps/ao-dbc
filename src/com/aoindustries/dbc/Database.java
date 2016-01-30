@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -687,7 +687,7 @@ public class Database extends AbstractDatabaseAccess {
 
 	/**
 	 * Whenever a new connection is obtained from the pool or the dataSource,
-	 * it is passed here for any intialization routine.
+	 * it is passed here for any initialization routine.
 	 * This default implementation does nothing.
 	 */
 	protected void initConnection(Connection conn) throws SQLException {
