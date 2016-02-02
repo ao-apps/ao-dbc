@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -102,7 +102,7 @@ public class Catalog {
      */
     public Schema getSchema(String name) throws NoRowException, SQLException {
         Schema schema = getSchemas().get(name);
-        if(schema==null) throw new NoRowException();
+        if(schema==null) throw new NoRowException("name=" + name);
         return schema;
     }
 
