@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,6 @@
  */
 package com.aoindustries.dbc.meta;
 
-import com.aoindustries.dbc.meta.Table;
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
 import com.aoindustries.util.StringUtility;
@@ -51,7 +50,7 @@ public class Index {
         this.name = name;
         this.type = type;
         if(columns.isEmpty()) throw new IllegalArgumentException("columns.isEmpty()");
-        this.columns = AoCollections.optimalUnmodifiableList(new ArrayList<Column>(columns));
+        this.columns = AoCollections.optimalUnmodifiableList(new ArrayList<>(columns));
     }
 
     @Override

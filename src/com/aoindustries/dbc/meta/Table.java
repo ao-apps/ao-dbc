@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,8 +24,8 @@ package com.aoindustries.dbc.meta;
 
 import com.aoindustries.dbc.NoRowException;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.AutoGrowArrayList;
 import com.aoindustries.util.AoCollections;
+import com.aoindustries.util.AutoGrowArrayList;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class Table {
     private static Integer getInteger(ResultSet results, String columnName) throws SQLException {
         int val = results.getInt(columnName);
         if(results.wasNull()) return null;
-        return Integer.valueOf(val);
+        return val;
     }
 
     /**
@@ -108,9 +108,8 @@ public class Table {
     public SortedMap<String,Column> getColumnMap() throws SQLException {
         synchronized(getColumnMapLock) {
             if(getColumnMapCache==null) {
-                SortedMap<String,Column> newColumnMap = new TreeMap<String,Column>(DatabaseMetaData.getCollator());
-                ResultSet results = schema.getCatalog().getMetaData().getMetaData().getColumns(schema.getCatalog().getName(), schema.getName(), name, null);
-                try {
+                SortedMap<String,Column> newColumnMap = new TreeMap<>(DatabaseMetaData.getCollator());
+                try (ResultSet results = schema.getCatalog().getMetaData().getMetaData().getColumns(schema.getCatalog().getName(), schema.getName(), name, null)) {
                     while(results.next()) {
                         Column newColumn = new Column(
                             this,
@@ -128,8 +127,6 @@ public class Table {
                         );
                         if(newColumnMap.put(newColumn.getName(), newColumn)!=null) throw new AssertionError("Duplicate column: "+newColumn);
                     }
-                } finally {
-                    results.close();
                 }
                 getColumnMapCache = AoCollections.optimalUnmodifiableSortedMap(newColumnMap);
             }
@@ -161,7 +158,7 @@ public class Table {
         synchronized(getColumnsLock) {
             if(getColumnsCache==null) {
                 SortedMap<String,Column> columnMap = getColumnMap();
-                List<Column> newColumns = new ArrayList<Column>(columnMap.size());
+                List<Column> newColumns = new ArrayList<>(columnMap.size());
                 for(int i=0; i<columnMap.size(); i++) newColumns.add(null);
                 for(Column column : columnMap.values()) {
                     int ordinalPosition = column.getOrdinalPosition();
@@ -200,9 +197,8 @@ public class Table {
         synchronized(getPrimaryKeyLock) {
             if(!getPrimaryKeyCached) {
                 String pkName = null;
-                List<Column> columns = new AutoGrowArrayList<Column>();
-                ResultSet results = schema.getCatalog().getMetaData().getMetaData().getPrimaryKeys(schema.getCatalog().getName(), schema.getName(), name);
-                try {
+                List<Column> columns = new AutoGrowArrayList<>();
+                try (ResultSet results = schema.getCatalog().getMetaData().getMetaData().getPrimaryKeys(schema.getCatalog().getName(), schema.getName(), name)) {
                     while(results.next()) {
                         String columnName = results.getString("COLUMN_NAME");
                         int keySeq = results.getInt("KEY_SEQ");
@@ -213,8 +209,6 @@ public class Table {
                         }
                         if(columns.set(keySeq-1, getColumn(columnName))!=null) throw new SQLException("Duplicate key sequence: "+keySeq);
                     }
-                } finally {
-                    results.close();
                 }
                 if(columns.isEmpty()) {
                     getPrimaryKeyCache = null;
@@ -243,11 +237,10 @@ public class Table {
     public Set<? extends Table> getImportedTables() throws SQLException {
         synchronized(getImportedTablesLock) {
             if(getImportedTablesCache==null) {
-                Set<Table> newImportedTables = new LinkedHashSet<Table>();
+                Set<Table> newImportedTables = new LinkedHashSet<>();
                 Catalog catalog = schema.getCatalog();
                 DatabaseMetaData metaData = catalog.getMetaData();
-                ResultSet results = schema.getCatalog().getMetaData().getMetaData().getImportedKeys(schema.getCatalog().getName(), schema.getName(), name);
-                try {
+                try (ResultSet results = schema.getCatalog().getMetaData().getMetaData().getImportedKeys(schema.getCatalog().getName(), schema.getName(), name)) {
                     while(results.next()) {
                         String pkCat = results.getString("PKTABLE_CAT");
                         Catalog pkCatalog = pkCat==null ? catalog : metaData.getCatalog(pkCat);
@@ -257,8 +250,6 @@ public class Table {
                             .getTable(results.getString("PKTABLE_NAME"))
                         );
                     }
-                } finally {
-                    results.close();
                 }
                 getImportedTablesCache = AoCollections.optimalUnmodifiableSet(newImportedTables);
             }
@@ -277,11 +268,10 @@ public class Table {
     public Set<? extends Table> getExportedTables() throws SQLException {
         synchronized(getExportedTablesLock) {
             if(getExportedTablesCache==null) {
-                Set<Table> newExportedTables = new LinkedHashSet<Table>();
+                Set<Table> newExportedTables = new LinkedHashSet<>();
                 Catalog catalog = schema.getCatalog();
                 DatabaseMetaData metaData = catalog.getMetaData();
-                ResultSet results = schema.getCatalog().getMetaData().getMetaData().getExportedKeys(schema.getCatalog().getName(), schema.getName(), name);
-                try {
+                try (ResultSet results = schema.getCatalog().getMetaData().getMetaData().getExportedKeys(schema.getCatalog().getName(), schema.getName(), name)) {
                     while(results.next()) {
                         String fkCat = results.getString("FKTABLE_CAT");
                         Catalog fkCatalog = fkCat==null ? catalog : metaData.getCatalog(fkCat);
@@ -291,8 +281,6 @@ public class Table {
                             .getTable(results.getString("FKTABLE_NAME"))
                         );
                     }
-                } finally {
-                    results.close();
                 }
                 getExportedTablesCache = AoCollections.optimalUnmodifiableSet(newExportedTables);
             }

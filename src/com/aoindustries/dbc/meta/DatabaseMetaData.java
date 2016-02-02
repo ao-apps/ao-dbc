@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -92,15 +92,12 @@ public class DatabaseMetaData {
     public SortedMap<String,Catalog> getCatalogs() throws SQLException {
         synchronized(getCatalogsLock) {
             if(getCatalogsCache==null) {
-                SortedMap<String,Catalog> newCatalogs = new TreeMap<String,Catalog>(englishCollator);
-                ResultSet results = metaData.getCatalogs();
-                try {
+                SortedMap<String,Catalog> newCatalogs = new TreeMap<>(englishCollator);
+                try (ResultSet results = metaData.getCatalogs()) {
                     while(results.next()) {
                         Catalog newCatalog = new Catalog(this, results.getString(1));
                         if(newCatalogs.put(newCatalog.getName(), newCatalog)!=null) throw new AssertionError("Duplicate catalog: "+newCatalog);
                     }
-                } finally {
-                    results.close();
                 }
                 getCatalogsCache = AoCollections.optimalUnmodifiableSortedMap(newCatalogs);
             }
