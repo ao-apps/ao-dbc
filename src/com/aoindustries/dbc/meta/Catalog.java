@@ -77,7 +77,12 @@ public class Catalog {
                 try (ResultSet results = metaData.getMetaData().getSchemas()) {
                     ResultSetMetaData resultsMeta = results.getMetaData();
                     while(results.next()) {
-						System.err.println("DEBUG: Catalog: getSchemas(): resultsMeta.getColumnCount()=" + resultsMeta.getColumnCount());
+						int colCount = resultsMeta.getColumnCount();
+						System.err.println("DEBUG: Catalog: getSchemas(): colCount=" + colCount);
+						for(int i=1; i<=colCount; i++) {
+							resultsMeta.getColumnName(i);
+							System.err.println("DEBUG: Catalog: getSchemas(): resultsMeta.getColumnName("+i+")=" + resultsMeta.getColumnName(i));
+						}
 						System.err.println("DEBUG: Catalog: getSchemas(): results.getString(\"TABLE_CATALOG\")=" + results.getString("TABLE_CATALOG"));
                         if(
                             resultsMeta.getColumnCount()==1 // PostgreSQL only returns one column
