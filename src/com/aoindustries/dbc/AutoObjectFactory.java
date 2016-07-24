@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2009, 2010, 2011, 2013, 2015  AO Industries, Inc.
+ * Copyright (C) 2009, 2010, 2011, 2013, 2015, 2016  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,6 @@
  */
 package com.aoindustries.dbc;
 
-import com.aoindustries.dbc.ObjectFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -60,7 +59,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
         }
     }
 
-    private static final ConcurrentMap<Class<?>,Method> valueOfIntMethods = new ConcurrentHashMap<Class<?>,Method>();
+    private static final ConcurrentMap<Class<?>,Method> valueOfIntMethods = new ConcurrentHashMap<>();
 
     /**
      * Gets the <code>valueOf(int)</code> for the provided class or <code>null</code> if doesn't
@@ -83,7 +82,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
         return existing==notExists ? null : existing;
     }
 
-    private static final ConcurrentMap<Class<?>,Method> valueOfStringMethods = new ConcurrentHashMap<Class<?>,Method>();
+    private static final ConcurrentMap<Class<?>,Method> valueOfStringMethods = new ConcurrentHashMap<>();
 
     /**
      * Gets the <code>valueOf(String)</code> for the provided class or <code>null</code> if doesn't
@@ -206,7 +205,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
                                     String value = result.getString(c);
                                     params[i] = result.wasNull() ? null : valueOfStringMethod.invoke(null, value);
                                 } else {
-                                    if(warnings==null) warnings = new ArrayList<String>();
+                                    if(warnings==null) warnings = new ArrayList<>();
                                     warnings.add("Unexpected parameter class: "+paramType.getName());
                                     continue CONSTRUCTORS;
                                 }
@@ -222,11 +221,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
             StringBuilder message = new StringBuilder("Unable to find matching constructor");
             if(warnings!=null) for(String warning : warnings) message.append(EOL).append(warning);
             throw new SQLException(message.toString());
-        } catch(InstantiationException err) {
-            throw new SQLException(err);
-        } catch(IllegalAccessException err) {
-            throw new SQLException(err);
-        } catch(InvocationTargetException err) {
+        } catch(InstantiationException | IllegalAccessException | InvocationTargetException err) {
             throw new SQLException(err);
         }
     }

@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -158,19 +158,19 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
             } catch(IllegalAccessException err) {
                 throw new SQLException("Illegal access on constructor: "+clazz.getName()+"(java.sql.ResultSet)", err);
             } catch(InvocationTargetException err) {
-                throw new SQLException("Illegal access on constructor: "+clazz.getName()+"(java.sql.ResultSet)", err);
+                throw new SQLException("Invocation exception on constructor: "+clazz.getName()+"(java.sql.ResultSet)", err);
             }
 		}
 	};
 
 	@Override
     final public <T> T executeObjectQuery(Class<T> clazz, String sql, Object ... params) throws NoRowException, SQLException {
-        return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, RuntimeException.class, new ClassObjectFactory<T>(clazz), sql, params);
+        return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params);
     }
 
 	@Override
     final public <T> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<T> clazz, String sql, Object ... params) throws NoRowException, SQLException {
-        return executeObjectQuery(isolationLevel, readOnly, rowRequired, RuntimeException.class, new ClassObjectFactory<T>(clazz), sql, params);
+        return executeObjectQuery(isolationLevel, readOnly, rowRequired, RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params);
 	}
 
 	@Override
@@ -194,14 +194,14 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
     final public <T> List<T> executeObjectListQuery(Class<T> clazz, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<T>(), RuntimeException.class, new ClassObjectFactory<T>(clazz), sql, params)
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<T>(), RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params)
 		);
     }
 
 	@Override
     final public <T> List<T> executeObjectListQuery(int isolationLevel, boolean readOnly, Class<T> clazz, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<T>(), RuntimeException.class, new ClassObjectFactory<T>(clazz), sql, params)
+			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<T>(), RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params)
 		);
 	}
 
@@ -235,12 +235,12 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 
 	@Override
     final public <T,C extends Collection<? super T>> C executeObjectCollectionQuery(C collection, Class<T> clazz, String sql, Object ... params) throws SQLException {
-        return executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, collection, RuntimeException.class, new ClassObjectFactory<T>(clazz), sql, params);
+        return executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, collection, RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params);
     }
 
 	@Override
     final public <T,C extends Collection<? super T>> C executeObjectCollectionQuery(int isolationLevel, boolean readOnly, C collection, Class<T> clazz, String sql, Object ... params) throws SQLException {
-        return executeObjectCollectionQuery(isolationLevel, readOnly, collection, RuntimeException.class, new ClassObjectFactory<T>(clazz), sql, params);
+        return executeObjectCollectionQuery(isolationLevel, readOnly, collection, RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params);
 	}
 
 	@Override
