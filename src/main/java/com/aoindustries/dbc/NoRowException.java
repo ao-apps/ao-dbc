@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2013, 2015  AO Industries, Inc.
+ * Copyright (C) 2010, 2011, 2015  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,26 +24,23 @@ package com.aoindustries.dbc;
 
 import java.sql.SQLException;
 
-/**
- * Thrown when more rows are retrieved than expected.
- */
-public class ExtraRowException extends SQLException {
+public class NoRowException extends SQLException {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 5397878995581459678L;
 
-    public ExtraRowException() {
-        super();
-    }
+	public NoRowException() {
+		super();
+	}
 
-    public ExtraRowException(String reason) {
-        super(reason);
-    }
+	public NoRowException(String reason) {
+		super(reason);
+	}
 
-    public ExtraRowException(Throwable cause) {
-        super(cause);
-    }
+	public NoRowException(Throwable cause) {
+		super(cause);
+	}
 
-    public ExtraRowException(String reason, Throwable cause) {
-        super(reason, cause);
-    }
+	public NoRowException(String reason, Throwable cause) {
+		super(reason, cause);
+	}
 }

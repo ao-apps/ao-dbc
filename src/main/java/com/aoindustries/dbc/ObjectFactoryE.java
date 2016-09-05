@@ -22,17 +22,18 @@
  */
 package com.aoindustries.dbc;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Target that may be used by <code>Database.executeTransaction</code>
- * and allows any arbitrary exception type in addition to the usual SQLException.
- *
- * @see  Database#executeTransaction(com.aoindustries.sql.DatabaseRunnableE)
+ * Creates instances of objects of the generics type from a result set.
  *
  * @author  AO Industries, Inc.
  */
-public interface DatabaseRunnableE<E extends Exception> {
+public interface ObjectFactoryE<T,E extends Exception> {
 
-    void run(DatabaseConnection db) throws SQLException, E;
+	/**
+	 * Creates one object from the current values in the ResultSet.
+	 */
+	T createObject(ResultSet result) throws SQLException, E;
 }

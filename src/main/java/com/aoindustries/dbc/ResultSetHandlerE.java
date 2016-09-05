@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2010, 2011, 2015  AO Industries, Inc.
+ * Copyright (C) 2014, 2015  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,25 +22,19 @@
  */
 package com.aoindustries.dbc;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class NoRowException extends SQLException {
+/**
+ * Processes the resultSet from a query.  This is called only once, it is no longer
+ * row-by-row.  Iteration over the results is up to the implementor.
+ *
+ * @author  AO Industries, Inc.
+ */
+public interface ResultSetHandlerE<T,E extends Exception> {
 
-    private static final long serialVersionUID = 5397878995581459678L;
-
-    public NoRowException() {
-        super();
-    }
-
-    public NoRowException(String reason) {
-        super(reason);
-    }
-
-    public NoRowException(Throwable cause) {
-        super(cause);
-    }
-
-    public NoRowException(String reason, Throwable cause) {
-        super(reason, cause);
-    }
+	/**
+	 * Process one set of results.
+	 */
+	T handleResultSet(ResultSet results) throws SQLException, E;
 }

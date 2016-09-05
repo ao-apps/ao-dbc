@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2008, 2009, 2010, 2011, 2014, 2015  AO Industries, Inc.
+ * Copyright (C) 2014, 2015  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,19 +22,17 @@
  */
 package com.aoindustries.dbc;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Creates instances of objects of the generics type from a result set.
+ * Target that may be used by <code>Database.executeTransaction</code>
+ * and allows any arbitrary exception type in addition to the usual SQLException.
+ *
+ * @see  Database#executeTransaction(com.aoindustries.sql.DatabaseCallableE)
  *
  * @author  AO Industries, Inc.
  */
-public interface ObjectFactory<T> extends ObjectFactoryE<T,RuntimeException>{
+public interface DatabaseCallableE<V,E extends Exception> {
 
-    /**
-     * Creates one object from the current values in the ResultSet.
-     */
-	@Override
-    T createObject(ResultSet result) throws SQLException;
+	V call(DatabaseConnection db) throws SQLException, E;
 }

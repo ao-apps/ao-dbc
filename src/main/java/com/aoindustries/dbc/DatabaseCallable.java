@@ -34,5 +34,5 @@ import java.sql.SQLException;
 public interface DatabaseCallable<V> extends DatabaseCallableE<V,RuntimeException> {
 
 	@Override
-    V call(DatabaseConnection db) throws SQLException;
+	V call(DatabaseConnection db) throws SQLException;
 }

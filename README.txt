@@ -1,4 +1,6 @@
-To provide patches or gain CVS access, please contact:
+Simplified JDBC access for simplified code.
+
+For questions or support, please contact:
 
     AO Industries, Inc.
     7262 Bull Pen Cir

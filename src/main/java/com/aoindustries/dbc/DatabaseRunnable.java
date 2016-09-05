@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2008, 2009, 2010, 2011, 2014, 2015  AO Industries, Inc.
+ * Copyright (C) 2010, 2011, 2014, 2015  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,20 +22,17 @@
  */
 package com.aoindustries.dbc;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Processes the resultSet from a query.  This is called only once, it is no longer
- * row-by-row.  Iteration over the results is up to the implementor.
+ * Target that may be used by <code>Database.executeTransaction</code>.
+ *
+ * @see  Database#executeTransaction(com.aoindustries.sql.DatabaseRunnable)
  *
  * @author  AO Industries, Inc.
  */
-public interface ResultSetHandler<T> extends ResultSetHandlerE<T,RuntimeException> {
+public interface DatabaseRunnable extends DatabaseRunnableE<RuntimeException> {
 
-    /**
-     * Process one set of results.
-     */
 	@Override
-    T handleResultSet(ResultSet results) throws SQLException;
+	void run(DatabaseConnection db) throws SQLException;
 }

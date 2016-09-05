@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2010, 2011, 2014, 2015  AO Industries, Inc.
+ * Copyright (C) 2014, 2015  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,14 +25,14 @@ package com.aoindustries.dbc;
 import java.sql.SQLException;
 
 /**
- * Target that may be used by <code>Database.executeTransaction</code>.
+ * Target that may be used by <code>Database.executeTransaction</code>
+ * and allows any arbitrary exception type in addition to the usual SQLException.
  *
- * @see  Database#executeTransaction(com.aoindustries.sql.DatabaseRunnable)
+ * @see  Database#executeTransaction(com.aoindustries.sql.DatabaseRunnableE)
  *
  * @author  AO Industries, Inc.
  */
-public interface DatabaseRunnable extends DatabaseRunnableE<RuntimeException> {
+public interface DatabaseRunnableE<E extends Exception> {
 
-	@Override
-    void run(DatabaseConnection db) throws SQLException;
+	void run(DatabaseConnection db) throws SQLException, E;
 }

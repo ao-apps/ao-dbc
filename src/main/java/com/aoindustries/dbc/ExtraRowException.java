@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2014, 2015  AO Industries, Inc.
+ * Copyright (C) 2013, 2015  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,14 +25,25 @@ package com.aoindustries.dbc;
 import java.sql.SQLException;
 
 /**
- * Target that may be used by <code>Database.executeTransaction</code>
- * and allows any arbitrary exception type in addition to the usual SQLException.
- *
- * @see  Database#executeTransaction(com.aoindustries.sql.DatabaseCallableE)
- *
- * @author  AO Industries, Inc.
+ * Thrown when more rows are retrieved than expected.
  */
-public interface DatabaseCallableE<V,E extends Exception> {
+public class ExtraRowException extends SQLException {
 
-    V call(DatabaseConnection db) throws SQLException, E;
+	private static final long serialVersionUID = 1L;
+
+	public ExtraRowException() {
+		super();
+	}
+
+	public ExtraRowException(String reason) {
+		super(reason);
+	}
+
+	public ExtraRowException(Throwable cause) {
+		super(cause);
+	}
+
+	public ExtraRowException(String reason, Throwable cause) {
+		super(reason, cause);
+	}
 }
