@@ -179,6 +179,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						<version>2.10.4</version>
 						<configuration>
 							<header><![CDATA[<a href="${project.url}">${project.name}<a>]]></header>
+							<keywords>true</keywords><!-- Help internal search systems -->
 							<links>
 								<link>https://www.aoindustries.com/docs/aocode-public/</link>
 							</links>
