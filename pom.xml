@@ -36,6 +36,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 	<name>AO Database Connectivity</name>
 	<url>https://www.aoindustries.com/docs/ao-dbc/</url>
 	<description>Simplified JDBC access for simplified code.</description>
+	<inceptionYear>2001</inceptionYear>
 
 	<licenses>
 		<license>
@@ -43,6 +44,11 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			<url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
 		</license>
 	</licenses>
+
+	<organization>
+		<name>AO Industries, Inc.</name>
+		<url>https://www.aoindustries.com/</url>
+	</organization>
 
 	<developers>
 		<developer>
