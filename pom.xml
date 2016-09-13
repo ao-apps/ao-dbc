@@ -104,7 +104,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<compilerArgs>-Xlint</compilerArgs>
+						<compilerArgs>
+							<arg>-Xlint</arg>
+						</compilerArgs>
 						<showDeprecation>true</showDeprecation>
 						<showWarnings>true</showWarnings>
 						<source>1.7</source>
