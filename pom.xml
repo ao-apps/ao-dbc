@@ -250,7 +250,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		<dependency>
 			<groupId>com.aoindustries</groupId>
 			<artifactId>aocode-public</artifactId>
-			<version>1.6.1</version>
+			<version>1.7-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
