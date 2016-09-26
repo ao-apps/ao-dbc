@@ -81,7 +81,8 @@ public class DatabaseMetaData {
 		return metaData;
 	}
 
-	private final Object getCatalogsLock = new Object();
+	private static class GetCatalogsLock {}
+	private final GetCatalogsLock getCatalogsLock = new GetCatalogsLock();
 	private SortedMap<String,Catalog> getCatalogsCache;
 
 	/**

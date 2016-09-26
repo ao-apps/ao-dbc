@@ -78,7 +78,8 @@ public class Schema {
 		return name;
 	}
 
-	private final Object getTablesLock = new Object();
+	private static class GetTablesLock {}
+	private final GetTablesLock getTablesLock = new GetTablesLock();
 	private SortedMap<String,Table> getTablesCache;
 
 	/**
