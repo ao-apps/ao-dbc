@@ -91,7 +91,8 @@ public class Table {
 		return tableType;
 	}
 
-	private final Object getColumnMapLock = new Object();
+	private static class GetColumnMapLock {}
+	private final GetColumnMapLock getColumnMapLock = new GetColumnMapLock();
 	private SortedMap<String,Column> getColumnMapCache;
 
 	private static Integer getInteger(ResultSet results, String columnName) throws SQLException {
@@ -145,7 +146,8 @@ public class Table {
 		return column;
 	}
 
-	private final Object getColumnsLock = new Object();
+	private static class GetColumnsLock {}
+	private final GetColumnsLock getColumnsLock = new GetColumnsLock();
 	private List<Column> getColumnsCache;
 
 	/**
@@ -186,7 +188,8 @@ public class Table {
 		}
 	}
 
-	private final Object getPrimaryKeyLock = new Object();
+	private static class GetPrimaryKeyLock {}
+	private final GetPrimaryKeyLock getPrimaryKeyLock = new GetPrimaryKeyLock();
 	private boolean getPrimaryKeyCached = false;
 	private Index getPrimaryKeyCache;
 
@@ -226,7 +229,8 @@ public class Table {
 		}
 	}
 
-	private final Object getImportedTablesLock = new Object();
+	private static class GetImportedTablesLock {}
+	private final GetImportedTablesLock getImportedTablesLock = new GetImportedTablesLock();
 	private Set<? extends Table> getImportedTablesCache;
 
 	/**
@@ -257,7 +261,8 @@ public class Table {
 		}
 	}
 
-	private final Object getExportedTablesLock = new Object();
+	private static class GetExportedTablesLock {}
+	private final GetExportedTablesLock getExportedTablesLock = new GetExportedTablesLock();
 	private Set<? extends Table> getExportedTablesCache;
 
 	/**

@@ -62,7 +62,8 @@ public class Catalog {
 		return name;
 	}
 
-	private final Object getSchemasLock = new Object();
+	private static class GetSchemasLock {}
+	private final GetSchemasLock getSchemasLock = new GetSchemasLock();
 	private SortedMap<String,Schema> getSchemasCache;
 
 	/**
