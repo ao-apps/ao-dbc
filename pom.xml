@@ -34,7 +34,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 	<packaging>jar</packaging>
 
 	<name>AO Database Connectivity</name>
-	<url>https://www.aoindustries.com/docs/ao-dbc/</url>
+	<url>https://www.aoindustries.com/ao-dbc/</url>
 	<description>Simplified JDBC access for simplified code.</description>
 	<inceptionYear>2001</inceptionYear>
 
@@ -216,7 +216,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 							<keywords>true</keywords><!-- Help internal search systems -->
 							<quiet>true</quiet>
 							<links>
-								<link>https://www.aoindustries.com/docs/aocode-public/</link>
+								<link>https://www.aoindustries.com/aocode-public/apidocs/</link>
 							</links>
 						</configuration>
 						<executions>
