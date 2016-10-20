@@ -30,7 +30,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 
 	<groupId>com.aoindustries</groupId>
 	<artifactId>ao-dbc</artifactId>
-	<version>1.1.1-SNAPSHOT</version>
+	<version>1.1.1</version>
 	<packaging>jar</packaging>
 
 	<name>AO Database Connectivity</name>
@@ -63,7 +63,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		<connection>scm:git:git://github.com/aoindustries/ao-dbc.git</connection>
 		<developerConnection>scm:git:git@github.com:aoindustries/ao-dbc.git</developerConnection>
 		<url>http://github.com/aoindustries/ao-dbc</url>
-		<tag>HEAD</tag>
+		<tag>ao-dbc-1.1.1</tag>
 	</scm>
 
 	<repositories>
