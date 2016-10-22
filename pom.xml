@@ -54,6 +54,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		<developer>
 			<name>AO Industries, Inc.</name>
 			<email>support@aoindustries.com</email>
+			<url>https://www.aoindustries.com/</url>
 			<organization>AO Industries, Inc.</organization>
 			<organizationUrl>https://www.aoindustries.com/</organizationUrl>
 		</developer>
@@ -62,7 +63,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 	<scm>
 		<connection>scm:git:git://github.com/aoindustries/ao-dbc.git</connection>
 		<developerConnection>scm:git:git@github.com:aoindustries/ao-dbc.git</developerConnection>
-		<url>http://github.com/aoindustries/ao-dbc</url>
+		<url>https://github.com/aoindustries/ao-dbc</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -306,7 +307,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		<dependency>
 			<groupId>com.aoindustries</groupId>
 			<artifactId>aocode-public</artifactId>
-			<version>1.8.2</version>
+			<version>1.8.3-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
