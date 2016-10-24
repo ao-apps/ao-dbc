@@ -44,6 +44,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			Java 1.9: Set this back to jdk17.
 		-->
 		<javac.bootclasspath>${bootclasspath.jdk18}</javac.bootclasspath>
+		<javac.link.javaApi>${javac.link.javaApi.jdk17}</javac.link.javaApi>
 	</properties>
 
 	<name>AO Database Connectivity</name>
@@ -71,7 +72,6 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						<version>2.10.4</version>
 						<configuration>
 							<links>
-								<link>https://docs.oracle.com/javase/7/docs/api/</link>
 								<link>https://www.aoindustries.com/aocode-public/apidocs/</link>
 							</links>
 						</configuration>
