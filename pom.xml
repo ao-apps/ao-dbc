@@ -61,7 +61,6 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 	</scm>
 
 	<profiles>
-		<!-- Add bootclasspath when profile enabled -->
 		<profile> 
 			<id>release</id>
 			<build>
