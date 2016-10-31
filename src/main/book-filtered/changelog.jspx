@@ -57,7 +57,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{project.name}"
 			version="1.1.1"
-			dateCreated="2016-10-20T18:09:00-0500"
+			datePublished="2016-10-20T18:09:00-0500"
 			groupId="@{project.groupId}"
 			artifactId="@{project.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -71,7 +71,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{project.name}"
 			version="1.1.0"
-			dateCreated="2016-10-04T19:27:00-0500"
+			datePublished="2016-10-04T19:27:00-0500"
 			groupId="@{project.groupId}"
 			artifactId="@{project.artifactId}"
 			scmUrl="@{project.scm.url}"
@@ -91,7 +91,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		<changelog:release
 			projectName="@{project.name}"
 			version="1.0"
-			dateCreated="2016-09-04T22:44:00-0500"
+			datePublished="2016-09-04T22:44:00-0500"
 			groupId="@{project.groupId}"
 			artifactId="@{project.artifactId}"
 			scmUrl="@{project.scm.url}"
