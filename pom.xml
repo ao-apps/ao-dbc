@@ -48,7 +48,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 	</properties>
 
 	<name>AO Database Connectivity</name>
-	<url>https://aoindustries.com${bookPath}/</url><!-- Can't inherit due to multi-module -->
+	<url>https://aoindustries.com/${project.artifactId}/</url>
 	<description>Simplified JDBC access for simplified code.</description>
 	<inceptionYear>2001</inceptionYear>
 
