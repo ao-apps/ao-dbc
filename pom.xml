@@ -61,20 +61,22 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 	</scm>
 
 	<profiles>
-		<profile> 
+		<profile>
 			<id>release</id>
 			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<configuration>
-							<links>
-								<link>https://aoindustries.com/aocode-public/apidocs/</link>
-							</links>
-						</configuration>
-					</plugin>
-				</plugins>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<configuration>
+								<links>
+									<link>https://aoindustries.com/aocode-public/apidocs/</link>
+								</links>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
 			</build>
 		</profile>
 	</profiles>
