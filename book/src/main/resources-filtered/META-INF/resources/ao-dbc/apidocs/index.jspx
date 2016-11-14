@@ -25,7 +25,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:core="https://semanticcms.com/core/taglib/"
 	xmlns:jsp="http://java.sun.com/JSP/Page"
-	title="@{documented.name} @{com.aoindustries:ao-dbc:jar.version} API Docs"
+	title="@{documented.name} @{com.aoindustries:ao-dbc:pom.version} API Docs"
 	shortTitle="API Docs"
 	datePublished="2016-10-16T21:59:00-0500"
 	dateModified="${ao:getLastModified('index.html')}"
