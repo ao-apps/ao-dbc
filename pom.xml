@@ -92,7 +92,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		<dependency>
 			<groupId>com.aoindustries</groupId>
 			<artifactId>aocode-public</artifactId>
-			<version>1.9.1-validation-SNAPSHOT</version>
+			<version>1.10.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
