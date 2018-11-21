@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -57,6 +57,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
+	final public BigDecimal executeBigDecimalUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, RuntimeException.class, bigDecimalObjectFactory, sql, params);
+	}
+
+	@Override
 	final public BigDecimal executeBigDecimalQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, RuntimeException.class, bigDecimalObjectFactory, sql, params);
 	}
@@ -64,6 +69,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	final public boolean executeBooleanQuery(String sql, Object ... params) throws NoRowException, SQLException {
 		return executeBooleanQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+	}
+
+	@Override
+	final public boolean executeBooleanUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+		return executeBooleanQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
 	@Override
@@ -79,6 +89,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	final public byte[] executeByteArrayQuery(String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, RuntimeException.class, byteArrayObjectFactory, sql, params);
+	}
+
+	@Override
+	final public byte[] executeByteArrayUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, RuntimeException.class, byteArrayObjectFactory, sql, params);
 	}
 
 	@Override
@@ -99,6 +114,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
+	final public Date executeDateUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, RuntimeException.class, dateObjectFactory, sql, params);
+	}
+
+	@Override
 	final public Date executeDateQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, RuntimeException.class, dateObjectFactory, sql, params);
 	}
@@ -106,6 +126,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	final public IntList executeIntListQuery(String sql, Object ... params) throws SQLException {
 		return executeIntListQuery(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+	}
+
+	@Override
+	final public IntList executeIntListUpdate(String sql, Object ... params) throws SQLException {
+		return executeIntListQuery(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
 	}
 
 	@Override
@@ -117,6 +142,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
+	final public int executeIntUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+		return executeIntQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+	}
+
+	@Override
 	abstract public int executeIntQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException;
 
 	@Override
@@ -125,11 +155,21 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
+	final public LongList executeLongListUpdate(String sql, Object ... params) throws SQLException {
+		return executeLongListQuery(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+	}
+
+	@Override
 	abstract public LongList executeLongListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException;
 
 	@Override
 	final public long executeLongQuery(String sql, Object ... params) throws NoRowException, SQLException {
 		return executeLongQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+	}
+
+	@Override
+	final public long executeLongUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+		return executeLongQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
 	@Override
@@ -169,6 +209,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
+	final public <T> T executeObjectUpdate(Class<T> clazz, String sql, Object ... params) throws NoRowException, SQLException {
+		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params);
+	}
+
+	@Override
 	final public <T> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<T> clazz, String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params);
 	}
@@ -176,6 +221,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	final public <T> T executeObjectQuery(ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, RuntimeException.class, objectFactory, sql, params);
+	}
+
+	@Override
+	final public <T> T executeObjectUpdate(ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, SQLException {
+		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, RuntimeException.class, objectFactory, sql, params);
 	}
 
 	@Override
@@ -189,12 +239,24 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
+	final public <T,E extends Exception> T executeObjectUpdate(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
+		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, eClass, objectFactory, sql, params);
+	}
+
+	@Override
 	abstract public <T,E extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E;
 
 	@Override
 	final public <T> List<T> executeObjectListQuery(Class<T> clazz, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
 			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<T>(), RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params)
+		);
+	}
+
+	@Override
+	final public <T> List<T> executeObjectListUpdate(Class<T> clazz, String sql, Object ... params) throws SQLException {
+		return AoCollections.optimalUnmodifiableList(
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<T>(), RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params)
 		);
 	}
 
@@ -213,6 +275,13 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
+	final public <T> List<T> executeObjectListUpdate(ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
+		return AoCollections.optimalUnmodifiableList(
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<T>(), RuntimeException.class, objectFactory, sql, params)
+		);
+	}
+
+	@Override
 	final public <T> List<T> executeObjectListQuery(int isolationLevel, boolean readOnly, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
 			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<T>(), RuntimeException.class, objectFactory, sql, params)
@@ -223,6 +292,13 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	final public <T,E extends Exception> List<T> executeObjectListQuery(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return AoCollections.optimalUnmodifiableList(
 			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<T>(), eClass, objectFactory, sql, params)
+		);
+	}
+
+	@Override
+	final public <T,E extends Exception> List<T> executeObjectListUpdate(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+		return AoCollections.optimalUnmodifiableList(
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<T>(), eClass, objectFactory, sql, params)
 		);
 	}
 
@@ -239,6 +315,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
+	final public <T,C extends Collection<? super T>> C executeObjectCollectionUpdate(C collection, Class<T> clazz, String sql, Object ... params) throws SQLException {
+		return executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, collection, RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params);
+	}
+
+	@Override
 	final public <T,C extends Collection<? super T>> C executeObjectCollectionQuery(int isolationLevel, boolean readOnly, C collection, Class<T> clazz, String sql, Object ... params) throws SQLException {
 		return executeObjectCollectionQuery(isolationLevel, readOnly, collection, RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params);
 	}
@@ -246,6 +327,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	final public <T,C extends Collection<? super T>> C executeObjectCollectionQuery(C collection, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
 		return executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, collection, RuntimeException.class, objectFactory, sql, params);
+	}
+
+	@Override
+	final public <T,C extends Collection<? super T>> C executeObjectCollectionUpdate(C collection, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
+		return executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, collection, RuntimeException.class, objectFactory, sql, params);
 	}
 
 	@Override
@@ -259,11 +345,21 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
+	final public <T,C extends Collection<? super T>,E extends Exception> C executeObjectCollectionUpdate(C collection, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+		return executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, collection, eClass, objectFactory, sql, params);
+	}
+
+	@Override
 	abstract public <T,C extends Collection<? super T>,E extends Exception> C executeObjectCollectionQuery(int isolationLevel, boolean readOnly, C collection, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E;
 
 	@Override
 	final public <T> T executeQuery(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
 		return executeQuery(Connection.TRANSACTION_READ_COMMITTED, true, RuntimeException.class, resultSetHandler, sql, params);
+	}
+
+	@Override
+	final public <T> T executeUpdate(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
+		return executeQuery(Connection.TRANSACTION_READ_COMMITTED, false, RuntimeException.class, resultSetHandler, sql, params);
 	}
 
 	@Override
@@ -274,6 +370,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	final public <T,E extends Exception> T executeQuery(Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
 		return executeQuery(Connection.TRANSACTION_READ_COMMITTED, true, eClass, resultSetHandler, sql, params);
+	}
+
+	@Override
+	final public <T,E extends Exception> T executeUpdate(Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
+		return executeQuery(Connection.TRANSACTION_READ_COMMITTED, false, eClass, resultSetHandler, sql, params);
 	}
 
 	@Override
@@ -294,6 +395,13 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
+	final public List<Short> executeShortListUpdate(String sql, Object ... params) throws SQLException {
+		return AoCollections.optimalUnmodifiableList(
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<Short>(), RuntimeException.class, shortObjectFactory, sql, params)
+		);
+	}
+
+	@Override
 	final public List<Short> executeShortListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
 			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<Short>(), RuntimeException.class, shortObjectFactory, sql, params)
@@ -303,6 +411,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	final public short executeShortQuery(String sql, Object ... params) throws NoRowException, SQLException {
 		return executeShortQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+	}
+
+	@Override
+	final public short executeShortUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+		return executeShortQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
 	@Override
@@ -321,6 +434,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
+	final public String executeStringUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, RuntimeException.class, stringObjectFactory, sql, params);
+	}
+
+	@Override
 	final public String executeStringQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, RuntimeException.class, stringObjectFactory, sql, params);
 	}
@@ -329,6 +447,13 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	final public List<String> executeStringListQuery(String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
 			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<String>(), RuntimeException.class, stringObjectFactory, sql, params)
+		);
+	}
+
+	@Override
+	final public List<String> executeStringListUpdate(String sql, Object ... params) throws SQLException {
+		return AoCollections.optimalUnmodifiableList(
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<String>(), RuntimeException.class, stringObjectFactory, sql, params)
 		);
 	}
 
@@ -349,6 +474,11 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	final public Timestamp executeTimestampQuery(String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, RuntimeException.class, timestampObjectFactory, sql, params);
+	}
+
+	@Override
+	final public Timestamp executeTimestampUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, RuntimeException.class, timestampObjectFactory, sql, params);
 	}
 
 	@Override
