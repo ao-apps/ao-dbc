@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -26,8 +26,15 @@ import com.aoindustries.sql.AOConnectionPool;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.LongList;
 import java.sql.Connection;
+import java.sql.SQLData;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 
@@ -88,36 +95,75 @@ public class Database extends AbstractDatabaseAccess {
 		return dataSource;
 	}
 
+	/**
+	 * The custom types discovered via {@link ServiceLoader}.
+	 */
+	private volatile Map<String,Class<?>> sqlDataTypes;
+
+	/**
+	 * Loads the custom types when first needed and caches the results.
+	 */
+	private Map<String,Class<?>> getSqlDataTypes() throws SQLException {
+		if(sqlDataTypes == null) {
+			// Load custom types from ServiceLoader
+			Map<String,Class<?>> newMap = new LinkedHashMap<>();
+			Iterator<SQLData> iter = ServiceLoader.load(SQLData.class).iterator();
+			while(iter.hasNext()) {
+				SQLData sqlData = iter.next();
+				newMap.put(sqlData.getSQLTypeName(), sqlData.getClass());
+			}
+			sqlDataTypes = newMap;
+		}
+		return sqlDataTypes;
+	}
+
+	private final Map<Connection,Map<String,Class<?>>> oldTypeMaps = new IdentityHashMap<>();
+
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
-		if(pool!=null) {
+		Connection conn;
+		if(pool != null) {
 			// From pool
-			Connection conn = pool.getConnection(isolationLevel, readOnly, maxConnections);
+			conn = pool.getConnection(isolationLevel, readOnly, maxConnections);
 			boolean successful = false;
 			try {
 				initConnection(conn);
 				successful = true;
-				return conn;
 			} finally {
 				if(!successful) pool.releaseConnection(conn);
 			}
 		} else {
 			// From dataSource
-			Connection conn = dataSource.getConnection();
+			conn = dataSource.getConnection();
 			boolean successful = false;
 			try {
 				if(isolationLevel!=conn.getTransactionIsolation()) conn.setTransactionIsolation(isolationLevel);
 				if(readOnly!=conn.isReadOnly()) conn.setReadOnly(readOnly);
 				initConnection(conn);
 				successful = true;
-				return conn;
 			} finally {
 				if(!successful) conn.close();
 			}
 		}
+		// Load custom types from ServiceLoader
+		Map<String,Class<?>> newTypes = getSqlDataTypes();
+		int size = newTypes.size();
+		if(size != 0) {
+			Map<String,Class<?>> typeMap = conn.getTypeMap();
+			// Note: We get "null" back from PostgreSQL driver, despite documentation of returning empty
+			if(typeMap == null) typeMap = new LinkedHashMap<>(size*4/3+1);
+			oldTypeMaps.put(conn, new LinkedHashMap<>(typeMap));
+			typeMap.putAll(newTypes);
+			conn.setTypeMap(typeMap);
+		}
+		return conn;
 	}
 
 	public void releaseConnection(Connection conn) throws SQLException {
-		if(pool!=null) {
+		// Restore custom types
+		// TODO: Do not remove on release and avoid re-adding for performance?
+		Map<String,Class<?>> oldTypeMap = oldTypeMaps.remove(conn);
+		if(oldTypeMap != null) conn.setTypeMap(oldTypeMap);
+		if(pool != null) {
 			// From pool
 			pool.releaseConnection(conn);
 		} else {
