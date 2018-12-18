@@ -195,7 +195,11 @@ public class DatabaseConnection extends AbstractDatabaseAccess {
 			// Defaults to string with object.toString only when the class has a valueOf(String) method that will reconstitute it in AutoObjectFactory
 			Class<?> clazz = param.getClass();
 			if(AutoObjectFactory.getValueOfStringMethod(clazz)!=null) pstmt.setString(pos, param.toString());
-			else throw new SQLException("Unexpected parameter class: "+clazz.getName());
+			else {
+				// Call setObject here, to give the database driver a chance to decide what to do
+				pstmt.setObject(pos, param);
+				//throw new SQLException("Unexpected parameter class: "+clazz.getName());
+			}
 		}
 	}
 
