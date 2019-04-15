@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ao-dbc - Simplified JDBC access for simplified code.
-Copyright (C) 2016, 2017, 2018  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2018, 2019  AO Industries, Inc.
 	support@aoindustries.com
 	7262 Bull Pen Cir
 	Mobile, AL 36695
@@ -31,17 +31,6 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 
 	<groupId>com.aoindustries</groupId><artifactId>ao-dbc</artifactId><version>1.1.4-SNAPSHOT</version>
 	<packaging>bundle</packaging>
-
-	<properties>
-		<javaVersion>1.7</javaVersion>
-		<compiler.bootclasspath>${bootclasspath.jdk17}</compiler.bootclasspath>
-		<!--
-			Java 1.8 javadoc bug: https://bugs.openjdk.java.net/browse/JDK-8041628
-			Java 1.9: Set this back to jdk17.
-		-->
-		<javac.bootclasspath>${bootclasspath.jdk18}</javac.bootclasspath>
-		<javac.link.javaApi>${javac.link.javaApi.jdk17}</javac.link.javaApi>
-	</properties>
 
 	<name>AO Database Connectivity</name>
 	<url>https://aoindustries.com/${project.artifactId}/</url>
