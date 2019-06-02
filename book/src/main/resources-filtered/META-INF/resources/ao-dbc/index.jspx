@@ -33,7 +33,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		title="@{documented.name}"
 		description="@{documented.description}"
 		datePublished="2016-10-16T21:59:00-0500"
-		dateModified="2019-06-01T00:46:53-0500"
+		dateModified="2019-06-01T18:51:51-0500"
 	>
 		<core:child page="changelog.jspx" />
 		<core:child page="apidocs/index.jspx" />
@@ -51,7 +51,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		<p>
 			@{documented.description}
 		</p>
-		<section:section label="Project Links">
+		<section:nav label="Project Links">
 			<ul>
 				<li><core:link page="index.jspx">Project Home</core:link></li>
 				<li><core:link page="changelog.jspx">Changelog</core:link></li>
@@ -59,6 +59,6 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				<li><ao:a href="https://search.maven.org/#search%7Cgav%7C1%7Cg:%22@{documented.groupId}%22%20AND%20a:%22@{documented.artifactId}%22">Maven Central Repository</ao:a></li>
 				<li><ao:a href="@{documented.scm.url}">GitHub</ao:a></li>
 			</ul>
-		</section:section>
+		</section:nav>
 	</core:page>
 </jsp:root>
