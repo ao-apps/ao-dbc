@@ -36,7 +36,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2019-06-19T09:48:11-0500"
+		dateModified="2019-06-20T22:08:18-0500"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -51,18 +51,27 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				groupId="@{documented.groupId}"
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{documented.scm.url}"
-			>
-				<ul>
-					<li>Minimum Java version changed from 1.6 to 1.7.</li>
-					<li>Using managed dependencies:
-						<ol>
-							<li>This project uses managed dependencies.</li>
-							<li>This project's managed dependencies may also be imported by other projects.</li>
-						</ol>
-					</li>
-				</ul>
-			</changelog:release>
+			/>
 		</c:if>
+
+		<changelog:release
+			projectName="@{documented.name}"
+			version="1.2.1"
+			datePublished="2019-06-20T22:08:18-0500"
+			groupId="@{documented.groupId}"
+			artifactId="@{documented.artifactId}"
+			scmUrl="@{documented.scm.url}"
+		>
+			<ul>
+				<li>Minimum Java version changed from 1.6 to 1.7.</li>
+				<li>Using managed dependencies:
+					<ol>
+						<li>This project uses managed dependencies.</li>
+						<li>This project's managed dependencies may also be imported by other projects.</li>
+					</ol>
+				</li>
+			</ul>
+		</changelog:release>
 
 		<changelog:release
 			projectName="@{documented.name}"
