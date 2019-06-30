@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2014, 2015  AO Industries, Inc.
+ * Copyright (C) 2014, 2015, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -28,7 +28,7 @@ import java.sql.SQLException;
  * Target that may be used by <code>Database.executeTransaction</code>
  * and allows any arbitrary exception type in addition to the usual SQLException.
  *
- * @see  Database#executeTransaction(com.aoindustries.sql.DatabaseRunnableE)
+ * @see  Database#executeTransaction(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
  *
  * @author  AO Industries, Inc.
  */
