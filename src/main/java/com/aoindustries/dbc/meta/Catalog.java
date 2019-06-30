@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -125,7 +125,7 @@ public class Catalog {
 	 *
 	 * TODO: Check is symmetric in JUnit test
 	 *
-	 * @param the set of tables types or <code>null</code> for all types
+	 * @param tableTypes  the set of tables types or <code>null</code> for all types
 	 */
 	public SymmetricGraph<Table,Edge<Table>,SQLException> getForeignKeyGraph(final Set<String> tableTypes) {
 		return new SymmetricGraph<Table, Edge<Table>, SQLException>() {
