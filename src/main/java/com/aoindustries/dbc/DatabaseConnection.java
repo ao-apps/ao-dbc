@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,7 +22,6 @@
  */
 package com.aoindustries.dbc;
 
-import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.sql.WrappedSQLException;
 import com.aoindustries.util.IntArrayList;
 import com.aoindustries.util.IntList;
@@ -67,8 +66,8 @@ public class DatabaseConnection extends AbstractDatabaseAccess {
 
 	/**
 	 * Gets a user-friendly description of the provided result in a string formatted like
-	 * <code>('value', 'value', int_value, ...)</code>.  This must not be used generate
-	 * SQL statements - it is just to provider user display.
+	 * <code>('value', 'value', int_value, …)</code>.  This must not be used generate
+	 * SQL statements - it is just to provide user display.
 	 */
 	@SuppressWarnings("deprecation")
 	private static String getRow(ResultSet result) throws SQLException {
@@ -103,8 +102,17 @@ public class DatabaseConnection extends AbstractDatabaseAccess {
 				case Types.TIMESTAMP :
 				case Types.VARCHAR :
 				default :
+					String S = result.getString(c);
 					sb.append('\'');
-					SQLUtility.escapeSQL(result.getString(c), sb);
+					int i;
+					for (i = 0; i < S.length(); i++) {
+						char ch = S.charAt(i);
+						if(ch == '\'') sb.append("''");
+						else if (ch == '\\' || ch == '"' || ch == '%' || ch == '_') {
+							sb.append('\\');
+						}
+						sb.append(ch);
+					}
 					sb.append('\'');
 					break;
 				//default :
