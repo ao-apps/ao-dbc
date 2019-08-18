@@ -53,7 +53,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				scmUrl="@{documented.scm.url}"
 			>
 				<ul>
-					<li>Updated for compatibility with <core:link book="/aocode-public" page="/changelog.jspx" element="release-notes-3.0.1">aocode-public-3.0.1</core:link>.</li>
+					<li>Updated for compatibility with <core:link book="/aocode-public" page="/changelog.jspx" element="release-notes-3.1.0">aocode-public-3.1.0</core:link>.</li>
 				</ul>
 			</changelog:release>
 		</c:if>
