@@ -31,6 +31,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
+@FunctionalInterface
 public interface DatabaseRunnable extends DatabaseRunnableE<RuntimeException> {
 
 	@Override
