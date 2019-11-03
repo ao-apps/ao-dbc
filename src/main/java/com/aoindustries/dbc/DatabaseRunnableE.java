@@ -32,6 +32,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
+@FunctionalInterface
 public interface DatabaseRunnableE<E extends Exception> {
 
 	void run(DatabaseConnection db) throws SQLException, E;

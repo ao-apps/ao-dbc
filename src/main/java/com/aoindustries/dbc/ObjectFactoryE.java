@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2014, 2015  AO Industries, Inc.
+ * Copyright (C) 2014, 2015, 2019  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,6 +30,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
+@FunctionalInterface
 public interface ObjectFactoryE<T,E extends Exception> {
 
 	/**
