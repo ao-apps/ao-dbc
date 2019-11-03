@@ -32,6 +32,13 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 	<groupId>com.aoindustries</groupId><artifactId>ao-dbc</artifactId><version>1.3.0-POST-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
+	<properties>
+		<javaVersion>1.8</javaVersion>
+		<compiler.bootclasspath>${bootclasspath.jdk8}</compiler.bootclasspath>
+		<javac.bootclasspath>${bootclasspath.jdk8}</javac.bootclasspath>
+		<javac.link.javaApi>${javac.link.javaApi.jdk8}</javac.link.javaApi>
+	</properties>
+
 	<name>AO Database Connectivity</name>
 	<url>https://aoindustries.com/${project.artifactId}/</url>
 	<description>Simplified JDBC access for simplified code.</description>
