@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2019-11-03T02:12:52-0600"
+		dateModified="2020-02-27T02:25:07-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -55,6 +55,10 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			>
 				<ul>
 					<li>Minimum Java version changed from 1.7 to 1.8.</li>
+					<li>
+						<code>Database</code> is now <code>AutoCloseable</code>,
+						which closes the underlying pool.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
