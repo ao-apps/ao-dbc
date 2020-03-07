@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-02-27T02:25:07-0600"
+		dateModified="2020-03-07T06:01:29-0600"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -49,12 +49,16 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			<changelog:release
 				projectName="@{documented.name}"
 				version="#{version}"
-				groupId="@{documented.groupId}"
+				groupId="@{project.groupId}"
 				artifactId="@{documented.artifactId}"
-				scmUrl="@{documented.scm.url}"
+				scmUrl="@{project.scm.url}"
 			>
 				<ul>
 					<li>Minimum Java version changed from 1.7 to 1.8.</li>
+					<li>
+						Reduced use of property substitutions in <code>pom.xml</code>.
+						This is to help 3rd-party parsers that fail to perform full Maven-compatible substitutions.
+					</li>
 					<li>
 						<code>Database</code> is now <code>AutoCloseable</code>,
 						which closes the underlying pool.
@@ -67,9 +71,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.3.0"
 			datePublished="2019-10-01T20:44:38-0500"
-			groupId="@{documented.groupId}"
+			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
-			scmUrl="@{documented.scm.url}"
+			scmUrl="@{project.scm.url}"
 		>
 			<ul>
 				<li>Updated for compatibility with <core:link book="/aocode-public" page="/changelog.jspx" element="release-notes-3.1.0">aocode-public-3.1.0</core:link>.</li>
@@ -80,9 +84,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.2.1"
 			datePublished="2019-06-20T22:08:18-0500"
-			groupId="@{documented.groupId}"
+			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
-			scmUrl="@{documented.scm.url}"
+			scmUrl="@{project.scm.url}"
 		>
 			<ul>
 				<li>Minimum Java version changed from 1.6 to 1.7.</li>
@@ -99,9 +103,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.2.0"
 			datePublished="2019-04-23T04:46:32-0500"
-			groupId="@{documented.groupId}"
+			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
-			scmUrl="@{documented.scm.url}"
+			scmUrl="@{project.scm.url}"
 		>
 			<ul>
 				<li>
@@ -124,9 +128,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.1.3"
 			datePublished="2017-07-19T19:16:33-0500"
-			groupId="@{documented.groupId}"
+			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
-			scmUrl="@{documented.scm.url}"
+			scmUrl="@{project.scm.url}"
 		>
 			<ul>
 				<li>Updated dependencies.</li>
@@ -137,9 +141,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.1.2"
 			datePublished="2016-11-15T18:37:30-0600"
-			groupId="@{documented.groupId}"
+			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
-			scmUrl="@{documented.scm.url}"
+			scmUrl="@{project.scm.url}"
 		>
 			<ul>
 				<li>New <core:link book="/ao-oss-parent" page="/index.jspx" /> POM to simplify <code>pom.xml</code> files.</li>
@@ -152,9 +156,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.1.1"
 			datePublished="2016-10-20T18:09:00-0500"
-			groupId="@{documented.groupId}"
+			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
-			scmUrl="@{documented.scm.url}"
+			scmUrl="@{project.scm.url}"
 		>
 			<ul>
 				<li>Improved Javadoc formatting.</li>
@@ -166,9 +170,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.1.0"
 			datePublished="2016-10-04T19:27:00-0500"
-			groupId="@{documented.groupId}"
+			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
-			scmUrl="@{documented.scm.url}"
+			scmUrl="@{project.scm.url}"
 		>
 			<ul>
 				<li>Improved Javadoc formatting.</li>
@@ -186,9 +190,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.0"
 			datePublished="2016-09-04T22:44:00-0500"
-			groupId="@{documented.groupId}"
+			groupId="@{project.groupId}"
 			artifactId="@{documented.artifactId}"
-			scmUrl="@{documented.scm.url}"
+			scmUrl="@{project.scm.url}"
 		>
 			<ul>
 				<li>Project moved to GitHub and Maven.</li>
