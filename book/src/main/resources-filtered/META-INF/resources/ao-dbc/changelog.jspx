@@ -114,11 +114,11 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					<code>execute*Query</code>.  Less is more - now get back to work!
 				</li>
 				<li>
-					Now supports the automatic loading of <ao:a rel="nofollow" href="@{javac.link.javaApi}java/sql/SQLData.html">SQLData</ao:a>
-					implementations via <ao:a rel="nofollow" href="@{javac.link.javaApi}java/util/ServiceLoader.html">ServiceLoader</ao:a>.
+					Now supports the automatic loading of <ao:a rel="nofollow" href="@{javadoc.link.javase}java/sql/SQLData.html">SQLData</ao:a>
+					implementations via <ao:a rel="nofollow" href="@{javadoc.link.javase}java/util/ServiceLoader.html">ServiceLoader</ao:a>.
 				</li>
 				<li>
-					Now calling <ao:a rel="nofollow" href="@{javac.link.javaApi}java/sql/PreparedStatement.html#setObject(int, java.lang.Object)">PreparedStatement.setObject(int, java.lang.Object)</ao:a>
+					Now calling <ao:a rel="nofollow" href="@{javadoc.link.javase}java/sql/PreparedStatement.html#setObject(int, java.lang.Object)">PreparedStatement.setObject(int, java.lang.Object)</ao:a>
 					to give the database driver a chance to decide what to do.
 				</li>
 			</ul>

@@ -35,8 +35,6 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 	<properties>
 		<!-- These values are copied from the project being documented -->
 		<documented.artifactId>ao-dbc</documented.artifactId>
-		<documented.javaVersion>1.8</documented.javaVersion>
-		<documented.javac.link.javaApi>${javac.link.javaApi.jdk8}</documented.javac.link.javaApi>
 		<documented.name>AO Database Connectivity</documented.name>
 		<documented.description>Simplified JDBC access for simplified code.</documented.description>
 
