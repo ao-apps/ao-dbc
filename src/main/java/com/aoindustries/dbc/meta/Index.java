@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,7 +24,7 @@ package com.aoindustries.dbc.meta;
 
 import com.aoindustries.table.IndexType;
 import com.aoindustries.util.AoCollections;
-import com.aoindustries.util.StringUtility;
+import com.aoindustries.lang.Strings;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,8 +55,8 @@ public class Index {
 
 	@Override
 	public String toString() {
-		if(name==null) return type + " (" + StringUtility.join(columns, ", ") + ")";
-		else return name + " " + type + " (" + StringUtility.join(columns, ", ") + ")";
+		if(name==null) return type + " (" + Strings.join(columns, ", ") + ")";
+		else return name + " " + type + " (" + Strings.join(columns, ", ") + ")";
 	}
 
 	public Table getTable() {
