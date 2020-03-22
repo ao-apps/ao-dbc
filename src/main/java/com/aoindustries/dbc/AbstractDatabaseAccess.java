@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2018  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -249,63 +249,63 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	final public <T> List<T> executeObjectListQuery(Class<T> clazz, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<T>(), RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params)
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<>(), RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params)
 		);
 	}
 
 	@Override
 	final public <T> List<T> executeObjectListUpdate(Class<T> clazz, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<T>(), RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params)
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<>(), RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params)
 		);
 	}
 
 	@Override
 	final public <T> List<T> executeObjectListQuery(int isolationLevel, boolean readOnly, Class<T> clazz, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<T>(), RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params)
+			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<>(), RuntimeException.class, new ClassObjectFactory<>(clazz), sql, params)
 		);
 	}
 
 	@Override
 	final public <T> List<T> executeObjectListQuery(ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<T>(), RuntimeException.class, objectFactory, sql, params)
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<>(), RuntimeException.class, objectFactory, sql, params)
 		);
 	}
 
 	@Override
 	final public <T> List<T> executeObjectListUpdate(ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<T>(), RuntimeException.class, objectFactory, sql, params)
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<>(), RuntimeException.class, objectFactory, sql, params)
 		);
 	}
 
 	@Override
 	final public <T> List<T> executeObjectListQuery(int isolationLevel, boolean readOnly, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<T>(), RuntimeException.class, objectFactory, sql, params)
+			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<>(), RuntimeException.class, objectFactory, sql, params)
 		);
 	}
 
 	@Override
 	final public <T,E extends Exception> List<T> executeObjectListQuery(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<T>(), eClass, objectFactory, sql, params)
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<>(), eClass, objectFactory, sql, params)
 		);
 	}
 
 	@Override
 	final public <T,E extends Exception> List<T> executeObjectListUpdate(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<T>(), eClass, objectFactory, sql, params)
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<>(), eClass, objectFactory, sql, params)
 		);
 	}
 
 	@Override
 	final public <T,E extends Exception> List<T> executeObjectListQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<T>(), eClass, objectFactory, sql, params)
+			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<>(), eClass, objectFactory, sql, params)
 		);
 	}
 
@@ -390,21 +390,21 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	final public List<Short> executeShortListQuery(String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<Short>(), RuntimeException.class, shortObjectFactory, sql, params)
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<>(), RuntimeException.class, shortObjectFactory, sql, params)
 		);
 	}
 
 	@Override
 	final public List<Short> executeShortListUpdate(String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<Short>(), RuntimeException.class, shortObjectFactory, sql, params)
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<>(), RuntimeException.class, shortObjectFactory, sql, params)
 		);
 	}
 
 	@Override
 	final public List<Short> executeShortListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<Short>(), RuntimeException.class, shortObjectFactory, sql, params)
+			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<>(), RuntimeException.class, shortObjectFactory, sql, params)
 		);
 	}
 
@@ -446,21 +446,21 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	final public List<String> executeStringListQuery(String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<String>(), RuntimeException.class, stringObjectFactory, sql, params)
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, new ArrayList<>(), RuntimeException.class, stringObjectFactory, sql, params)
 		);
 	}
 
 	@Override
 	final public List<String> executeStringListUpdate(String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<String>(), RuntimeException.class, stringObjectFactory, sql, params)
+			executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, new ArrayList<>(), RuntimeException.class, stringObjectFactory, sql, params)
 		);
 	}
 
 	@Override
 	final public List<String> executeStringListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
 		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<String>(), RuntimeException.class, stringObjectFactory, sql, params)
+			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<>(), RuntimeException.class, stringObjectFactory, sql, params)
 		);
 	}
 
