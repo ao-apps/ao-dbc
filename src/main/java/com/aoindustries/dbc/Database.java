@@ -584,15 +584,12 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	 *
 	 * @see #isInTransaction()
 	 */
-	public void executeTransaction(final DatabaseRunnable runnable) throws SQLException {
+	public void executeTransaction(DatabaseRunnable runnable) throws SQLException {
 		executeTransaction(
 			RuntimeException.class,
-			new DatabaseCallableE<Void,RuntimeException>() {
-				@Override
-				public Void call(DatabaseConnection db) throws SQLException {
-					runnable.run(db);
-					return null;
-				}
+			(DatabaseConnection db) -> {
+				runnable.run(db);
+				return null;
 			}
 		);
 	}
@@ -608,12 +605,9 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	) throws SQLException, E {
 		executeTransaction(
 			eClass,
-			new DatabaseCallableE<Void,E>() {
-				@Override
-				public Void call(DatabaseConnection db) throws SQLException, E {
-					runnable.run(db);
-					return null;
-				}
+			(DatabaseConnection db) -> {
+				runnable.run(db);
+				return null;
 			}
 		);
 	}
@@ -626,12 +620,7 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	public <V> V executeTransaction(final DatabaseCallable<V> callable) throws SQLException {
 		return executeTransaction(
 			RuntimeException.class,
-			new DatabaseCallableE<V,RuntimeException>() {
-				@Override
-				public V call(DatabaseConnection db) throws SQLException {
-					return callable.call(db);
-				}
-			}
+			(DatabaseConnection db) -> callable.call(db)
 		);
 	}
 

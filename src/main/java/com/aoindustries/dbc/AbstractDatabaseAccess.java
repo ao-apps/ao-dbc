@@ -44,12 +44,7 @@ import java.util.List;
  */
 abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 
-	private static final ObjectFactory<BigDecimal> bigDecimalObjectFactory = new ObjectFactory<BigDecimal>() {
-		@Override
-		public BigDecimal createObject(ResultSet result) throws SQLException {
-			return result.getBigDecimal(1);
-		}
-	};
+	private static final ObjectFactory<BigDecimal> bigDecimalObjectFactory = result -> result.getBigDecimal(1);
 
 	@Override
 	final public BigDecimal executeBigDecimalQuery(String sql, Object ... params) throws NoRowException, SQLException {
@@ -79,12 +74,7 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	abstract public boolean executeBooleanQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException;
 
-	private static final ObjectFactory<byte[]> byteArrayObjectFactory = new ObjectFactory<byte[]>() {
-		@Override
-		public byte[] createObject(ResultSet result) throws SQLException {
-			return result.getBytes(1);
-		}
-	};
+	private static final ObjectFactory<byte[]> byteArrayObjectFactory = result -> result.getBytes(1);
 
 	@Override
 	final public byte[] executeByteArrayQuery(String sql, Object ... params) throws NoRowException, SQLException {
@@ -101,12 +91,7 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, RuntimeException.class, byteArrayObjectFactory, sql, params);
 	}
 
-	private static final ObjectFactory<Date> dateObjectFactory = new ObjectFactory<Date>() {
-		@Override
-		public Date createObject(ResultSet result) throws SQLException {
-			return result.getDate(1);
-		}
-	};
+	private static final ObjectFactory<Date> dateObjectFactory = result -> result.getDate(1);
 
 	@Override
 	final public Date executeDateQuery(String sql, Object ... params) throws NoRowException, SQLException {
@@ -380,12 +365,7 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	abstract public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E;
 
-	private static final ObjectFactory<Short> shortObjectFactory = new ObjectFactory<Short>() {
-		@Override
-		public Short createObject(ResultSet result) throws SQLException {
-			return result.getShort(1);
-		}
-	};
+	private static final ObjectFactory<Short> shortObjectFactory = result-> result.getShort(1);
 
 	@Override
 	final public List<Short> executeShortListQuery(String sql, Object ... params) throws SQLException {
@@ -421,12 +401,7 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	@Override
 	abstract public short executeShortQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException;
 
-	private static final ObjectFactory<String> stringObjectFactory = new ObjectFactory<String>() {
-		@Override
-		public String createObject(ResultSet result) throws SQLException {
-			return result.getString(1);
-		}
-	};
+	private static final ObjectFactory<String> stringObjectFactory = result -> result.getString(1);
 
 	@Override
 	final public String executeStringQuery(String sql, Object ... params) throws NoRowException, SQLException {
@@ -464,12 +439,7 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 		);
 	}
 
-	private static final ObjectFactory<Timestamp> timestampObjectFactory = new ObjectFactory<Timestamp>() {
-		@Override
-		public Timestamp createObject(ResultSet result) throws SQLException {
-			return result.getTimestamp(1);
-		}
-	};
+	private static final ObjectFactory<Timestamp> timestampObjectFactory = result -> result.getTimestamp(1);
 
 	@Override
 	final public Timestamp executeTimestampQuery(String sql, Object ... params) throws NoRowException, SQLException {
