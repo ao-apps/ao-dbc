@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2018  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2018, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -631,7 +631,7 @@ public interface DatabaseAccess {
 	<T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E;
 
 	/**
-	 * Read-only query the database with a <code>List<Short></code> return type.
+	 * Read-only query the database with a {@code List<Short>} return type.
 	 * <ul>
 	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
 	 *   <li>readOnly = <code>true</code></li>
@@ -642,7 +642,7 @@ public interface DatabaseAccess {
 	List<Short> executeShortListQuery(String sql, Object ... params) throws SQLException;
 
 	/**
-	 * Read-write query the database with a <code>List<Short></code> return type.
+	 * Read-write query the database with a {@code List<Short>} return type.
 	 * <ul>
 	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
 	 *   <li>readOnly = <code>false</code></li>
@@ -653,7 +653,7 @@ public interface DatabaseAccess {
 	List<Short> executeShortListUpdate(String sql, Object ... params) throws SQLException;
 
 	/**
-	 * Query the database with a <code>List<Short></code> return type.
+	 * Query the database with a {@code List<Short>} return type.
 	 */
 	List<Short> executeShortListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException;
 
