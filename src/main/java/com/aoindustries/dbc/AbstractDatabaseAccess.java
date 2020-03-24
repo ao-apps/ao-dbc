@@ -22,7 +22,7 @@
  */
 package com.aoindustries.dbc;
 
-import com.aoindustries.util.AoCollections;
+import com.aoindustries.collections.AoCollections;
 import com.aoindustries.util.IntList;
 import com.aoindustries.util.LongList;
 import java.lang.reflect.Constructor;

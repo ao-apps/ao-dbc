@@ -22,9 +22,9 @@
  */
 package com.aoindustries.dbc.meta;
 
-import com.aoindustries.table.IndexType;
-import com.aoindustries.util.AoCollections;
+import com.aoindustries.collections.AoCollections;
 import com.aoindustries.lang.Strings;
+import com.aoindustries.table.IndexType;
 import java.util.ArrayList;
 import java.util.List;
 
