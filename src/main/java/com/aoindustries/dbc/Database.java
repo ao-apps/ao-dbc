@@ -584,6 +584,7 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	 *
 	 * @see #isInTransaction()
 	 */
+	@SuppressWarnings("overloads")
 	public void executeTransaction(DatabaseRunnable runnable) throws SQLException {
 		executeTransaction(
 			RuntimeException.class,
@@ -617,6 +618,7 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	 *
 	 * @see #isInTransaction()
 	 */
+	@SuppressWarnings("overloads")
 	public <V> V executeTransaction(final DatabaseCallable<V> callable) throws SQLException {
 		return executeTransaction(
 			RuntimeException.class,
