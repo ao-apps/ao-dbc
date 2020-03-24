@@ -22,9 +22,9 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.collections.IntList;
+import com.aoindustries.collections.LongList;
 import com.aoindustries.sql.AOConnectionPool;
-import com.aoindustries.util.IntList;
-import com.aoindustries.util.LongList;
 import java.sql.Connection;
 import java.sql.SQLData;
 import java.sql.SQLException;

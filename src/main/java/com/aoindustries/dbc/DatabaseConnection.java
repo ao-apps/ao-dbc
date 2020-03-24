@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2019  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,11 +22,11 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.collections.IntArrayList;
+import com.aoindustries.collections.IntList;
+import com.aoindustries.collections.LongArrayList;
+import com.aoindustries.collections.LongList;
 import com.aoindustries.sql.WrappedSQLException;
-import com.aoindustries.util.IntArrayList;
-import com.aoindustries.util.IntList;
-import com.aoindustries.util.LongArrayList;
-import com.aoindustries.util.LongList;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;

@@ -22,8 +22,8 @@
  */
 package com.aoindustries.dbc;
 
-import com.aoindustries.util.IntList;
-import com.aoindustries.util.LongList;
+import com.aoindustries.collections.IntList;
+import com.aoindustries.collections.LongList;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;

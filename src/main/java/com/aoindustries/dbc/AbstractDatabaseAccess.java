@@ -23,8 +23,8 @@
 package com.aoindustries.dbc;
 
 import com.aoindustries.collections.AoCollections;
-import com.aoindustries.util.IntList;
-import com.aoindustries.util.LongList;
+import com.aoindustries.collections.IntList;
+import com.aoindustries.collections.LongList;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;

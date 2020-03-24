@@ -23,9 +23,9 @@
 package com.aoindustries.dbc.meta;
 
 import com.aoindustries.collections.AoCollections;
+import com.aoindustries.collections.AutoGrowArrayList;
 import com.aoindustries.dbc.NoRowException;
 import com.aoindustries.table.IndexType;
-import com.aoindustries.util.AutoGrowArrayList;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
