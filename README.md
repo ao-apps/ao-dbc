@@ -27,7 +27,7 @@ Simplified JDBC access for simplified code.
 * [Project Home](https://aoindustries.com/ao-dbc/)
 * [Changelog](https://aoindustries.com/ao-dbc/changelog)
 * [API Docs](https://aoindustries.com/ao-dbc/apidocs/)
-* [Maven Central Repository](https://search.maven.org/#search%7Cgav%7C1%7Cg:%22com.aoindustries%22%20AND%20a:%22ao-dbc%22)
+* [Maven Central Repository](https://search.maven.org/artifact/com.aoindustries/ao-dbc)
 * [GitHub](https://github.com/aoindustries/ao-dbc)
 
 ## Contact Us
