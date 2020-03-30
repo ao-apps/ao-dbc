@@ -38,7 +38,6 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 	<inceptionYear>2001</inceptionYear>
 
 	<scm>
-		<!-- Can't inherit due to multi-module -->
 		<connection>scm:git:git://github.com/aoindustries/ao-dbc.git</connection>
 		<developerConnection>scm:git:git@github.com:aoindustries/ao-dbc.git</developerConnection>
 		<url>https://github.com/aoindustries/ao-dbc</url>
