@@ -171,13 +171,13 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 		// Restore custom types
 		// TODO: Do not remove on release and avoid re-adding for performance?
 		Map<String,Class<?>> oldTypeMap = oldTypeMaps.remove(conn);
-		if(oldTypeMap != null) conn.setTypeMap(oldTypeMap);
+		if(oldTypeMap != null && !conn.isClosed()) conn.setTypeMap(oldTypeMap);
 		if(pool != null) {
 			// From pool
 			pool.releaseConnection(conn);
 		} else {
 			// From dataSource
-			if(!conn.isClosed()) conn.close();
+			conn.close();
 		}
 	}
 
