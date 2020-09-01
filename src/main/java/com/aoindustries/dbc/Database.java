@@ -47,6 +47,8 @@ import javax.sql.DataSource;
  *
  * @author  AO Industries, Inc.
  */
+// TODO: Have a separate Database and CloseableDatabase, similar to HttpClient
+// TODO: This will allow APIs that don't want their database closed to hide the close method
 public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 
 	/**
