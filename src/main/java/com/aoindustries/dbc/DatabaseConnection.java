@@ -451,6 +451,7 @@ public class DatabaseConnection extends AbstractDatabaseAccess {
 		return rolledBack;
 	}
 
+	// TODO: Version that adds any exception to SQLException.setNextException.  Here and similar within this project
 	public boolean rollbackAndClose() {
 		boolean rolledBack=false;
 		try {
