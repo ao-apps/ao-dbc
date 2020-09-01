@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2009, 2010, 2011, 2013, 2015, 2016  AO Industries, Inc.
+ * Copyright (C) 2009, 2010, 2011, 2013, 2015, 2016, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -221,7 +221,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 			StringBuilder message = new StringBuilder("Unable to find matching constructor");
 			if(warnings!=null) for(String warning : warnings) message.append(EOL).append(warning);
 			throw new SQLException(message.toString());
-		} catch(InstantiationException | IllegalAccessException | InvocationTargetException err) {
+		} catch(InstantiationException | IllegalAccessException | InvocationTargetException err) { // TODO: ReflectiveOperationException
 			throw new SQLException(err);
 		}
 	}
