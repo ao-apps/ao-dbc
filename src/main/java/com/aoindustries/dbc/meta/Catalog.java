@@ -71,6 +71,7 @@ public class Catalog {
 	 *
 	 * @see  java.sql.DatabaseMetaData#getSchemas()
 	 */
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public SortedMap<String,Schema> getSchemas() throws SQLException {
 		synchronized(getSchemasLock) {
 			if(getSchemasCache==null) {

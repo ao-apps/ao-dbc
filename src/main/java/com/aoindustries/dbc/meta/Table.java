@@ -106,6 +106,7 @@ public class Table {
 	 *
 	 * @see  java.sql.DatabaseMetaData#getColumns(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public SortedMap<String,Column> getColumnMap() throws SQLException {
 		synchronized(getColumnMapLock) {
 			if(getColumnMapCache==null) {
@@ -156,12 +157,15 @@ public class Table {
 	 *
 	 * @see  #getColumnMap()
 	 */
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public List<Column> getColumns() throws SQLException {
 		synchronized(getColumnsLock) {
 			if(getColumnsCache==null) {
 				SortedMap<String,Column> columnMap = getColumnMap();
 				List<Column> newColumns = new ArrayList<>(columnMap.size());
-				for(int i=0; i<columnMap.size(); i++) newColumns.add(null);
+				for(int i=0; i<columnMap.size(); i++) {
+					newColumns.add(null);
+				}
 				for(Column column : columnMap.values()) {
 					int ordinalPosition = column.getOrdinalPosition();
 					if(newColumns.set(ordinalPosition-1, column)!=null) throw new SQLException("Duplicate ordinal position: "+ordinalPosition);
@@ -238,6 +242,7 @@ public class Table {
 	 *
 	 * This is based on getImportedKeys
 	 */
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public Set<? extends Table> getImportedTables() throws SQLException {
 		synchronized(getImportedTablesLock) {
 			if(getImportedTablesCache==null) {

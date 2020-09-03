@@ -87,6 +87,7 @@ public class Schema {
 	 *
 	 * @see  java.sql.DatabaseMetaData#getTables(java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
 	 */
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public SortedMap<String,Table> getTables() throws SQLException {
 		synchronized(getTablesLock) {
 			if(getTablesCache==null) {

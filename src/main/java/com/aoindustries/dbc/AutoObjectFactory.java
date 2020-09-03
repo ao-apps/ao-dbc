@@ -219,7 +219,11 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 				}
 			}
 			StringBuilder message = new StringBuilder("Unable to find matching constructor");
-			if(warnings!=null) for(String warning : warnings) message.append(EOL).append(warning);
+			if(warnings != null) {
+				for(String warning : warnings) {
+					message.append(EOL).append(warning);
+				}
+			}
 			throw new SQLException(message.toString());
 		} catch(InstantiationException | IllegalAccessException | InvocationTargetException err) { // TODO: ReflectiveOperationException
 			throw new SQLException(err);

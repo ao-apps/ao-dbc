@@ -71,6 +71,7 @@ public class Index {
 		return type;
 	}
 
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public List<Column> getColumns() {
 		return columns;
 	}

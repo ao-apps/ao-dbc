@@ -90,6 +90,7 @@ public class DatabaseMetaData {
 	 *
 	 * @see  java.sql.DatabaseMetaData#getCatalogs()
 	 */
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public SortedMap<String,Catalog> getCatalogs() throws SQLException {
 		synchronized(getCatalogsLock) {
 			if(getCatalogsCache==null) {

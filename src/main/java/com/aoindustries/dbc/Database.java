@@ -114,6 +114,7 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	/**
 	 * Loads the custom types when first needed and caches the results.
 	 */
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Only used within this class
 	private Map<String,Class<?>> getSqlDataTypes() throws SQLException {
 		if(sqlDataTypes == null) {
 			// Load custom types from ServiceLoader

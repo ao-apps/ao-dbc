@@ -125,7 +125,7 @@ public class DatabaseConnection extends AbstractDatabaseAccess {
 
 	private final Database database;
 
-	Connection _conn;
+	private Connection _conn;
 
 	protected DatabaseConnection(Database database) {
 	   this.database=database;
@@ -212,8 +212,10 @@ public class DatabaseConnection extends AbstractDatabaseAccess {
 	}
 
 	public static void setParams(Connection conn, PreparedStatement pstmt, Object ... params) throws SQLException {
-		int pos=1;
-		for(Object param : params) setParam(conn, pstmt, pos++, param);
+		int pos = 1;
+		for(Object param : params) {
+			setParam(conn, pstmt, pos++, param);
+		}
 	}
 
 	@Override
@@ -249,7 +251,9 @@ public class DatabaseConnection extends AbstractDatabaseAccess {
 				setParams(conn, pstmt, params);
 				try (ResultSet results = pstmt.executeQuery()) {
 					IntList V=new IntArrayList();
-					while(results.next()) V.add(results.getInt(1));
+					while(results.next()) {
+						V.add(results.getInt(1));
+					}
 					return V;
 				}
 			} catch(SQLException err) {
@@ -291,7 +295,9 @@ public class DatabaseConnection extends AbstractDatabaseAccess {
 				setParams(conn, pstmt, params);
 				try (ResultSet results = pstmt.executeQuery()) {
 					LongList V=new LongArrayList();
-					while(results.next()) V.add(results.getLong(1));
+					while(results.next()) {
+						V.add(results.getLong(1));
+					}
 					return V;
 				}
 			} catch(SQLException err) {
