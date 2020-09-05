@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class AutoObjectFactory<T> implements ObjectFactory<T> {
 
-	static final String EOL = System.getProperty("line.separator");
+	static final String EOL = System.lineSeparator();
 
 	/**
 	 * Concurrent map can't store nulls, uses this in place of null values when lookup fails.
