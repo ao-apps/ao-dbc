@@ -184,7 +184,7 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 				if(cause instanceof Error) throw (Error)cause;
 				if(cause instanceof RuntimeException) throw (RuntimeException)cause;
 				if(cause instanceof SQLException) throw (SQLException)cause;
-				throw new SQLException(clazz.getName() + "(java.sql.ResultSet)", cause);
+				throw new SQLException(clazz.getName() + "(java.sql.ResultSet)", cause == null ? e : cause);
 			} catch(Error | RuntimeException e) {
 				throw e;
 			} catch(Throwable t) {

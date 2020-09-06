@@ -230,7 +230,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 			if(cause instanceof Error) throw (Error)cause;
 			if(cause instanceof RuntimeException) throw (RuntimeException)cause;
 			if(cause instanceof SQLException) throw (SQLException)cause;
-			throw new SQLException(cause);
+			throw new SQLException(cause == null ? e : cause);
 		} catch(Error | RuntimeException | SQLException e) {
 			throw e;
 		} catch(Throwable t) {

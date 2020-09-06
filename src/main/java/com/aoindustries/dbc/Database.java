@@ -198,6 +198,7 @@ public class Database extends AbstractDatabaseAccess {
 			pool.releaseConnection(conn);
 		} else {
 			// From dataSource
+			// TODO: Log warnings here, too, like done by AOConnectionPool
 			conn.close();
 		}
 	}
