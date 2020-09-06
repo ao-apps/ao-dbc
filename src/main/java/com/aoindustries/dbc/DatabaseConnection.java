@@ -218,6 +218,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 *
 	 * @param  t  Any exceptions will be added here via {@link Throwable#addSuppressed(java.lang.Throwable)}
 	 */
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public void close(Throwable t) {
 		try {
 			close();
@@ -250,6 +251,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 *
 	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
 	 */
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public boolean rollback(Throwable t) {
 		boolean rolledBack = false;
 		try {
@@ -269,6 +271,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 *
 	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
 	 */
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public boolean rollbackAndClose() throws SQLException {
 		Connection c = _conn;
 		if(c != null) {
@@ -332,6 +335,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 *
 	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
 	 */
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public boolean rollbackAndClose(Throwable t) {
 		boolean rolledBack = false;
 		try {

@@ -121,6 +121,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 	 * result set.
 	 */
 	@Override
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public T createObject(ResultSet result) throws SQLException {
 		try {
 			ResultSetMetaData metaData = result.getMetaData();
