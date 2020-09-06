@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 
@@ -198,8 +199,39 @@ public class Database extends AbstractDatabaseAccess {
 			pool.releaseConnection(conn);
 		} else {
 			// From dataSource
-			// TODO: Log warnings here, too, like done by AOConnectionPool
-			conn.close();
+			Throwable t1 = null;
+			try {
+				// Log warnings here, like done by AOConnectionPool.logConnection(Connection)
+				if(!conn.isClosed()) {
+					if(logger.isLoggable(Level.WARNING)) {
+						SQLWarning warning = conn.getWarnings();
+						if(warning != null) logger.log(Level.WARNING, null, warning);
+					}
+					conn.clearWarnings();
+				}
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t) {
+				t1 = t;
+			} finally {
+				try {
+					conn.close();
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Throwable t) {
+					if(t1 == null) {
+						t1 = t;
+					} else {
+						t1.addSuppressed(t);
+					}
+				}
+			}
+			if(t1 != null) {
+				if(t1 instanceof Error) throw (Error)t1;
+				if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
+				if(t1 instanceof SQLException) throw (SQLException)t1;
+				throw new SQLException(t1);
+			}
 		}
 	}
 

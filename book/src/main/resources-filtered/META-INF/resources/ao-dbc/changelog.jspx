@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-06T00:12:33-05:00"
+		dateModified="2020-09-06T07:47:57-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -97,6 +97,10 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						<code>AutoCloseable</code> implementation moved to a new class <code>CloseableDatabase</code>,
 						which extends <code>Database</code>.  This allows the return of <code>Database</code> in
 						contexts where it is not expected to be closed.
+					</li>
+					<li>
+						Now logs <code>SQLWarning</code> from connections obtained from both <code>AOConnectionPool</code>
+						and <code>DataSource</code>.  Previously, warnings were only logged by <code>AOConnectionPool</code>.
 					</li>
 				</ul>
 			</changelog:release>
