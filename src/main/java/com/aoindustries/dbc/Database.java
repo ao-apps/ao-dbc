@@ -346,8 +346,10 @@ public class Database implements DatabaseAccess {
 	 * <ol>
 	 * <li>Returns immediately on {@link ThreadDeath}.</li>
 	 * <li>Rolls-back the transaction on {@link Error} or {@link RuntimeException}.</li>
-	 * <li>Rolls-back the transaction on {@link NoRowException} or {@link NullDataException} on the outer-most transaction only.</li>
-	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException} or {@link NullDataException}.</li>
+	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
+	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
+	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
 	 * <li>Rolls-back the transaction on {@code E}.</li>
 	 * </ol>
 	 * <p>
@@ -369,7 +371,7 @@ public class Database implements DatabaseAccess {
 			// Reuse existing connection
 			try {
 				return callable.call(conn);
-			} catch(ThreadDeath | NoRowException | NullDataException e) {
+			} catch(ThreadDeath | NoRowException | NullDataException | ExtraRowException e) {
 				throw e;
 			} catch(Error | RuntimeException e) {
 				conn.rollback(e);
@@ -396,7 +398,7 @@ public class Database implements DatabaseAccess {
 					}
 				} catch(ThreadDeath td) {
 					throw td;
-				} catch(Error | RuntimeException | NoRowException | NullDataException e) {
+				} catch(Error | RuntimeException | NoRowException | NullDataException | ExtraRowException e) {
 					newConn.rollback(e);
 					throw e;
 				} catch(SQLException err) {

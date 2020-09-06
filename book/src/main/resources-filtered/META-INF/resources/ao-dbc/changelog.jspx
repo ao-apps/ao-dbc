@@ -120,6 +120,8 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						default methods on the <code>DatabaseAccess</code> interface, then removed
 						<code>AbstractDatabaseAccess</code>.
 					</li>
+					<li>Declared throws of <code>ExtraRowException</code> where it may occur.</li>
+					<li>No longer automatically rollback transaction on <code>ExtraRowException</code>.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

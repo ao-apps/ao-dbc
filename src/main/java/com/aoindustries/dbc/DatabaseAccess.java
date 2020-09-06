@@ -117,7 +117,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeBigDecimalUpdate(java.lang.String, java.lang.Object...)
 	 */
-	default BigDecimal executeBigDecimalQuery(String sql, Object ... params) throws NoRowException, SQLException {
+	default BigDecimal executeBigDecimalQuery(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeBigDecimalQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
 	}
 
@@ -133,7 +133,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeBigDecimalQuery(java.lang.String, java.lang.Object...)
 	 */
-	default BigDecimal executeBigDecimalUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+	default BigDecimal executeBigDecimalUpdate(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeBigDecimalQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
@@ -142,7 +142,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
-	default BigDecimal executeBigDecimalQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
+	default BigDecimal executeBigDecimalQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.BigDecimal, sql, params);
 	}
 
@@ -156,7 +156,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeBooleanUpdate(java.lang.String, java.lang.Object...)
 	 */
-	default boolean executeBooleanQuery(String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+	default boolean executeBooleanQuery(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeBooleanQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
 	}
 
@@ -170,7 +170,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeBooleanQuery(java.lang.String, java.lang.Object...)
 	 */
-	default boolean executeBooleanUpdate(String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+	default boolean executeBooleanUpdate(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeBooleanQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
@@ -181,8 +181,7 @@ public interface DatabaseAccess {
 	 *
 	 * @throws  NullDataException  When has a row, but with NULL value.
 	 */
-	// TODO: Declare throws ExtraRowException, here and other places.  Make parent exception "RecoverableSQLException" or similar, too?
-	default Boolean executeBooleanQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+	default Boolean executeBooleanQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeObjectQuery(
 			isolationLevel,
 			readOnly,
@@ -209,7 +208,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeByteArrayUpdate(java.lang.String, java.lang.Object...)
 	 */
-	default byte[] executeByteArrayQuery(String sql, Object ... params) throws NoRowException, SQLException {
+	default byte[] executeByteArrayQuery(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeByteArrayQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
 	}
 
@@ -225,7 +224,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeByteArrayQuery(java.lang.String, java.lang.Object...)
 	 */
-	default byte[] executeByteArrayUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+	default byte[] executeByteArrayUpdate(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeByteArrayQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
@@ -234,7 +233,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
-	default byte[] executeByteArrayQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
+	default byte[] executeByteArrayQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.ByteArray, sql, params);
 	}
 
@@ -250,7 +249,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeDateUpdate(java.lang.String, java.lang.Object...)
 	 */
-	default Date executeDateQuery(String sql, Object ... params) throws NoRowException, SQLException {
+	default Date executeDateQuery(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeDateQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
 	}
 
@@ -266,7 +265,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeDateQuery(java.lang.String, java.lang.Object...)
 	 */
-	default Date executeDateUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+	default Date executeDateUpdate(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeDateQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
@@ -275,7 +274,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
-	default Date executeDateQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
+	default Date executeDateQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.Date, sql, params);
 	}
 
@@ -336,7 +335,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeIntUpdate(java.lang.String, java.lang.Object...)
 	 */
-	default int executeIntQuery(String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+	default int executeIntQuery(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeIntQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
 	}
 
@@ -350,7 +349,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeIntQuery(java.lang.String, java.lang.Object...)
 	 */
-	default int executeIntUpdate(String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+	default int executeIntUpdate(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeIntQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
@@ -361,7 +360,7 @@ public interface DatabaseAccess {
 	 *
 	 * @throws  NullDataException  When has a row, but with NULL value.
 	 */
-	default Integer executeIntQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+	default Integer executeIntQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeObjectQuery(
 			isolationLevel,
 			readOnly,
@@ -433,7 +432,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeLongUpdate(java.lang.String, java.lang.Object...)
 	 */
-	default long executeLongQuery(String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+	default long executeLongQuery(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeLongQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
 	}
 
@@ -447,7 +446,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeLongQuery(java.lang.String, java.lang.Object...)
 	 */
-	default long executeLongUpdate(String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+	default long executeLongUpdate(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeLongQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
@@ -458,7 +457,7 @@ public interface DatabaseAccess {
 	 *
 	 * @throws  NullDataException  When has a row, but with NULL value.
 	 */
-	default Long executeLongQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+	default Long executeLongQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeObjectQuery(
 			isolationLevel,
 			readOnly,
@@ -485,7 +484,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeObjectUpdate(java.lang.Class, java.lang.String, java.lang.Object...)
 	 */
-	default <T> T executeObjectQuery(Class<T> clazz, String sql, Object ... params) throws NoRowException, SQLException {
+	default <T> T executeObjectQuery(Class<T> clazz, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, clazz, sql, params);
 	}
 
@@ -501,7 +500,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeObjectQuery(java.lang.Class, java.lang.String, java.lang.Object...)
 	 */
-	default <T> T executeObjectUpdate(Class<T> clazz, String sql, Object ... params) throws NoRowException, SQLException {
+	default <T> T executeObjectUpdate(Class<T> clazz, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, clazz, sql, params);
 	}
 
@@ -510,7 +509,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
-	default <T> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<T> clazz, String sql, Object ... params) throws NoRowException, SQLException {
+	default <T> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<T> clazz, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, new ObjectFactories.Object<>(clazz), sql, params);
 	}
 
@@ -526,7 +525,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeObjectUpdate(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
-	default <T> T executeObjectQuery(ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, SQLException {
+	default <T> T executeObjectQuery(ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, objectFactory, sql, params);
 	}
 
@@ -542,7 +541,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeObjectQuery(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
-	default <T> T executeObjectUpdate(ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, SQLException {
+	default <T> T executeObjectUpdate(ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, objectFactory, sql, params);
 	}
 
@@ -551,7 +550,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
-	default <T> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, SQLException {
+	default <T> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, RuntimeException.class, objectFactory, sql, params);
 	}
 
@@ -567,7 +566,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeObjectUpdate(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,E extends Exception> T executeObjectQuery(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
+	default <T,E extends Exception> T executeObjectQuery(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, E {
 		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, eClass, objectFactory, sql, params);
 	}
 
@@ -583,7 +582,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeObjectQuery(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,E extends Exception> T executeObjectUpdate(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
+	default <T,E extends Exception> T executeObjectUpdate(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, E {
 		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, eClass, objectFactory, sql, params);
 	}
 
@@ -592,7 +591,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
-	default <T,E extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
+	default <T,E extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, E {
 		return executeQuery(
 			isolationLevel,
 			readOnly,
@@ -939,7 +938,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeShortUpdate(java.lang.String, java.lang.Object...)
 	 */
-	default short executeShortQuery(String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+	default short executeShortQuery(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeShortQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
 	}
 
@@ -953,7 +952,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeShortQuery(java.lang.String, java.lang.Object...)
 	 */
-	default short executeShortUpdate(String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+	default short executeShortUpdate(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeShortQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
@@ -964,7 +963,7 @@ public interface DatabaseAccess {
 	 *
 	 * @throws  NullDataException  When has a row, but with NULL value.
 	 */
-	default Short executeShortQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+	default Short executeShortQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeObjectQuery(
 			isolationLevel,
 			readOnly,
@@ -991,7 +990,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeStringUpdate(java.lang.String, java.lang.Object...)
 	 */
-	default String executeStringQuery(String sql, Object ... params) throws NoRowException, SQLException {
+	default String executeStringQuery(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeStringQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
 	}
 
@@ -1007,7 +1006,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeStringQuery(java.lang.String, java.lang.Object...)
 	 */
-	default String executeStringUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+	default String executeStringUpdate(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeStringQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
@@ -1016,7 +1015,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
-	default String executeStringQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
+	default String executeStringQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.String, sql, params);
 	}
 
@@ -1067,7 +1066,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeTimestampUpdate(java.lang.String, java.lang.Object...)
 	 */
-	default Timestamp executeTimestampQuery(String sql, Object ... params) throws NoRowException, SQLException {
+	default Timestamp executeTimestampQuery(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeTimestampQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
 	}
 
@@ -1083,7 +1082,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeTimestampQuery(java.lang.String, java.lang.Object...)
 	 */
-	default Timestamp executeTimestampUpdate(String sql, Object ... params) throws NoRowException, SQLException {
+	default Timestamp executeTimestampUpdate(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeTimestampQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
@@ -1092,7 +1091,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
-	default Timestamp executeTimestampQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
+	default Timestamp executeTimestampQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.Timestamp, sql, params);
 	}
 
