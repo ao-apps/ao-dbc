@@ -22,10 +22,6 @@
  */
 package com.aoindustries.dbc;
 
-import com.aoindustries.collections.IntArrayList;
-import com.aoindustries.collections.IntList;
-import com.aoindustries.collections.LongArrayList;
-import com.aoindustries.collections.LongList;
 import com.aoindustries.exception.WrappedException;
 import com.aoindustries.sql.WrappedSQLException;
 import java.io.InputStream;
@@ -42,7 +38,6 @@ import java.sql.NClob;
 import java.sql.PreparedStatement;
 import java.sql.Ref;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLData;
 import java.sql.SQLException;
@@ -51,7 +46,6 @@ import java.sql.Struct;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.Collection;
 
 /**
  * A <code>DatabaseConnection</code> is used to only get actual database connections when needed.
@@ -60,7 +54,7 @@ import java.util.Collection;
  *
  * @author  AO Industries, Inc.
  */
-public class DatabaseConnection extends AbstractDatabaseAccess implements AutoCloseable {
+public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
 	private static final int FETCH_SIZE = 1000;
 

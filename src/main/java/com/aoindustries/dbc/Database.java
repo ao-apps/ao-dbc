@@ -22,15 +22,12 @@
  */
 package com.aoindustries.dbc;
 
-import com.aoindustries.collections.IntList;
-import com.aoindustries.collections.LongList;
 import com.aoindustries.exception.WrappedException;
 import com.aoindustries.sql.AOConnectionPool;
 import java.sql.Connection;
 import java.sql.SQLData;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
-import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -50,7 +47,7 @@ import javax.sql.DataSource;
  *
  * @author  AO Industries, Inc.
  */
-public class Database extends AbstractDatabaseAccess {
+public class Database implements DatabaseAccess {
 
 	/**
 	 * Only one connection pool is made to the database.

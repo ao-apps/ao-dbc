@@ -115,6 +115,11 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 							<code>executeObjectUpdate</code> would do the trick.
 						</p>
 					</li>
+					<li>
+						Moved base implementation methods from <code>AbstractDatabaseAccess</code> abstract class to
+						default methods on the <code>DatabaseAccess</code> interface, then removed
+						<code>AbstractDatabaseAccess</code>.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
