@@ -190,20 +190,36 @@ public class Database extends AbstractDatabaseAccess {
 		return conn;
 	}
 
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public void releaseConnection(Connection conn) throws SQLException {
+		Throwable t1 = null;
 		// Restore custom types
-		// TODO: Do not remove on release and avoid re-adding for performance?
-		Map<String,Class<?>> oldTypeMap = oldTypeMaps.remove(conn);
-		if(oldTypeMap != null && !conn.isClosed()) conn.setTypeMap(oldTypeMap);
+		Boolean closed = null; // Only call conn.isClosed() once
+		try {
+			// TODO: Do not remove on release and avoid re-adding for performance?
+			Map<String,Class<?>> oldTypeMap = oldTypeMaps.remove(conn);
+			if(oldTypeMap != null) {
+				if(closed == null) closed = conn.isClosed();
+				if(!closed) conn.setTypeMap(oldTypeMap);
+			}
+		} catch(ThreadDeath td) {
+			throw td;
+		} catch(Throwable t) {
+			if(t1 == null) {
+				t1 = t;
+			} else {
+				t1.addSuppressed(t);
+			}
+		}
 		if(pool != null) {
 			// From pool
 			pool.releaseConnection(conn);
 		} else {
 			// From dataSource
-			Throwable t1 = null;
 			try {
 				// Log warnings here, like done by AOConnectionPool.logConnection(Connection)
-				if(!conn.isClosed()) {
+				if(closed == null) closed = conn.isClosed();
+				if(!closed) {
 					if(logger.isLoggable(Level.WARNING)) {
 						SQLWarning warning = conn.getWarnings();
 						if(warning != null) logger.log(Level.WARNING, null, warning);
@@ -213,7 +229,11 @@ public class Database extends AbstractDatabaseAccess {
 			} catch(ThreadDeath td) {
 				throw td;
 			} catch(Throwable t) {
-				t1 = t;
+				if(t1 == null) {
+					t1 = t;
+				} else {
+					t1.addSuppressed(t);
+				}
 			} finally {
 				try {
 					conn.close();
@@ -227,12 +247,12 @@ public class Database extends AbstractDatabaseAccess {
 					}
 				}
 			}
-			if(t1 != null) {
-				if(t1 instanceof Error) throw (Error)t1;
-				if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
-				if(t1 instanceof SQLException) throw (SQLException)t1;
-				throw new SQLException(t1);
-			}
+		}
+		if(t1 != null) {
+			if(t1 instanceof Error) throw (Error)t1;
+			if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
+			if(t1 instanceof SQLException) throw (SQLException)t1;
+			throw new SQLException(t1);
 		}
 	}
 
