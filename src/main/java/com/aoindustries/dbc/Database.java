@@ -268,20 +268,6 @@ public class Database extends AbstractDatabaseAccess {
 	}
 
 	@Override
-	public <T,E extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
-		return executeTransaction(eClass, (DatabaseConnection conn) ->
-			conn.executeObjectQuery(isolationLevel, readOnly, rowRequired, eClass, objectFactory, sql, params)
-		);
-	}
-
-	@Override
-	public <T,C extends Collection<? super T>,E extends Exception> C executeObjectCollectionQuery(int isolationLevel, boolean readOnly, C collection, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		return executeTransaction(eClass, (DatabaseConnection conn) ->
-			conn.executeObjectCollectionQuery(isolationLevel, readOnly, collection, eClass, objectFactory, sql, params)
-		);
-	}
-
-	@Override
 	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
 		return executeTransaction(eClass, (DatabaseConnection conn) ->
 			conn.executeQuery(isolationLevel, readOnly, eClass, resultSetHandler, sql, params)

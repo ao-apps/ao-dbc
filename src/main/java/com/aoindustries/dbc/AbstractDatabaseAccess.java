@@ -30,8 +30,11 @@ import com.aoindustries.collections.LongList;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,6 +46,67 @@ import java.util.List;
  */
 // TODO: Add variants for Supplier and Consumer
 abstract public class AbstractDatabaseAccess implements DatabaseAccess {
+
+	/**
+	 * Gets a user-friendly description of the provided result in a string formatted like
+	 * <code>('value', 'value', int_value, null, …)</code>.  This must not be used generate
+	 * SQL statements - it is just to provide user display.
+	 */
+	// TODO: Capitalize "NULL"?
+	// TODO: Auto-ellipsis on long values?
+	// TODO: Move to a utility class?
+	private static String getRow(ResultSet result) throws SQLException {
+		StringBuilder sb = new StringBuilder();
+		sb.append('(');
+		ResultSetMetaData metaData = result.getMetaData();
+		int colCount = metaData.getColumnCount();
+		for(int c=1; c<=colCount; c++) {
+			if(c>1) sb.append(", ");
+			int colType = metaData.getColumnType(c);
+			switch(colType) {
+				case Types.BIGINT :
+				case Types.BIT :
+				case Types.BOOLEAN :
+				case Types.DECIMAL :
+				case Types.DOUBLE :
+				case Types.FLOAT :
+				case Types.INTEGER :
+				case Types.NUMERIC :
+				case Types.REAL :
+				case Types.SMALLINT :
+				case Types.TINYINT :
+					sb.append(result.getObject(c));
+					break;
+				case Types.CHAR :
+				case Types.DATE :
+				case Types.LONGNVARCHAR :
+				case Types.LONGVARCHAR :
+				case Types.NCHAR :
+				case Types.NVARCHAR :
+				case Types.TIME :
+				case Types.TIMESTAMP :
+				case Types.VARCHAR :
+				default :
+					String S = result.getString(c);
+					sb.append('\'');
+					int i;
+					for (i = 0; i < S.length(); i++) {
+						char ch = S.charAt(i);
+						if(ch == '\'') sb.append("''");
+						else if (ch == '\\' || ch == '"' || ch == '%' || ch == '_') {
+							sb.append('\\');
+						}
+						sb.append(ch);
+					}
+					sb.append('\'');
+					break;
+				//default :
+				//    throw new SQLException("Unexpected column type: "+colType);
+			}
+		}
+		sb.append(')');
+		return sb.toString();
+	}
 
 	@Override
 	final public BigDecimal executeBigDecimalQuery(String sql, Object ... params) throws NoRowException, SQLException {
@@ -239,7 +303,24 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
-	abstract public <T,E extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E;
+	final public <T,E extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
+		return executeQuery(
+			isolationLevel,
+			readOnly,
+			eClass,
+			results -> {
+				if(results.next()) {
+					T object = objectFactory.createObject(results);
+					if(results.next()) throw new ExtraRowException();
+					return object;
+				}
+				if(rowRequired) throw new NoRowException();
+				return null;
+			},
+			sql,
+			params
+		);
+	}
 
 	@Override
 	final public <T> List<T> executeObjectListQuery(Class<T> clazz, String sql, Object ... params) throws SQLException {
@@ -333,7 +414,24 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
-	abstract public <T,C extends Collection<? super T>,E extends Exception> C executeObjectCollectionQuery(int isolationLevel, boolean readOnly, C collection, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E;
+	final public <T,C extends Collection<? super T>,E extends Exception> C executeObjectCollectionQuery(int isolationLevel, boolean readOnly, C collection, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+		return executeQuery(
+			isolationLevel,
+			readOnly,
+			eClass,
+			results -> {
+				while(results.next()) {
+					T newObj = objectFactory.createObject(results);
+					if(!collection.add(newObj)) {
+						throw new SQLException("Duplicate row in results: " + getRow(results));
+					}
+				}
+				return collection;
+			},
+			sql,
+			params
+		);
+	}
 
 	@Override
 	final public <T> T executeQuery(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {

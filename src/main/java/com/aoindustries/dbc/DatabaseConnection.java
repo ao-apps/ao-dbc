@@ -64,64 +64,6 @@ public class DatabaseConnection extends AbstractDatabaseAccess implements AutoCl
 
 	private static final int FETCH_SIZE = 1000;
 
-	/**
-	 * Gets a user-friendly description of the provided result in a string formatted like
-	 * <code>('value', 'value', int_value, …)</code>.  This must not be used generate
-	 * SQL statements - it is just to provide user display.
-	 */
-	private static String getRow(ResultSet result) throws SQLException {
-		StringBuilder sb = new StringBuilder();
-		sb.append('(');
-		ResultSetMetaData metaData = result.getMetaData();
-		int colCount = metaData.getColumnCount();
-		for(int c=1; c<=colCount; c++) {
-			if(c>1) sb.append(", ");
-			int colType = metaData.getColumnType(c);
-			switch(colType) {
-				case Types.BIGINT :
-				case Types.BIT :
-				case Types.BOOLEAN :
-				case Types.DECIMAL :
-				case Types.DOUBLE :
-				case Types.FLOAT :
-				case Types.INTEGER :
-				case Types.NUMERIC :
-				case Types.REAL :
-				case Types.SMALLINT :
-				case Types.TINYINT :
-					sb.append(result.getObject(c));
-					break;
-				case Types.CHAR :
-				case Types.DATE :
-				case Types.LONGNVARCHAR :
-				case Types.LONGVARCHAR :
-				case Types.NCHAR :
-				case Types.NVARCHAR :
-				case Types.TIME :
-				case Types.TIMESTAMP :
-				case Types.VARCHAR :
-				default :
-					String S = result.getString(c);
-					sb.append('\'');
-					int i;
-					for (i = 0; i < S.length(); i++) {
-						char ch = S.charAt(i);
-						if(ch == '\'') sb.append("''");
-						else if (ch == '\\' || ch == '"' || ch == '%' || ch == '_') {
-							sb.append('\\');
-						}
-						sb.append(ch);
-					}
-					sb.append('\'');
-					break;
-				//default :
-				//    throw new SQLException("Unexpected column type: "+colType);
-			}
-		}
-		sb.append(')');
-		return sb.toString();
-	}
-
 	private final Database database;
 
 	private Connection _conn;
@@ -214,50 +156,6 @@ public class DatabaseConnection extends AbstractDatabaseAccess implements AutoCl
 		int pos = 1;
 		for(Object param : params) {
 			setParam(conn, pstmt, pos++, param);
-		}
-	}
-
-	@Override
-	public <T,E extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
-		Connection conn = getConnection(isolationLevel, readOnly);
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			try {
-				setParams(conn, pstmt, params);
-				try (ResultSet results = pstmt.executeQuery()) {
-					if(results.next()) {
-						T object = objectFactory.createObject(results);
-						if(results.next()) throw new ExtraRowException();
-						return object;
-					}
-					if(rowRequired) throw new NoRowException();
-					return null;
-				}
-			} catch(NoRowException err) {
-				throw err;
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
-			}
-		}
-	}
-
-	@Override
-	public <T,C extends Collection<? super T>,E extends Exception> C executeObjectCollectionQuery(int isolationLevel, boolean readOnly, C collection, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		Connection conn = getConnection(isolationLevel, readOnly);
-		conn.setAutoCommit(false);
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			try {
-				pstmt.setFetchSize(FETCH_SIZE);
-				setParams(conn, pstmt, params);
-				try (ResultSet results = pstmt.executeQuery()) {
-					while(results.next()) {
-						T newObj = objectFactory.createObject(results);
-						if(!collection.add(newObj)) throw new SQLException("Duplicate row in results: "+getRow(results));
-					}
-					return collection;
-				}
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
-			}
 		}
 	}
 
