@@ -57,6 +57,7 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	private final AOConnectionPool pool;
 
 	private final DataSource dataSource;
+	@SuppressWarnings("NonConstantLogger")
 	private final Logger logger;
 
 	public Database(String driver, String url, String user, String password, int numConnections, long maxConnectionAge, Logger logger) {
@@ -370,6 +371,7 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	}
 
 	@Override
+	@SuppressWarnings("UseSpecificCatch")
 	public <T,E extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
 		DatabaseConnection conn = transactionConnection.get();
 		if(conn!=null) {
@@ -413,6 +415,7 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	}
 
 	@Override
+	@SuppressWarnings("UseSpecificCatch")
 	public <T,C extends Collection<? super T>,E extends Exception> C executeObjectCollectionQuery(int isolationLevel, boolean readOnly, C collection, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		DatabaseConnection conn = transactionConnection.get();
 		if(conn!=null) {
@@ -456,6 +459,7 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	}
 
 	@Override
+	@SuppressWarnings("UseSpecificCatch")
 	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
 		DatabaseConnection conn = transactionConnection.get();
 		if(conn!=null) {
@@ -646,6 +650,7 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	 *
 	 * @see #isInTransaction()
 	 */
+	@SuppressWarnings("UseSpecificCatch")
 	public <V,E extends Exception> V executeTransaction(
 		Class<E> eClass,
 		DatabaseCallableE<V,E> callable

@@ -275,6 +275,7 @@ public class Table {
 	 *
 	 * This is based on getExportedKeys
 	 */
+	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
 	public Set<? extends Table> getExportedTables() throws SQLException {
 		synchronized(getExportedTablesLock) {
 			if(getExportedTablesCache==null) {
