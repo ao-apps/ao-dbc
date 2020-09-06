@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2010, 2011, 2015, 2020  AO Industries, Inc.
+ * Copyright (C) 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,25 +25,25 @@ package com.aoindustries.dbc;
 import java.sql.SQLException;
 
 /**
- * Thrown when no row available and a row is required.
+ * Thrown when database contains a null value and a non-null value is required.
  */
-public class NoRowException extends SQLException {
+public class NullDataException extends SQLException {
 
-	private static final long serialVersionUID = 5397878995581459678L;
+	private static final long serialVersionUID = 1L;
 
-	public NoRowException() {
+	public NullDataException() {
 		super();
 	}
 
-	public NoRowException(String reason) {
+	public NullDataException(String reason) {
 		super(reason);
 	}
 
-	public NoRowException(Throwable cause) {
+	public NullDataException(Throwable cause) {
 		super(cause);
 	}
 
-	public NoRowException(String reason, Throwable cause) {
+	public NullDataException(String reason, Throwable cause) {
 		super(reason, cause);
 	}
 }

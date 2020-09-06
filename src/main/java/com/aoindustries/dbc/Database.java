@@ -268,13 +268,6 @@ public class Database extends AbstractDatabaseAccess {
 	}
 
 	@Override
-	public boolean executeBooleanQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
-		return executeTransaction((DatabaseConnection conn) ->
-			conn.executeBooleanQuery(isolationLevel, readOnly, rowRequired, sql, params)
-		);
-	}
-
-	@Override
 	public IntList executeIntListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
 		return executeTransaction((DatabaseConnection conn) ->
 			conn.executeIntListQuery(isolationLevel, readOnly, sql, params)
@@ -282,23 +275,9 @@ public class Database extends AbstractDatabaseAccess {
 	}
 
 	@Override
-	public int executeIntQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
-		return executeTransaction((DatabaseConnection conn) ->
-			conn.executeIntQuery(isolationLevel, readOnly, rowRequired, sql, params)
-		);
-	}
-
-	@Override
 	public LongList executeLongListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
 		return executeTransaction((DatabaseConnection conn) ->
 			conn.executeLongListQuery(isolationLevel, readOnly, sql, params)
-		);
-	}
-
-	@Override
-	public long executeLongQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
-		return executeTransaction((DatabaseConnection conn) ->
-			conn.executeLongQuery(isolationLevel, readOnly, rowRequired, sql, params)
 		);
 	}
 
@@ -320,13 +299,6 @@ public class Database extends AbstractDatabaseAccess {
 	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
 		return executeTransaction(eClass, (DatabaseConnection conn) ->
 			conn.executeQuery(isolationLevel, readOnly, eClass, resultSetHandler, sql, params)
-		);
-	}
-
-	@Override
-	public short executeShortQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
-		return executeTransaction((DatabaseConnection conn) ->
-			conn.executeShortQuery(isolationLevel, readOnly, rowRequired, sql, params)
 		);
 	}
 
@@ -401,13 +373,16 @@ public class Database extends AbstractDatabaseAccess {
 	/**
 	 * <p>
 	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
-	 * Rolls-back the transaction on RuntimeException.
-	 * Rolls-back the transaction on NoRowException on the outer-most transaction only.
-	 * Rolls-back and closes the connection on all SQLException except NoRowException.
-	 * Rolls-back the transaction on E.
 	 * </p>
+	 * <ol>
+	 * <li>Returns immediately on {@link ThreadDeath}.</li>
+	 * <li>Rolls-back the transaction on {@link Error} or {@link RuntimeException}.</li>
+	 * <li>Rolls-back the transaction on {@link NoRowException} or {@link NullDataException} on the outer-most transaction only.</li>
+	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException} or {@link NullDataException}.</li>
+	 * <li>Rolls-back the transaction on {@code E}.</li>
+	 * </ol>
 	 * <p>
-	 * The connection allocated is stored as a ThreadLocal and will be automatically reused if
+	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
 	 * another transaction is performed within this transaction.  Any nested transaction will automatically
 	 * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
 	 * entire transaction on any exception.
@@ -425,8 +400,8 @@ public class Database extends AbstractDatabaseAccess {
 			// Reuse existing connection
 			try {
 				return callable.call(conn);
-			} catch(ThreadDeath | NoRowException td) {
-				throw td;
+			} catch(ThreadDeath | NoRowException | NullDataException e) {
+				throw e;
 			} catch(Error | RuntimeException e) {
 				conn.rollback(e);
 				throw e;
@@ -452,7 +427,7 @@ public class Database extends AbstractDatabaseAccess {
 					}
 				} catch(ThreadDeath td) {
 					throw td;
-				} catch(Error | RuntimeException | NoRowException e) {
+				} catch(Error | RuntimeException | NoRowException | NullDataException e) {
 					newConn.rollback(e);
 					throw e;
 				} catch(SQLException err) {

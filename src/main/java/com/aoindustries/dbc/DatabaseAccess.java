@@ -138,7 +138,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeBooleanUpdate(java.lang.String, java.lang.Object...)
 	 */
-	boolean executeBooleanQuery(String sql, Object ... params) throws NoRowException, SQLException;
+	boolean executeBooleanQuery(String sql, Object ... params) throws NoRowException, NullDataException, SQLException;
 
 	/**
 	 * Read-write query the database with a <code>boolean</code> return type.
@@ -150,12 +150,12 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeBooleanQuery(java.lang.String, java.lang.Object...)
 	 */
-	boolean executeBooleanUpdate(String sql, Object ... params) throws NoRowException, SQLException;
+	boolean executeBooleanUpdate(String sql, Object ... params) throws NoRowException, NullDataException, SQLException;
 
 	/**
 	 * Query the database with a <code>boolean</code> return type.
 	 */
-	boolean executeBooleanQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException;
+	boolean executeBooleanQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException;
 
 	/**
 	 * Read-only query the database with a <code>byte[]</code> return type.
@@ -252,7 +252,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeIntUpdate(java.lang.String, java.lang.Object...)
 	 */
-	int executeIntQuery(String sql, Object ... params) throws NoRowException, SQLException;
+	int executeIntQuery(String sql, Object ... params) throws NoRowException, NullDataException, SQLException;
 
 	/**
 	 * Read-write query the database with an <code>int</code> return type.
@@ -264,12 +264,12 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeIntQuery(java.lang.String, java.lang.Object...)
 	 */
-	int executeIntUpdate(String sql, Object ... params) throws NoRowException, SQLException;
+	int executeIntUpdate(String sql, Object ... params) throws NoRowException, NullDataException, SQLException;
 
 	/**
 	 * Query the database with an <code>int</code> return type.
 	 */
-	int executeIntQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException;
+	int executeIntQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException;
 
 	/**
 	 * Read-only query the database with a <code>LongList</code> return type.
@@ -308,7 +308,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeLongUpdate(java.lang.String, java.lang.Object...)
 	 */
-	long executeLongQuery(String sql, Object ... params) throws NoRowException, SQLException;
+	long executeLongQuery(String sql, Object ... params) throws NoRowException, NullDataException, SQLException;
 
 	/**
 	 * Read-write query the database with a <code>long</code> return type.
@@ -320,12 +320,12 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeLongQuery(java.lang.String, java.lang.Object...)
 	 */
-	long executeLongUpdate(String sql, Object ... params) throws NoRowException, SQLException;
+	long executeLongUpdate(String sql, Object ... params) throws NoRowException, NullDataException, SQLException;
 
 	/**
 	 * Query the database with a <code>long</code> return type.
 	 */
-	long executeLongQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException;
+	long executeLongQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException;
 
 	/**
 	 * Read-only query the database with a <code>&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
@@ -667,7 +667,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeShortUpdate(java.lang.String, java.lang.Object...)
 	 */
-	short executeShortQuery(String sql, Object ... params) throws NoRowException, SQLException;
+	short executeShortQuery(String sql, Object ... params) throws NoRowException, NullDataException, SQLException;
 
 	/**
 	 * Read-write query the database with a <code>short</code> return type.
@@ -679,12 +679,12 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeShortQuery(java.lang.String, java.lang.Object...)
 	 */
-	short executeShortUpdate(String sql, Object ... params) throws NoRowException, SQLException;
+	short executeShortUpdate(String sql, Object ... params) throws NoRowException, NullDataException, SQLException;
 
 	/**
 	 * Query the database with a <code>short</code> return type.
 	 */
-	short executeShortQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException;
+	short executeShortQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException;
 
 	/**
 	 * Read-only query the database with a <code>String</code> return type.

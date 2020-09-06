@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-06T07:47:57-05:00"
+		dateModified="2020-09-06T09:07:04-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -101,6 +101,18 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						Now logs <code>SQLWarning</code> from connections obtained from both <code>AOConnectionPool</code>
 						and <code>DataSource</code>.  Previously, warnings were only logged by <code>AOConnectionPool</code>.
+					</li>
+					<li>Created <code>ObjectFactory</code> instances for common types in <code>ObjectFactories</code>.</li>
+					<li>
+						<p>
+							<code>execute*Query</code> and <code>execute*Update</code> that return Java primitives now throw
+							a new <code>NullDataException</code> when the query returns a <code>NULL</code> value.
+						</p>
+						<p>
+							Previously, the default conversion was used.  Any code that relied on this default conversion will
+							need to be updated: a simple lambda on <code>executeObjectQuery</code> or
+							<code>executeObjectUpdate</code> would do the trick.
+						</p>
 					</li>
 				</ul>
 			</changelog:release>

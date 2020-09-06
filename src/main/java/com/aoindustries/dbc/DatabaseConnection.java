@@ -218,29 +218,6 @@ public class DatabaseConnection extends AbstractDatabaseAccess implements AutoCl
 	}
 
 	@Override
-	public boolean executeBooleanQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
-		Connection conn = getConnection(isolationLevel, readOnly);
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			try {
-				setParams(conn, pstmt, params);
-				try (ResultSet results = pstmt.executeQuery()) {
-					if(results.next()) {
-						boolean b=results.getBoolean(1);
-						if(results.next()) throw new ExtraRowException();
-						return b;
-					}
-					if(rowRequired) throw new NoRowException();
-					return false;
-				}
-			} catch(NoRowException err) {
-				throw err;
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
-			}
-		}
-	}
-
-	@Override
 	public IntList executeIntListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		conn.setAutoCommit(false);
@@ -262,29 +239,6 @@ public class DatabaseConnection extends AbstractDatabaseAccess implements AutoCl
 	}
 
 	@Override
-	public int executeIntQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
-		Connection conn = getConnection(isolationLevel, readOnly);
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			try {
-				setParams(conn, pstmt, params);
-				try (ResultSet results = pstmt.executeQuery()) {
-					if(results.next()) {
-						int i=results.getInt(1);
-						if(results.next()) throw new ExtraRowException();
-						return i;
-					}
-					if(rowRequired) throw new NoRowException();
-					return 0;
-				}
-			} catch(NoRowException err) {
-				throw err;
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
-			}
-		}
-	}
-
-	@Override
 	public LongList executeLongListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		conn.setAutoCommit(false);
@@ -299,29 +253,6 @@ public class DatabaseConnection extends AbstractDatabaseAccess implements AutoCl
 					}
 					return V;
 				}
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
-			}
-		}
-	}
-
-	@Override
-	public long executeLongQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
-		Connection conn = getConnection(isolationLevel, readOnly);
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			try {
-				setParams(conn, pstmt, params);
-				try (ResultSet results = pstmt.executeQuery()) {
-					if(results.next()) {
-						long l=results.getLong(1);
-						if(results.next()) throw new ExtraRowException();
-						return l;
-					}
-					if(rowRequired) throw new NoRowException();
-					return 0;
-				}
-			} catch(NoRowException err) {
-				throw err;
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
 			}
@@ -383,29 +314,6 @@ public class DatabaseConnection extends AbstractDatabaseAccess implements AutoCl
 				try (ResultSet results = pstmt.executeQuery()) {
 					return resultSetHandler.handleResultSet(results);
 				}
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
-			}
-		}
-	}
-
-	@Override
-	public short executeShortQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
-		Connection conn = getConnection(isolationLevel, readOnly);
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			try {
-				setParams(conn, pstmt, params);
-				try (ResultSet results = pstmt.executeQuery()) {
-					if(results.next()) {
-						short s=results.getShort(1);
-						if(results.next()) throw new ExtraRowException();
-						return s;
-					}
-					if(rowRequired) throw new NoRowException();
-					return 0;
-				}
-			} catch(NoRowException err) {
-				throw err;
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
 			}
