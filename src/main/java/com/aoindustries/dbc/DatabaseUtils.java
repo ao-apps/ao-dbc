@@ -26,6 +26,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Package-private implementation utilities.
@@ -34,6 +36,8 @@ import java.sql.Types;
  */
 final class DatabaseUtils {
 
+	private static final Logger logger = Logger.getLogger(DatabaseUtils.class.getName());
+
 	/**
 	 * Gets a user-friendly description of the provided result in a string formatted like
 	 * <code>('value', 'value', int_value, null, …)</code>.  This must not be used generate
@@ -41,6 +45,7 @@ final class DatabaseUtils {
 	 */
 	// TODO: Capitalize "NULL"?
 	// TODO: Auto-ellipsis on long values?
+	@SuppressWarnings("fallthrough")
 	static String getRow(ResultSet result) throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
@@ -63,6 +68,11 @@ final class DatabaseUtils {
 				case Types.TINYINT :
 					sb.append(result.getObject(c));
 					break;
+				default :
+					if(logger.isLoggable(Level.WARNING)) {
+						logger.log(Level.WARNING, "Unexpected column type: {0}", colType);
+					}
+					// Fall-through to quoted
 				case Types.CHAR :
 				case Types.DATE :
 				case Types.LONGNVARCHAR :
@@ -72,7 +82,6 @@ final class DatabaseUtils {
 				case Types.TIME :
 				case Types.TIMESTAMP :
 				case Types.VARCHAR :
-				default :
 					String S = result.getString(c);
 					sb.append('\'');
 					int i;
@@ -86,8 +95,6 @@ final class DatabaseUtils {
 					}
 					sb.append('\'');
 					break;
-				//default :
-				//    throw new SQLException("Unexpected column type: "+colType);
 			}
 		}
 		sb.append(')');
