@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,7 +44,6 @@ final class DatabaseUtils {
 	 * <code>('value', 'value', int_value, null, …)</code>.  This must not be used generate
 	 * SQL statements - it is just to provide user display.
 	 */
-	// TODO: Capitalize "NULL"?
 	// TODO: Auto-ellipsis on long values?
 	@SuppressWarnings("fallthrough")
 	static String getRow(ResultSet result) throws SQLException {
@@ -66,7 +66,7 @@ final class DatabaseUtils {
 				case Types.REAL :
 				case Types.SMALLINT :
 				case Types.TINYINT :
-					sb.append(result.getObject(c));
+					sb.append(Objects.toString(result.getObject(c), "NULL"));
 					break;
 				default :
 					if(logger.isLoggable(Level.WARNING)) {
@@ -82,18 +82,22 @@ final class DatabaseUtils {
 				case Types.TIME :
 				case Types.TIMESTAMP :
 				case Types.VARCHAR :
-					String S = result.getString(c);
-					sb.append('\'');
-					int i;
-					for (i = 0; i < S.length(); i++) {
-						char ch = S.charAt(i);
-						if(ch == '\'') sb.append("''");
-						else if (ch == '\\' || ch == '"' || ch == '%' || ch == '_') {
-							sb.append('\\');
+					String value = result.getString(c);
+					if(value == null) {
+						sb.append("NULL");
+					} else {
+						sb.append('\'');
+						int i;
+						for (i = 0; i < value.length(); i++) {
+							char ch = value.charAt(i);
+							if(ch == '\'') sb.append("''");
+							else if (ch == '\\' || ch == '"' || ch == '%' || ch == '_') {
+								sb.append('\\');
+							}
+							sb.append(ch);
 						}
-						sb.append(ch);
+						sb.append('\'');
 					}
-					sb.append('\'');
 					break;
 			}
 		}
