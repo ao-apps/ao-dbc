@@ -113,6 +113,8 @@ public interface DatabaseAccess {
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
+	 * @return  The value or {@code null} when row with null value.
+	 *
 	 * @see  #executeBigDecimalUpdate(java.lang.String, java.lang.Object...)
 	 */
 	default BigDecimal executeBigDecimalQuery(String sql, Object ... params) throws NoRowException, SQLException {
@@ -127,6 +129,8 @@ public interface DatabaseAccess {
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
+	 * @return  The value or {@code null} when row with null value.
+	 *
 	 * @see  #executeBigDecimalQuery(java.lang.String, java.lang.Object...)
 	 */
 	default BigDecimal executeBigDecimalUpdate(String sql, Object ... params) throws NoRowException, SQLException {
@@ -135,6 +139,8 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a <code>BigDecimal</code> return type.
+	 *
+	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
 	default BigDecimal executeBigDecimalQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.BigDecimal, sql, params);
@@ -170,11 +176,25 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a <code>boolean</code> return type.
+	 *
+	 * @return  The value or {@code null} when no row and row not required.
+	 *
+	 * @throws  NullDataException  When has a row, but with NULL value.
 	 */
-	default boolean executeBooleanQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
-		Boolean b = executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.Boolean, sql, params);
-		if(b == null) throw new NullDataException();
-		return b;
+	// TODO: Declare throws ExtraRowException, here and other places.  Make parent exception "RecoverableSQLException" or similar, too?
+	default Boolean executeBooleanQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+		return executeObjectQuery(
+			isolationLevel,
+			readOnly,
+			rowRequired,
+			result -> {
+				boolean b = result.getBoolean(1);
+				if(result.wasNull()) throw new NullDataException();
+				return b;
+			},
+			sql,
+			params
+		);
 	}
 
 	/**
@@ -184,6 +204,8 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = <code>true</code></li>
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
+	 *
+	 * @return  The value or {@code null} when row with null value.
 	 *
 	 * @see  #executeByteArrayUpdate(java.lang.String, java.lang.Object...)
 	 */
@@ -199,6 +221,8 @@ public interface DatabaseAccess {
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
+	 * @return  The value or {@code null} when row with null value.
+	 *
 	 * @see  #executeByteArrayQuery(java.lang.String, java.lang.Object...)
 	 */
 	default byte[] executeByteArrayUpdate(String sql, Object ... params) throws NoRowException, SQLException {
@@ -207,6 +231,8 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a <code>byte[]</code> return type.
+	 *
+	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
 	default byte[] executeByteArrayQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.ByteArray, sql, params);
@@ -219,6 +245,8 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = <code>true</code></li>
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
+	 *
+	 * @return  The value or {@code null} when row with null value.
 	 *
 	 * @see  #executeDateUpdate(java.lang.String, java.lang.Object...)
 	 */
@@ -234,6 +262,8 @@ public interface DatabaseAccess {
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
+	 * @return  The value or {@code null} when row with null value.
+	 *
 	 * @see  #executeDateQuery(java.lang.String, java.lang.Object...)
 	 */
 	default Date executeDateUpdate(String sql, Object ... params) throws NoRowException, SQLException {
@@ -242,6 +272,8 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a <code>java.sql.Date</code> return type.
+	 *
+	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
 	default Date executeDateQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.Date, sql, params);
@@ -324,12 +356,24 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with an <code>int</code> return type.
+	 *
+	 * @return  The value or {@code null} when no row and row not required.
+	 *
+	 * @throws  NullDataException  When has a row, but with NULL value.
 	 */
-	// TODO: Return Integer for when no row is required, here and similar - careful to distinguish with NullDataException
-	default int executeIntQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
-		Integer i = executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.Integer, sql, params);
-		if(i == null) throw new NullDataException();
-		return i;
+	default Integer executeIntQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+		return executeObjectQuery(
+			isolationLevel,
+			readOnly,
+			rowRequired,
+			result -> {
+				int i = result.getInt(1);
+				if(result.wasNull()) throw new NullDataException();
+				return i;
+			},
+			sql,
+			params
+		);
 	}
 
 	/**
@@ -409,11 +453,24 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a <code>long</code> return type.
+	 *
+	 * @return  The value or {@code null} when no row and row not required.
+	 *
+	 * @throws  NullDataException  When has a row, but with NULL value.
 	 */
-	default long executeLongQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
-		Long l = executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.Long, sql, params);
-		if(l == null) throw new NullDataException();
-		return l;
+	default Long executeLongQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+		return executeObjectQuery(
+			isolationLevel,
+			readOnly,
+			rowRequired,
+			result -> {
+				long l = result.getLong(1);
+				if(result.wasNull()) throw new NullDataException();
+				return l;
+			},
+			sql,
+			params
+		);
 	}
 
 	/**
@@ -423,6 +480,8 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = <code>true</code></li>
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
+	 *
+	 * @return  The value or {@code null} when row with null value.
 	 *
 	 * @see  #executeObjectUpdate(java.lang.Class, java.lang.String, java.lang.Object...)
 	 */
@@ -438,6 +497,8 @@ public interface DatabaseAccess {
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
+	 * @return  The value or {@code null} when row with null value.
+	 *
 	 * @see  #executeObjectQuery(java.lang.Class, java.lang.String, java.lang.Object...)
 	 */
 	default <T> T executeObjectUpdate(Class<T> clazz, String sql, Object ... params) throws NoRowException, SQLException {
@@ -446,6 +507,8 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a <code>&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 *
+	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
 	default <T> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<T> clazz, String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, new ObjectFactories.Object<>(clazz), sql, params);
@@ -458,6 +521,8 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = <code>true</code></li>
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
+	 *
+	 * @return  The value or {@code null} when row with null value.
 	 *
 	 * @see  #executeObjectUpdate(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
@@ -473,6 +538,8 @@ public interface DatabaseAccess {
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
+	 * @return  The value or {@code null} when row with null value.
+	 *
 	 * @see  #executeObjectQuery(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> T executeObjectUpdate(ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, SQLException {
@@ -481,6 +548,8 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a <code>&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 *
+	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
 	default <T> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, RuntimeException.class, objectFactory, sql, params);
@@ -493,6 +562,8 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = <code>true</code></li>
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
+	 *
+	 * @return  The value or {@code null} when row with null value.
 	 *
 	 * @see  #executeObjectUpdate(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
@@ -508,6 +579,8 @@ public interface DatabaseAccess {
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
+	 * @return  The value or {@code null} when row with null value.
+	 *
 	 * @see  #executeObjectQuery(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T,E extends Exception> T executeObjectUpdate(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
@@ -516,6 +589,8 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a <code>&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 *
+	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
 	default <T,E extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
 		return executeQuery(
@@ -884,11 +959,24 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a <code>short</code> return type.
+	 *
+	 * @return  The value or {@code null} when no row and row not required.
+	 *
+	 * @throws  NullDataException  When has a row, but with NULL value.
 	 */
-	default short executeShortQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
-		Short s = executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.Short, sql, params);
-		if(s == null) throw new NullDataException();
-		return s;
+	default Short executeShortQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
+		return executeObjectQuery(
+			isolationLevel,
+			readOnly,
+			rowRequired,
+			result -> {
+				short s = result.getShort(1);
+				if(result.wasNull()) throw new NullDataException();
+				return s;
+			},
+			sql,
+			params
+		);
 	}
 
 	/**
@@ -898,6 +986,8 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = <code>true</code></li>
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
+	 *
+	 * @return  The value or {@code null} when row with null value.
 	 *
 	 * @see  #executeStringUpdate(java.lang.String, java.lang.Object...)
 	 */
@@ -913,6 +1003,8 @@ public interface DatabaseAccess {
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
+	 * @return  The value or {@code null} when row with null value.
+	 *
 	 * @see  #executeStringQuery(java.lang.String, java.lang.Object...)
 	 */
 	default String executeStringUpdate(String sql, Object ... params) throws NoRowException, SQLException {
@@ -921,6 +1013,8 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a <code>String</code> return type.
+	 *
+	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
 	default String executeStringQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.String, sql, params);
@@ -969,6 +1063,8 @@ public interface DatabaseAccess {
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
+	 * @return  The value or {@code null} when row with null value.
+	 *
 	 * @see  #executeTimestampUpdate(java.lang.String, java.lang.Object...)
 	 */
 	default Timestamp executeTimestampQuery(String sql, Object ... params) throws NoRowException, SQLException {
@@ -983,6 +1079,8 @@ public interface DatabaseAccess {
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
+	 * @return  The value or {@code null} when row with null value.
+	 *
 	 * @see  #executeTimestampQuery(java.lang.String, java.lang.Object...)
 	 */
 	default Timestamp executeTimestampUpdate(String sql, Object ... params) throws NoRowException, SQLException {
@@ -991,6 +1089,8 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a <code>Timestamp</code> return type.
+	 *
+	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
 	default Timestamp executeTimestampQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
 		return executeObjectQuery(isolationLevel, readOnly, rowRequired, ObjectFactories.Timestamp, sql, params);
