@@ -39,12 +39,13 @@ final class DatabaseUtils {
 
 	private static final Logger logger = Logger.getLogger(DatabaseUtils.class.getName());
 
+	private static final int AUTO_ELLIPSIS_LEN = 32;
+
 	/**
 	 * Gets a user-friendly description of the provided result in a string formatted like
-	 * <code>('value', 'value', int_value, null, …)</code>.  This must not be used generate
-	 * SQL statements - it is just to provide user display.
+	 * <code>('value', 'value', 'long_value_cutoff_at_32_characte…', int_value, NULL, …)</code>. 
+	 * This must not be used generate SQL statements - it is just to provide user display.
 	 */
-	// TODO: Auto-ellipsis on long values?
 	@SuppressWarnings("fallthrough")
 	static String getRow(ResultSet result) throws SQLException {
 		StringBuilder sb = new StringBuilder();
@@ -89,6 +90,10 @@ final class DatabaseUtils {
 						sb.append('\'');
 						int i;
 						for (i = 0; i < value.length(); i++) {
+							if(i >= AUTO_ELLIPSIS_LEN) {
+								sb.append('…');
+								break;
+							}
 							char ch = value.charAt(i);
 							if(ch == '\'') sb.append("''");
 							else if (ch == '\\' || ch == '"' || ch == '%' || ch == '_') {
