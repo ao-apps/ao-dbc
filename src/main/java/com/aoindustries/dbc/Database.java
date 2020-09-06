@@ -24,6 +24,7 @@ package com.aoindustries.dbc;
 
 import com.aoindustries.collections.IntList;
 import com.aoindustries.collections.LongList;
+import com.aoindustries.exception.WrappedException;
 import com.aoindustries.sql.AOConnectionPool;
 import java.sql.Connection;
 import java.sql.SQLData;
@@ -134,39 +135,57 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
 		Connection conn;
+		Throwable t1 = null;
 		if(pool != null) {
 			// From pool
 			conn = pool.getConnection(isolationLevel, readOnly, maxConnections);
-			boolean successful = false;
 			try {
+				initSqlDataTypes(conn);
 				initConnection(conn);
-				successful = true;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t) {
+				t1 = t;
 			} finally {
-				if(!successful) pool.releaseConnection(conn);
+				if(t1 != null) {
+					try {
+						pool.releaseConnection(conn);
+					} catch(ThreadDeath td) {
+						throw td;
+					} catch(Throwable t) {
+						t1.addSuppressed(t);
+					}
+				}
 			}
 		} else {
 			// From dataSource
 			conn = dataSource.getConnection();
-			boolean successful = false;
 			try {
-				if(isolationLevel!=conn.getTransactionIsolation()) conn.setTransactionIsolation(isolationLevel);
-				if(readOnly!=conn.isReadOnly()) conn.setReadOnly(readOnly);
+				if(isolationLevel != conn.getTransactionIsolation()) conn.setTransactionIsolation(isolationLevel);
+				if(readOnly != conn.isReadOnly()) conn.setReadOnly(readOnly);
+				initSqlDataTypes(conn);
 				initConnection(conn);
-				successful = true;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t) {
+				t1 = t;
 			} finally {
-				if(!successful) conn.close();
+				if(t1 != null) {
+					try {
+						conn.close();
+					} catch(ThreadDeath td) {
+						throw td;
+					} catch(Throwable t) {
+						t1.addSuppressed(t);
+					}
+				}
 			}
 		}
-		// Load custom types from ServiceLoader
-		Map<String,Class<?>> newTypes = getSqlDataTypes();
-		int size = newTypes.size();
-		if(size != 0) {
-			Map<String,Class<?>> typeMap = conn.getTypeMap();
-			// Note: We get "null" back from PostgreSQL driver, despite documentation of returning empty
-			if(typeMap == null) typeMap = new LinkedHashMap<>(size*4/3+1);
-			oldTypeMaps.put(conn, new LinkedHashMap<>(typeMap));
-			typeMap.putAll(newTypes);
-			conn.setTypeMap(typeMap);
+		if(t1 != null) {
+			if(t1 instanceof Error) throw (Error)t1;
+			if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
+			if(t1 instanceof SQLException) throw (SQLException)t1;
+			throw new WrappedException(t1);
 		}
 		return conn;
 	}
@@ -198,34 +217,43 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	@Override
 	public boolean executeBooleanQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
 		DatabaseConnection conn = transactionConnection.get();
-		if(conn!=null) {
+		if(conn != null) {
 			// Reuse existing connection
 			try {
 				return conn.executeBooleanQuery(isolationLevel, readOnly, rowRequired, sql, params);
-			} catch(RuntimeException err) {
-				conn.rollback();
-				throw err;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Error | RuntimeException e) {
+				conn.rollback(e);
+				throw e;
 			} catch(NoRowException err) {
 				throw err;
 			} catch(SQLException err) {
-				conn.rollbackAndClose();
+				conn.rollbackAndClose(err);
 				throw err;
+			} catch(Throwable t) {
+				conn.rollback(t);
+				throw new WrappedException(t);
 			}
 		} else {
 			// Create new connection
-			conn=createDatabaseConnection();
-			try {
-				boolean value=conn.executeBooleanQuery(isolationLevel, readOnly, rowRequired, sql, params);
-				if(!readOnly) conn.commit();
-				return value;
-			} catch(RuntimeException | NoRowException err) {
-				conn.rollback();
-				throw err;
-			} catch(SQLException err) {
-				conn.rollbackAndClose();
-				throw err;
-			} finally {
-				conn.releaseConnection();
+			try (DatabaseConnection newConn = createDatabaseConnection()) {
+				try {
+					boolean value=newConn.executeBooleanQuery(isolationLevel, readOnly, rowRequired, sql, params);
+					if(!readOnly) newConn.commit();
+					return value;
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Error | RuntimeException | NoRowException e) {
+					newConn.rollback(e);
+					throw e;
+				} catch(SQLException err) {
+					newConn.rollbackAndClose(err);
+					throw err;
+				} catch(Throwable t) {
+					newConn.rollback(t);
+					throw new WrappedException(t);
+				}
 			}
 		}
 	}
@@ -233,34 +261,43 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	@Override
 	public IntList executeIntListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
 		DatabaseConnection conn = transactionConnection.get();
-		if(conn!=null) {
+		if(conn != null) {
 			// Reuse existing connection
 			try {
 				return conn.executeIntListQuery(isolationLevel, readOnly, sql, params);
-			} catch(RuntimeException err) {
-				conn.rollback();
-				throw err;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Error | RuntimeException e) {
+				conn.rollback(e);
+				throw e;
 			} catch(NoRowException err) {
 				throw err;
 			} catch(SQLException err) {
-				conn.rollbackAndClose();
+				conn.rollbackAndClose(err);
 				throw err;
+			} catch(Throwable t) {
+				conn.rollback(t);
+				throw new WrappedException(t);
 			}
 		} else {
 			// Create new connection
-			conn=createDatabaseConnection();
-			try {
-				IntList value=conn.executeIntListQuery(isolationLevel, readOnly, sql, params);
-				if(!readOnly) conn.commit();
-				return value;
-			} catch(RuntimeException | NoRowException err) {
-				conn.rollback();
-				throw err;
-			} catch(SQLException err) {
-				conn.rollbackAndClose();
-				throw err;
-			} finally {
-				conn.releaseConnection();
+			try (DatabaseConnection newConn = createDatabaseConnection()) {
+				try {
+					IntList value=newConn.executeIntListQuery(isolationLevel, readOnly, sql, params);
+					if(!readOnly) newConn.commit();
+					return value;
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Error | RuntimeException | NoRowException e) {
+					newConn.rollback(e);
+					throw e;
+				} catch(SQLException err) {
+					newConn.rollbackAndClose(err);
+					throw err;
+				} catch(Throwable t) {
+					newConn.rollback(t);
+					throw new WrappedException(t);
+				}
 			}
 		}
 	}
@@ -268,34 +305,43 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	@Override
 	public int executeIntQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
 		DatabaseConnection conn = transactionConnection.get();
-		if(conn!=null) {
+		if(conn != null) {
 			// Reuse existing connection
 			try {
 				return conn.executeIntQuery(isolationLevel, readOnly, rowRequired, sql, params);
-			} catch(RuntimeException err) {
-				conn.rollback();
-				throw err;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Error | RuntimeException e) {
+				conn.rollback(e);
+				throw e;
 			} catch(NoRowException err) {
 				throw err;
 			} catch(SQLException err) {
-				conn.rollbackAndClose();
+				conn.rollbackAndClose(err);
 				throw err;
+			} catch(Throwable t) {
+				conn.rollback(t);
+				throw new WrappedException(t);
 			}
 		} else {
 			// Create new connection
-			conn=createDatabaseConnection();
-			try {
-				int value=conn.executeIntQuery(isolationLevel, readOnly, rowRequired, sql, params);
-				if(!readOnly) conn.commit();
-				return value;
-			} catch(RuntimeException | NoRowException err) {
-				conn.rollback();
-				throw err;
-			} catch(SQLException err) {
-				conn.rollbackAndClose();
-				throw err;
-			} finally {
-				conn.releaseConnection();
+			try (DatabaseConnection newConn = createDatabaseConnection()) {
+				try {
+					int value=newConn.executeIntQuery(isolationLevel, readOnly, rowRequired, sql, params);
+					if(!readOnly) newConn.commit();
+					return value;
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Error | RuntimeException | NoRowException e) {
+					newConn.rollback(e);
+					throw e;
+				} catch(SQLException err) {
+					newConn.rollbackAndClose(err);
+					throw err;
+				} catch(Throwable t) {
+					newConn.rollback(t);
+					throw new WrappedException(t);
+				}
 			}
 		}
 	}
@@ -303,34 +349,43 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	@Override
 	public LongList executeLongListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
 		DatabaseConnection conn = transactionConnection.get();
-		if(conn!=null) {
+		if(conn != null) {
 			// Reuse existing connection
 			try {
 				return conn.executeLongListQuery(isolationLevel, readOnly, sql, params);
-			} catch(RuntimeException err) {
-				conn.rollback();
-				throw err;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Error | RuntimeException e) {
+				conn.rollback(e);
+				throw e;
 			} catch(NoRowException err) {
 				throw err;
 			} catch(SQLException err) {
-				conn.rollbackAndClose();
+				conn.rollbackAndClose(err);
 				throw err;
+			} catch(Throwable t) {
+				conn.rollback(t);
+				throw new WrappedException(t);
 			}
 		} else {
 			// Create new connection
-			conn=createDatabaseConnection();
-			try {
-				LongList value=conn.executeLongListQuery(isolationLevel, readOnly, sql, params);
-				if(!readOnly) conn.commit();
-				return value;
-			} catch(RuntimeException | NoRowException err) {
-				conn.rollback();
-				throw err;
-			} catch(SQLException err) {
-				conn.rollbackAndClose();
-				throw err;
-			} finally {
-				conn.releaseConnection();
+			try (DatabaseConnection newConn = createDatabaseConnection()) {
+				try {
+					LongList value=newConn.executeLongListQuery(isolationLevel, readOnly, sql, params);
+					if(!readOnly) newConn.commit();
+					return value;
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Error | RuntimeException | NoRowException e) {
+					newConn.rollback(e);
+					throw e;
+				} catch(SQLException err) {
+					newConn.rollbackAndClose(err);
+					throw err;
+				} catch(Throwable t) {
+					newConn.rollback(t);
+					throw new WrappedException(t);
+				}
 			}
 		}
 	}
@@ -338,166 +393,181 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	@Override
 	public long executeLongQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
 		DatabaseConnection conn = transactionConnection.get();
-		if(conn!=null) {
+		if(conn != null) {
 			// Reuse existing connection
 			try {
 				return conn.executeLongQuery(isolationLevel, readOnly, rowRequired, sql, params);
-			} catch(RuntimeException err) {
-				conn.rollback();
-				throw err;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Error | RuntimeException e) {
+				conn.rollback(e);
+				throw e;
 			} catch(NoRowException err) {
 				throw err;
 			} catch(SQLException err) {
-				conn.rollbackAndClose();
+				conn.rollbackAndClose(err);
 				throw err;
+			} catch(Throwable t) {
+				conn.rollback(t);
+				throw new WrappedException(t);
 			}
 		} else {
 			// Create new connection
-			conn=createDatabaseConnection();
-			try {
-				long value=conn.executeLongQuery(isolationLevel, readOnly, rowRequired, sql, params);
-				if(!readOnly) conn.commit();
-				return value;
-			} catch(RuntimeException | NoRowException err) {
-				conn.rollback();
-				throw err;
-			} catch(SQLException err) {
-				conn.rollbackAndClose();
-				throw err;
-			} finally {
-				conn.releaseConnection();
+			try (DatabaseConnection newConn = createDatabaseConnection()) {
+				try {
+					long value=newConn.executeLongQuery(isolationLevel, readOnly, rowRequired, sql, params);
+					if(!readOnly) newConn.commit();
+					return value;
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Error | RuntimeException | NoRowException e) {
+					newConn.rollback(e);
+					throw e;
+				} catch(SQLException err) {
+					newConn.rollbackAndClose(err);
+					throw err;
+				} catch(Throwable t) {
+					newConn.rollback(t);
+					throw new WrappedException(t);
+				}
 			}
 		}
 	}
 
 	@Override
-	@SuppressWarnings("UseSpecificCatch")
 	public <T,E extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
 		DatabaseConnection conn = transactionConnection.get();
-		if(conn!=null) {
+		if(conn != null) {
 			// Reuse existing connection
 			try {
 				return conn.executeObjectQuery(isolationLevel, readOnly, rowRequired, eClass, objectFactory, sql, params);
-			} catch(RuntimeException err) {
-				conn.rollback();
-				throw err;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Error | RuntimeException e) {
+				conn.rollback(e);
+				throw e;
 			} catch(NoRowException err) {
 				throw err;
 			} catch(SQLException err) {
-				conn.rollbackAndClose();
+				conn.rollbackAndClose(err);
 				throw err;
-			} catch(Exception e) {
-				conn.rollback();
-				if(eClass.isInstance(e)) throw eClass.cast(e);
-				throw new SQLException(e);
+			} catch(Throwable t) {
+				conn.rollback(t);
+				if(eClass.isInstance(t)) throw eClass.cast(t);
+				throw new WrappedException(t);
 			}
 		} else {
 			// Create new connection
-			conn=createDatabaseConnection();
-			try {
-				T value=conn.executeObjectQuery(isolationLevel, readOnly, rowRequired, eClass, objectFactory, sql, params);
-				if(!readOnly) conn.commit();
-				return value;
-			} catch(RuntimeException | NoRowException err) {
-				conn.rollback();
-				throw err;
-			} catch(SQLException err) {
-				conn.rollbackAndClose();
-				throw err;
-			} catch(Exception e) {
-				conn.rollback();
-				if(eClass.isInstance(e)) throw eClass.cast(e);
-				throw new SQLException(e);
-			} finally {
-				conn.releaseConnection();
+			try (DatabaseConnection newConn = createDatabaseConnection()) {
+				try {
+					T value=newConn.executeObjectQuery(isolationLevel, readOnly, rowRequired, eClass, objectFactory, sql, params);
+					if(!readOnly) newConn.commit();
+					return value;
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Error | RuntimeException | NoRowException e) {
+					newConn.rollback(e);
+					throw e;
+				} catch(SQLException err) {
+					newConn.rollbackAndClose(err);
+					throw err;
+				} catch(Throwable t) {
+					newConn.rollback(t);
+					if(eClass.isInstance(t)) throw eClass.cast(t);
+					throw new WrappedException(t);
+				}
 			}
 		}
 	}
 
 	@Override
-	@SuppressWarnings("UseSpecificCatch")
 	public <T,C extends Collection<? super T>,E extends Exception> C executeObjectCollectionQuery(int isolationLevel, boolean readOnly, C collection, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		DatabaseConnection conn = transactionConnection.get();
-		if(conn!=null) {
+		if(conn != null) {
 			// Reuse existing connection
 			try {
 				return conn.executeObjectCollectionQuery(isolationLevel, readOnly, collection, eClass, objectFactory, sql, params);
-			} catch(RuntimeException err) {
-				conn.rollback();
-				throw err;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Error | RuntimeException e) {
+				conn.rollback(e);
+				throw e;
 			} catch(NoRowException err) {
 				throw err;
 			} catch(SQLException err) {
-				conn.rollbackAndClose();
+				conn.rollbackAndClose(err);
 				throw err;
-			} catch(Exception e) {
-				conn.rollback();
-				if(eClass.isInstance(e)) throw eClass.cast(e);
-				throw new SQLException(e);
+			} catch(Throwable t) {
+				conn.rollback(t);
+				if(eClass.isInstance(t)) throw eClass.cast(t);
+				throw new WrappedException(t);
 			}
 		} else {
 			// Create new connection
-			conn=createDatabaseConnection();
-			try {
-				C value=conn.executeObjectCollectionQuery(isolationLevel, readOnly, collection, eClass, objectFactory, sql, params);
-				if(!readOnly) conn.commit();
-				return value;
-			} catch(RuntimeException | NoRowException err) {
-				conn.rollback();
-				throw err;
-			} catch(SQLException err) {
-				conn.rollbackAndClose();
-				throw err;
-			} catch(Exception e) {
-				conn.rollback();
-				if(eClass.isInstance(e)) throw eClass.cast(e);
-				throw new SQLException(e);
-			} finally {
-				conn.releaseConnection();
+			try (DatabaseConnection newConn = createDatabaseConnection()) {
+				try {
+					C value=newConn.executeObjectCollectionQuery(isolationLevel, readOnly, collection, eClass, objectFactory, sql, params);
+					if(!readOnly) newConn.commit();
+					return value;
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Error | RuntimeException | NoRowException e) {
+					newConn.rollback(e);
+					throw e;
+				} catch(SQLException err) {
+					newConn.rollbackAndClose(err);
+					throw err;
+				} catch(Throwable t) {
+					newConn.rollback(t);
+					if(eClass.isInstance(t)) throw eClass.cast(t);
+					throw new WrappedException(t);
+				}
 			}
 		}
 	}
 
 	@Override
-	@SuppressWarnings("UseSpecificCatch")
 	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
 		DatabaseConnection conn = transactionConnection.get();
-		if(conn!=null) {
+		if(conn != null) {
 			// Reuse existing connection
 			try {
 				return conn.executeQuery(isolationLevel, readOnly, eClass, resultSetHandler, sql, params);
-			} catch(RuntimeException err) {
-				conn.rollback();
-				throw err;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Error | RuntimeException e) {
+				conn.rollback(e);
+				throw e;
 			} catch(NoRowException err) {
 				throw err;
 			} catch(SQLException err) {
-				conn.rollbackAndClose();
+				conn.rollbackAndClose(err);
 				throw err;
-			} catch(Exception e) {
-				conn.rollback();
-				if(eClass.isInstance(e)) throw eClass.cast(e);
-				throw new SQLException(e);
+			} catch(Throwable t) {
+				conn.rollback(t);
+				if(eClass.isInstance(t)) throw eClass.cast(t);
+				throw new WrappedException(t);
 			}
 		} else {
 			// Create new connection
-			conn=createDatabaseConnection();
-			try {
-				T value = conn.executeQuery(isolationLevel, readOnly, eClass, resultSetHandler, sql, params);
-				if(!readOnly) conn.commit();
-				return value;
-			} catch(RuntimeException | NoRowException err) {
-				conn.rollback();
-				throw err;
-			} catch(SQLException err) {
-				conn.rollbackAndClose();
-				throw err;
-			} catch(Exception e) {
-				conn.rollback();
-				if(eClass.isInstance(e)) throw eClass.cast(e);
-				throw new SQLException(e);
-			} finally {
-				conn.releaseConnection();
+			try (DatabaseConnection newConn = createDatabaseConnection()) {
+				try {
+					T value = newConn.executeQuery(isolationLevel, readOnly, eClass, resultSetHandler, sql, params);
+					if(!readOnly) newConn.commit();
+					return value;
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Error | RuntimeException | NoRowException e) {
+					newConn.rollback(e);
+					throw e;
+				} catch(SQLException err) {
+					newConn.rollbackAndClose(err);
+					throw err;
+				} catch(Throwable t) {
+					newConn.rollback(t);
+					if(eClass.isInstance(t)) throw eClass.cast(t);
+					throw new WrappedException(t);
+				}
 			}
 		}
 	}
@@ -505,34 +575,43 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	@Override
 	public short executeShortQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, SQLException {
 		DatabaseConnection conn = transactionConnection.get();
-		if(conn!=null) {
+		if(conn != null) {
 			// Reuse existing connection
 			try {
 				return conn.executeShortQuery(isolationLevel, readOnly, rowRequired, sql, params);
-			} catch(RuntimeException err) {
-				conn.rollback();
-				throw err;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Error | RuntimeException e) {
+				conn.rollback(e);
+				throw e;
 			} catch(NoRowException err) {
 				throw err;
 			} catch(SQLException err) {
-				conn.rollbackAndClose();
+				conn.rollbackAndClose(err);
 				throw err;
+			} catch(Throwable t) {
+				conn.rollback(t);
+				throw new WrappedException(t);
 			}
 		} else {
 			// Create new connection
-			conn=createDatabaseConnection();
-			try {
-				short value=conn.executeShortQuery(isolationLevel, readOnly, rowRequired, sql, params);
-				if(!readOnly) conn.commit();
-				return value;
-			} catch(RuntimeException | NoRowException err) {
-				conn.rollback();
-				throw err;
-			} catch(SQLException err) {
-				conn.rollbackAndClose();
-				throw err;
-			} finally {
-				conn.releaseConnection();
+			try (DatabaseConnection newConn = createDatabaseConnection()) {
+				try {
+					short value=newConn.executeShortQuery(isolationLevel, readOnly, rowRequired, sql, params);
+					if(!readOnly) newConn.commit();
+					return value;
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Error | RuntimeException | NoRowException e) {
+					newConn.rollback(e);
+					throw e;
+				} catch(SQLException err) {
+					newConn.rollbackAndClose(err);
+					throw err;
+				} catch(Throwable t) {
+					newConn.rollback(t);
+					throw new WrappedException(t);
+				}
 			}
 		}
 	}
@@ -540,34 +619,43 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	@Override
 	public int executeUpdate(String sql, Object ... params) throws SQLException {
 		DatabaseConnection conn = transactionConnection.get();
-		if(conn!=null) {
+		if(conn != null) {
 			// Reuse existing connection
 			try {
 				return conn.executeUpdate(sql, params);
-			} catch(RuntimeException err) {
-				conn.rollback();
-				throw err;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Error | RuntimeException e) {
+				conn.rollback(e);
+				throw e;
 			} catch(NoRowException err) {
 				throw err;
 			} catch(SQLException err) {
-				conn.rollbackAndClose();
+				conn.rollbackAndClose(err);
 				throw err;
+			} catch(Throwable t) {
+				conn.rollback(t);
+				throw new WrappedException(t);
 			}
 		} else {
 			// Create new connection
-			conn=createDatabaseConnection();
-			try {
-				int updateCount = conn.executeUpdate(sql, params);
-				conn.commit();
-				return updateCount;
-			} catch(RuntimeException | NoRowException err) {
-				conn.rollback();
-				throw err;
-			} catch(SQLException err) {
-				conn.rollbackAndClose();
-				throw err;
-			} finally {
-				conn.releaseConnection();
+			try (DatabaseConnection newConn = createDatabaseConnection()) {
+				try {
+					int updateCount = newConn.executeUpdate(sql, params);
+					newConn.commit();
+					return updateCount;
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Error | RuntimeException | NoRowException e) {
+					newConn.rollback(e);
+					throw e;
+				} catch(SQLException err) {
+					newConn.rollbackAndClose(err);
+					throw err;
+				} catch(Throwable t) {
+					newConn.rollback(t);
+					throw new WrappedException(t);
+				}
 			}
 		}
 	}
@@ -650,53 +738,55 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	 *
 	 * @see #isInTransaction()
 	 */
-	@SuppressWarnings("UseSpecificCatch")
 	public <V,E extends Exception> V executeTransaction(
 		Class<E> eClass,
 		DatabaseCallableE<V,E> callable
 	) throws SQLException, E {
 		DatabaseConnection conn = transactionConnection.get();
-		if(conn!=null) {
+		if(conn != null) {
 			// Reuse existing connection
 			try {
 				return callable.call(conn);
-			} catch(RuntimeException err) {
-				conn.rollback();
-				throw err;
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Error | RuntimeException e) {
+				conn.rollback(e);
+				throw e;
 			} catch(NoRowException err) {
 				throw err;
 			} catch(SQLException err) {
-				conn.rollbackAndClose();
+				conn.rollbackAndClose(err);
 				throw err;
-			} catch(Exception e) {
-				conn.rollback();
-				if(eClass.isInstance(e)) throw eClass.cast(e);
-				throw new SQLException(e);
+			} catch(Throwable t) {
+				conn.rollback(t);
+				if(eClass.isInstance(t)) throw eClass.cast(t);
+				throw new WrappedException(t);
 			}
 		} else {
 			// Create new connection
-			conn=createDatabaseConnection();
-			try {
-				transactionConnection.set(conn);
+			try (DatabaseConnection newConn = createDatabaseConnection()) {
 				try {
-					V result = callable.call(conn);
-					conn.commit();
-					return result;
-				} finally {
-					transactionConnection.remove();
+					transactionConnection.set(newConn);
+					try {
+						V result = callable.call(newConn);
+						newConn.commit();
+						return result;
+					} finally {
+						transactionConnection.remove();
+					}
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Error | RuntimeException | NoRowException e) {
+					newConn.rollback(e);
+					throw e;
+				} catch(SQLException err) {
+					newConn.rollbackAndClose(err);
+					throw err;
+				} catch(Throwable t) {
+					newConn.rollback(t);
+					if(eClass.isInstance(t)) throw eClass.cast(t);
+					throw new WrappedException(t);
 				}
-			} catch(RuntimeException | NoRowException err) {
-				conn.rollback();
-				throw err;
-			} catch(SQLException err) {
-				conn.rollbackAndClose();
-				throw err;
-			} catch(Exception e) {
-				conn.rollback();
-				if(eClass.isInstance(e)) throw eClass.cast(e);
-				throw new SQLException(e);
-			} finally {
-				conn.releaseConnection();
 			}
 		}
 	}
@@ -704,6 +794,24 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	@Override
 	public String toString() {
 		return "Database("+(pool!=null ? pool.toString() : dataSource.toString())+")";
+	}
+
+	/**
+	 * Whenever a new connection is obtained from the pool or the dataSource,
+	 * it is passed here for initialization of {@link #getSqlDataTypes()}.
+	 */
+	protected void initSqlDataTypes(Connection conn) throws SQLException {
+		// Load custom types from ServiceLoader
+		Map<String,Class<?>> newTypes = getSqlDataTypes();
+		int size = newTypes.size();
+		if(size != 0) {
+			Map<String,Class<?>> typeMap = conn.getTypeMap();
+			// Note: We get "null" back from PostgreSQL driver, despite documentation of returning empty
+			if(typeMap == null) typeMap = new LinkedHashMap<>(size*4/3+1);
+			oldTypeMaps.put(conn, new LinkedHashMap<>(typeMap));
+			typeMap.putAll(newTypes);
+			conn.setTypeMap(typeMap);
+		}
 	}
 
 	/**

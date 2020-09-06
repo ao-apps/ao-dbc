@@ -26,6 +26,7 @@ import com.aoindustries.collections.IntArrayList;
 import com.aoindustries.collections.IntList;
 import com.aoindustries.collections.LongArrayList;
 import com.aoindustries.collections.LongList;
+import com.aoindustries.exception.WrappedException;
 import com.aoindustries.sql.WrappedSQLException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -51,7 +52,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Collection;
-import java.util.logging.Level;
 
 /**
  * A <code>DatabaseConnection</code> is used to only get actual database connections when needed.
@@ -60,7 +60,7 @@ import java.util.logging.Level;
  *
  * @author  AO Industries, Inc.
  */
-public class DatabaseConnection extends AbstractDatabaseAccess {
+public class DatabaseConnection extends AbstractDatabaseAccess implements AutoCloseable {
 
 	private static final int FETCH_SIZE = 1000;
 
@@ -69,7 +69,6 @@ public class DatabaseConnection extends AbstractDatabaseAccess {
 	 * <code>('value', 'value', int_value, …)</code>.  This must not be used generate
 	 * SQL statements - it is just to provide user display.
 	 */
-	@SuppressWarnings("deprecation")
 	private static String getRow(ResultSet result) throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
@@ -140,11 +139,11 @@ public class DatabaseConnection extends AbstractDatabaseAccess {
 	}
 
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
-		Connection c=_conn;
-		if(c==null) {
-			c=database.getConnection(isolationLevel, readOnly, maxConnections);
+		Connection c = _conn;
+		if(c == null) {
+			c = database.getConnection(isolationLevel, readOnly, maxConnections);
 			if(!readOnly || isolationLevel>=Connection.TRANSACTION_REPEATABLE_READ) c.setAutoCommit(false);
-			_conn=c;
+			_conn = c;
 		} else if(c.getTransactionIsolation()<isolationLevel) {
 			if(!c.getAutoCommit()) {
 				// c.commit();
@@ -427,47 +426,162 @@ public class DatabaseConnection extends AbstractDatabaseAccess {
 	}
 
 	public void commit() throws SQLException {
-		Connection c=_conn;
-		if(c!=null && !c.getAutoCommit()) c.commit();
+		Connection c = _conn;
+		if(c != null && !c.getAutoCommit()) c.commit();
 	}
 
 	public boolean isClosed() throws SQLException {
-		Connection c=_conn;
-		return c==null || c.isClosed();
+		Connection c = _conn;
+		return c == null || c.isClosed();
 	}
 
+	/**
+	 * @deprecated  Please use {@link #close()}
+	 */
+	@Deprecated
 	public void releaseConnection() throws SQLException {
-		Connection c=_conn;
-		if(c!=null) {
-			_conn=null;
+		close();
+	}
+
+	/**
+	 * Closes and/or releases the current connection back to the pool.
+	 */
+	@Override
+	public void close() throws SQLException {
+		Connection c = _conn;
+		if(c != null) {
+			_conn = null;
 			database.releaseConnection(c);
 		}
 	}
 
-	public boolean rollback() {
-		boolean rolledBack=false;
+	/**
+	 * Closes and/or releases the current connection back to the pool.
+	 *
+	 * @param  t  Any exceptions will be added here via {@link Throwable#addSuppressed(java.lang.Throwable)}
+	 */
+	public void close(Throwable t) {
 		try {
-			if(_conn!=null && !_conn.isClosed()) {
-				rolledBack=true;
-				if(!_conn.getAutoCommit()) _conn.rollback();
-			}
-		} catch(SQLException err) {
-			database.getLogger().logp(Level.SEVERE, DatabaseConnection.class.getName(), "rollback", null, err);
+			close();
+		} catch(ThreadDeath td) {
+			throw td;
+		} catch(Throwable t2) {
+			t.addSuppressed(t2);
+		}
+	}
+
+	/**
+	 * Rolls back the current connection, if have connection and is not auto-commit.
+	 *
+	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
+	 */
+	public boolean rollback() throws SQLException {
+		Connection c = _conn;
+		if(c != null && !c.isClosed()) {
+			if(!c.getAutoCommit()) c.rollback();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Rolls back the current connection, if have connection and is not auto-commit.
+	 *
+	 * @param  t  Any exceptions will be added here via {@link Throwable#addSuppressed(java.lang.Throwable)}
+	 *
+	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
+	 */
+	public boolean rollback(Throwable t) {
+		boolean rolledBack = false;
+		try {
+			rolledBack = rollback();
+		} catch(ThreadDeath td) {
+			throw td;
+		} catch(Throwable t2) {
+			t.addSuppressed(t2);
 		}
 		return rolledBack;
 	}
 
-	// TODO: Version that adds any exception to SQLException.setNextException.  Here and similar within this project
-	public boolean rollbackAndClose() {
-		boolean rolledBack=false;
-		try {
-			if(_conn!=null && !_conn.isClosed()) {
-				rolledBack=true;
-				if(!_conn.getAutoCommit()) _conn.rollback();
-				_conn.close();
+	/**
+	 * Rolls back the current connection, if have connection and is not auto-commit, and forces the underlying
+	 * connection closed.  This close is distinct from {@link #close()}, which is intended for
+	 * releasing to the underlying pool.
+	 *
+	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
+	 */
+	public boolean rollbackAndClose() throws SQLException {
+		Connection c = _conn;
+		if(c != null) {
+			_conn = null;
+			Throwable t1 = null;
+			boolean rollback = false;
+			try {
+				rollback = !c.isClosed();
+				if(rollback) {
+					try {
+						if(!c.getAutoCommit()) c.rollback();
+					} catch(ThreadDeath td) {
+						throw td;
+					} catch(Throwable t) {
+						t1 = t;
+					} finally {
+						try {
+							c.close();
+						} catch(ThreadDeath td) {
+							throw td;
+						} catch(Throwable t) {
+							if(t1 == null) {
+								t1 = t;
+							} else {
+								t1.addSuppressed(t);
+							}
+						}
+					}
+				}
+			} finally {
+				try {
+					database.releaseConnection(c);
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Throwable t) {
+					if(t1 == null) {
+						t1 = t;
+					} else {
+						t1.addSuppressed(t);
+					}
+				}
 			}
-		} catch(SQLException err) {
-			database.getLogger().logp(Level.SEVERE, DatabaseConnection.class.getName(), "rollbackAndClose", null, err);
+			if(t1 != null) {
+				if(t1 instanceof Error) throw (Error)t1;
+				if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
+				if(t1 instanceof SQLException) throw (SQLException)t1;
+				throw new WrappedException(t1);
+			}
+			return rollback;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Rolls back the current connection, if have connection and is not auto-commit, and forces the underlying
+	 * connection closed.  This close is distinct from {@link #close(java.lang.Throwable)}, which is intended for
+	 * releasing to the underlying pool.
+	 *
+	 * @param  t  Any exceptions will be added here via {@link Throwable#addSuppressed(java.lang.Throwable)}
+	 *
+	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
+	 */
+	public boolean rollbackAndClose(Throwable t) {
+		boolean rolledBack = false;
+		try {
+			rolledBack = rollbackAndClose();
+		} catch(ThreadDeath td) {
+			throw td;
+		} catch(Throwable t2) {
+			t.addSuppressed(t2);
 		}
 		return rolledBack;
 	}

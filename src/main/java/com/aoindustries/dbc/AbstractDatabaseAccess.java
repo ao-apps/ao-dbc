@@ -175,15 +175,20 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 		}
 
 		@Override
+		@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 		public T createObject(ResultSet result) throws SQLException {
 			try {
 				return constructor.newInstance(result);
-			} catch(InstantiationException err) {
-				throw new SQLException("Unable to instantiate object: "+clazz.getName()+"(java.sql.ResultSet)", err);
-			} catch(IllegalAccessException err) {
-				throw new SQLException("Illegal access on constructor: "+clazz.getName()+"(java.sql.ResultSet)", err);
-			} catch(InvocationTargetException err) {
-				throw new SQLException("Invocation exception on constructor: "+clazz.getName()+"(java.sql.ResultSet)", err);
+			} catch(InvocationTargetException e) {
+				Throwable cause = e.getCause();
+				if(cause instanceof Error) throw (Error)cause;
+				if(cause instanceof RuntimeException) throw (RuntimeException)cause;
+				if(cause instanceof SQLException) throw (SQLException)cause;
+				throw new SQLException(clazz.getName() + "(java.sql.ResultSet)", cause);
+			} catch(Error | RuntimeException e) {
+				throw e;
+			} catch(Throwable t) {
+				throw new SQLException(clazz.getName() + "(java.sql.ResultSet)", t);
 			}
 		}
 	};

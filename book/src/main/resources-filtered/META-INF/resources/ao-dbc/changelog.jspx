@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-08-27T22:47:28-05:00"
+		dateModified="2020-09-06T00:12:33-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -52,7 +52,49 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				groupId="@{project.groupId}"
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{project.scm.url}"
-			/>
+			>
+				<ul>
+					<li><code>createObject</code> now unwraps cause from <code>InvocationTargetException</code>.</li>
+					<li>Integrated support of <code>Throwable.addSuppressed(Throwable)</code>:
+						<ol>
+							<li>
+								<code>DatabaseConnection.rollback()</code> now throws <code>SQLException</code>, instead of
+								logging and returning.
+							</li>
+							<li>
+								New <code>DatabaseConnection.rollback(Throwable)</code> that adds any exceptions occuring
+								during rollback to the given throwable via <code>Throwable.addSuppressed(Throwable)</code>.
+							</li>
+							<li>
+								<code>DatabaseConnection.rollbackAndClose()</code> now throws <code>SQLException</code>, instead of
+								logging and returning.
+							</li>
+							<li>
+								New <code>DatabaseConnection.rollbackAndClose(Throwable)</code> that adds any exceptions occuring
+								during rollback to the given throwable via <code>Throwable.addSuppressed(Throwable)</code>.
+							</li>
+							<li>
+								<code>Database.getConnection(…)</code> now adds any exceptions occuring
+								during clean-up (close and/or release connection) to the first throwable via
+								<code>Throwable.addSuppressed(Throwable)</code>.
+							</li>
+							<li>
+								<code>DatabaseConnection</code> now implements <code>AutoCloseable</code>, with the
+								expectation to by used via try-with-resources.
+							</li>
+						</ol>
+					</li>
+					<li>
+						Any exception during <code>SQLData</code> initialization will now clean-up properly
+						(close and/or release connection).
+					</li>
+					<li>
+						<code>execute*(…)</code> methods now also rollback on all types of <code>Throwable</code>
+						except <code>ThreadDeath</code> and <code>NoRowException</code>, versus just handling
+						<code>Exception</code> and below.
+					</li>
+				</ul>
+			</changelog:release>
 		</c:if>
 
 		<changelog:release

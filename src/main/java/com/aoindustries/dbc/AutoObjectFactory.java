@@ -55,7 +55,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 		try {
 			notExists = AutoObjectFactory.class.getMethod("getValueOfStringMethod", Class.class);
 		} catch(NoSuchMethodException err) {
-			throw new RuntimeException(err);
+			throw new ExceptionInInitializerError(err);
 		}
 	}
 
@@ -225,8 +225,16 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 				}
 			}
 			throw new SQLException(message.toString());
-		} catch(InstantiationException | IllegalAccessException | InvocationTargetException err) { // TODO: ReflectiveOperationException
-			throw new SQLException(err);
+		} catch(InvocationTargetException e) {
+			Throwable cause = e.getCause();
+			if(cause instanceof Error) throw (Error)cause;
+			if(cause instanceof RuntimeException) throw (RuntimeException)cause;
+			if(cause instanceof SQLException) throw (SQLException)cause;
+			throw new SQLException(cause);
+		} catch(Error | RuntimeException | SQLException e) {
+			throw e;
+		} catch(Throwable t) {
+			throw new SQLException(t);
 		}
 	}
 }
