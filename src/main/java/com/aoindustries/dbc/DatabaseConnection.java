@@ -218,48 +218,6 @@ public class DatabaseConnection extends AbstractDatabaseAccess implements AutoCl
 	}
 
 	@Override
-	public IntList executeIntListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
-		Connection conn = getConnection(isolationLevel, readOnly);
-		conn.setAutoCommit(false);
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			try {
-				pstmt.setFetchSize(FETCH_SIZE);
-				setParams(conn, pstmt, params);
-				try (ResultSet results = pstmt.executeQuery()) {
-					IntList V=new IntArrayList();
-					while(results.next()) {
-						V.add(results.getInt(1));
-					}
-					return V;
-				}
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
-			}
-		}
-	}
-
-	@Override
-	public LongList executeLongListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
-		Connection conn = getConnection(isolationLevel, readOnly);
-		conn.setAutoCommit(false);
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			try {
-				pstmt.setFetchSize(FETCH_SIZE);
-				setParams(conn, pstmt, params);
-				try (ResultSet results = pstmt.executeQuery()) {
-					LongList V=new LongArrayList();
-					while(results.next()) {
-						V.add(results.getLong(1));
-					}
-					return V;
-				}
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
-			}
-		}
-	}
-
-	@Override
 	public <T,E extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -306,7 +264,7 @@ public class DatabaseConnection extends AbstractDatabaseAccess implements AutoCl
 	@Override
 	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
-		conn.setAutoCommit(false);
+		conn.setAutoCommit(false); // TODO: Consolidate this repeated setAutoCommit(false) into getConnection
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			try {
 				pstmt.setFetchSize(FETCH_SIZE);

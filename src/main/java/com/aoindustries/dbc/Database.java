@@ -268,20 +268,6 @@ public class Database extends AbstractDatabaseAccess {
 	}
 
 	@Override
-	public IntList executeIntListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
-		return executeTransaction((DatabaseConnection conn) ->
-			conn.executeIntListQuery(isolationLevel, readOnly, sql, params)
-		);
-	}
-
-	@Override
-	public LongList executeLongListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
-		return executeTransaction((DatabaseConnection conn) ->
-			conn.executeLongListQuery(isolationLevel, readOnly, sql, params)
-		);
-	}
-
-	@Override
 	public <T,E extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, SQLException, E {
 		return executeTransaction(eClass, (DatabaseConnection conn) ->
 			conn.executeObjectQuery(isolationLevel, readOnly, rowRequired, eClass, objectFactory, sql, params)

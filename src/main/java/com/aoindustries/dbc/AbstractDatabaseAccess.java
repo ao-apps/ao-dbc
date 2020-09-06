@@ -23,7 +23,9 @@
 package com.aoindustries.dbc;
 
 import com.aoindustries.collections.AoCollections;
+import com.aoindustries.collections.IntArrayList;
 import com.aoindustries.collections.IntList;
+import com.aoindustries.collections.LongArrayList;
 import com.aoindustries.collections.LongList;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -104,17 +106,33 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
-	final public IntList executeIntListQuery(String sql, Object ... params) throws SQLException {
+	final public IntList executeIntListQuery(String sql, Object ... params) throws NullDataException, SQLException {
 		return executeIntListQuery(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
 	}
 
 	@Override
-	final public IntList executeIntListUpdate(String sql, Object ... params) throws SQLException {
+	final public IntList executeIntListUpdate(String sql, Object ... params) throws NullDataException, SQLException {
 		return executeIntListQuery(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
 	}
 
 	@Override
-	abstract public IntList executeIntListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException;
+	final public IntList executeIntListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+		return executeQuery(
+			isolationLevel,
+			readOnly,
+			results -> {
+				IntList list = new IntArrayList();
+				while(results.next()) {
+					int i = results.getInt(1);
+					if(results.wasNull()) throw new NullDataException();
+					list.add(i);
+				}
+				return list;
+			},
+			sql,
+			params
+		);
+	}
 
 	@Override
 	final public int executeIntQuery(String sql, Object ... params) throws NoRowException, NullDataException, SQLException {
@@ -134,17 +152,33 @@ abstract public class AbstractDatabaseAccess implements DatabaseAccess {
 	}
 
 	@Override
-	final public LongList executeLongListQuery(String sql, Object ... params) throws SQLException {
+	final public LongList executeLongListQuery(String sql, Object ... params) throws NullDataException, SQLException {
 		return executeLongListQuery(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
 	}
 
 	@Override
-	final public LongList executeLongListUpdate(String sql, Object ... params) throws SQLException {
+	final public LongList executeLongListUpdate(String sql, Object ... params) throws NullDataException, SQLException {
 		return executeLongListQuery(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
 	}
 
 	@Override
-	abstract public LongList executeLongListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException;
+	final public LongList executeLongListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+		return executeQuery(
+			isolationLevel,
+			readOnly,
+			results -> {
+				LongList list = new LongArrayList();
+				while(results.next()) {
+					long l = results.getLong(1);
+					if(results.wasNull()) throw new NullDataException();
+					list.add(l);
+				}
+				return list;
+			},
+			sql,
+			params
+		);
+	}
 
 	@Override
 	final public long executeLongQuery(String sql, Object ... params) throws NoRowException, NullDataException, SQLException {

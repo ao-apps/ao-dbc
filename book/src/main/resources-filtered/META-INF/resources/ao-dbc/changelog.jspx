@@ -105,12 +105,13 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					<li>Created <code>ObjectFactory</code> instances for common types in <code>ObjectFactories</code>.</li>
 					<li>
 						<p>
-							<code>execute*Query</code> and <code>execute*Update</code> that return Java primitives now throw
-							a new <code>NullDataException</code> when the query returns a <code>NULL</code> value.
+							<code>execute*Query</code> and <code>execute*Update</code> that return Java primitives,
+							along with the specialized primitive-list <code>executeIntList*</code> and <code>executeLongList*</code>,
+							now throw a new <code>NullDataException</code> when the result returns a <code>NULL</code> value.
 						</p>
 						<p>
 							Previously, the default conversion was used.  Any code that relied on this default conversion will
-							need to be updated: a simple lambda on <code>executeObjectQuery</code> or
+							need to be updated: a small lambda on <code>executeObjectQuery</code> or
 							<code>executeObjectUpdate</code> would do the trick.
 						</p>
 					</li>
