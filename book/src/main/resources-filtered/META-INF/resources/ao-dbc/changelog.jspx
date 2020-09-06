@@ -93,6 +93,11 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						except <code>ThreadDeath</code> and <code>NoRowException</code>, versus just handling
 						<code>Exception</code> and below.
 					</li>
+					<li>
+						<code>AutoCloseable</code> implementation moved to a new class <code>CloseableDatabase</code>,
+						which extends <code>Database</code>.  This allows the return of <code>Database</code> in
+						contexts where it is not expected to be closed.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>

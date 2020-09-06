@@ -48,9 +48,7 @@ import javax.sql.DataSource;
  *
  * @author  AO Industries, Inc.
  */
-// TODO: Have a separate Database and CloseableDatabase, similar to HttpClient
-// TODO: This will allow APIs that don't want their database closed to hide the close method
-public class Database extends AbstractDatabaseAccess implements AutoCloseable {
+public class Database extends AbstractDatabaseAccess {
 
 	/**
 	 * Only one connection pool is made to the database.
@@ -102,9 +100,9 @@ public class Database extends AbstractDatabaseAccess implements AutoCloseable {
 	 * Closes the database.
 	 *
 	 * @see  AOConnectionPool#close()
+	 * @see  CloseableDatabase#close()
 	 */
-	@Override
-	public void close() {
+	protected void close() {
 		if(pool != null) pool.close();
 	}
 
