@@ -43,7 +43,6 @@ import java.util.List;
  *
  * @author  AO Industries, Inc.
  */
-// TODO: Add variants for Supplier and Consumer
 public interface DatabaseAccess {
 
 	/**
