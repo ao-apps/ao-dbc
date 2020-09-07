@@ -133,6 +133,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						JDBC driver when attempts are made to change read-only state or isolation levels during a
 						transaction; this is a safer behavior.
 					</li>
+					<!-- TODO: Add Java 8+ streaming support? -->
 				</ul>
 			</changelog:release>
 		</c:if>
