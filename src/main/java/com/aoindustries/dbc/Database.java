@@ -283,20 +283,6 @@ public class Database implements DatabaseAccess {
 		}
 	}
 
-	@Override
-	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
-		return executeTransaction(eClass, (DatabaseConnection conn) ->
-			conn.executeQuery(isolationLevel, readOnly, eClass, resultSetHandler, sql, params)
-		);
-	}
-
-	@Override
-	public int executeUpdate(String sql, Object ... params) throws SQLException {
-		return executeTransaction((DatabaseConnection conn) ->
-			conn.executeUpdate(sql, params)
-		);
-	}
-
 	private final ThreadLocal<DatabaseConnection> transactionConnection = new ThreadLocal<>();
 
 	/**
@@ -462,5 +448,19 @@ public class Database implements DatabaseAccess {
 	 */
 	protected void initConnection(Connection conn) throws SQLException {
 		// Do nothing
+	}
+
+	@Override
+	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
+		return executeTransaction(eClass, (DatabaseConnection conn) ->
+			conn.executeQuery(isolationLevel, readOnly, eClass, resultSetHandler, sql, params)
+		);
+	}
+
+	@Override
+	public int executeUpdate(String sql, Object ... params) throws SQLException {
+		return executeTransaction((DatabaseConnection conn) ->
+			conn.executeUpdate(sql, params)
+		);
 	}
 }

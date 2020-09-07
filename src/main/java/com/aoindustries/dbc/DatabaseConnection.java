@@ -202,35 +202,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		}
 	}
 
-	@Override
-	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
-		Connection conn = getConnection(isolationLevel, readOnly);
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			try {
-				pstmt.setFetchSize(FETCH_SIZE);
-				setParams(conn, pstmt, params);
-				try (ResultSet results = pstmt.executeQuery()) {
-					return resultSetHandler.handleResultSet(results);
-				}
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
-			}
-		}
-	}
-
-	@Override
-	public int executeUpdate(String sql, Object ... params) throws SQLException {
-		Connection conn = getConnection(Connection.TRANSACTION_READ_COMMITTED, false);
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			try {
-				setParams(conn, pstmt, params);
-				return pstmt.executeUpdate();
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
-			}
-		}
-	}
-
 	public void commit() throws SQLException {
 		Connection c = _conn;
 		if(c != null && !c.getAutoCommit()) c.commit();
@@ -394,5 +365,34 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 			t.addSuppressed(t2);
 		}
 		return rolledBack;
+	}
+
+	@Override
+	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
+		Connection conn = getConnection(isolationLevel, readOnly);
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			try {
+				pstmt.setFetchSize(FETCH_SIZE);
+				setParams(conn, pstmt, params);
+				try (ResultSet results = pstmt.executeQuery()) {
+					return resultSetHandler.handleResultSet(results);
+				}
+			} catch(SQLException err) {
+				throw new WrappedSQLException(err, pstmt);
+			}
+		}
+	}
+
+	@Override
+	public int executeUpdate(String sql, Object ... params) throws SQLException {
+		Connection conn = getConnection(Connection.TRANSACTION_READ_COMMITTED, false);
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			try {
+				setParams(conn, pstmt, params);
+				return pstmt.executeUpdate();
+			} catch(SQLException err) {
+				throw new WrappedSQLException(err, pstmt);
+			}
+		}
 	}
 }
