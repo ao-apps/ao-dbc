@@ -56,7 +56,10 @@ final public class ObjectFactories {
 		return result.wasNull() ? null : d;
 	};
 
-	// TODO: Float, along with query/update
+	public static final ObjectFactory<java.lang.Float> Float = result -> {
+		float f = result.getFloat(1);
+		return result.wasNull() ? null : f;
+	};
 
 	public static final ObjectFactory<java.lang.Integer> Integer = result -> {
 		int i = result.getInt(1);

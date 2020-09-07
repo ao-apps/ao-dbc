@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-07T06:08:30-05:00"
+		dateModified="2020-09-07T08:05:14-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -133,7 +133,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						JDBC driver when attempts are made to change read-only state or isolation levels during a
 						transaction; this is a safer behavior.
 					</li>
-					<li>Added support for primitive <code>double</code> queries and updates.</li>
+					<li>Added support for primitive <code>double</code> and <code>float</code> queries and updates.</li>
 					<li>Added support for Java 8+ streaming queries and updates.</li>
 				</ul>
 			</changelog:release>

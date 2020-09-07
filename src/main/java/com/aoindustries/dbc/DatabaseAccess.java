@@ -288,7 +288,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #updateDouble(java.lang.String, java.lang.Object[])
 	 */
-	default double executeDoubleQuery(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+	default double queryDouble(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return queryDouble(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
 	}
 
@@ -300,7 +300,7 @@ public interface DatabaseAccess {
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
-	 * @see  #executeDoubleQuery(java.lang.String, java.lang.Object...)
+	 * @see  #queryDouble(java.lang.String, java.lang.Object[])
 	 */
 	default double updateDouble(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return queryDouble(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
@@ -355,7 +355,51 @@ public interface DatabaseAccess {
 	 */
 	DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException;
 
-	// TODO: Float
+	/**
+	 * Read-only query the database with a <code>float</code> return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>rowRequired = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #updateFloat(java.lang.String, java.lang.Object[])
+	 */
+	default float queryFloat(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+		return queryFloat(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a <code>float</code> return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>rowRequired = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #queryFloat(java.lang.String, java.lang.Object[])
+	 */
+	default float updateFloat(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+		return queryFloat(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+	}
+
+	/**
+	 * Query the database with a <code>float</code> return type.
+	 *
+	 * @return  The value or {@code null} when no row and row not required.
+	 *
+	 * @throws  NullDataException  When has a row, but with NULL value.
+	 */
+	default Float queryFloat(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+		return executeObjectQuery(
+			isolationLevel,
+			readOnly,
+			rowRequired,
+			ObjectFactories.notNull(ObjectFactories.Float),
+			sql,
+			params
+		);
+	}
 
 	/**
 	 * Read-only query the database with an <code>int</code> return type.
