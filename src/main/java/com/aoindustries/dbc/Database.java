@@ -23,6 +23,8 @@
 package com.aoindustries.dbc;
 
 import com.aoindustries.exception.WrappedException;
+import com.aoindustries.lang.AutoCloseables;
+import com.aoindustries.lang.Throwables;
 import com.aoindustries.sql.AOConnectionPool;
 import java.sql.Connection;
 import java.sql.SQLData;
@@ -161,16 +163,13 @@ public class Database implements DatabaseAccess {
 			} catch(ThreadDeath td) {
 				throw td;
 			} catch(Throwable t) {
-				t1 = t;
-			} finally {
-				if(t1 != null) {
-					try {
-						pool.releaseConnection(conn);
-					} catch(ThreadDeath td) {
-						throw td;
-					} catch(Throwable t) {
-						t1.addSuppressed(t);
-					}
+				t1 = Throwables.addSuppressed(t1, t);
+				try {
+					pool.releaseConnection(conn);
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Throwable t2) {
+					t1 = Throwables.addSuppressed(t1, t2);
 				}
 			}
 		} else {
@@ -189,17 +188,7 @@ public class Database implements DatabaseAccess {
 			} catch(ThreadDeath td) {
 				throw td;
 			} catch(Throwable t) {
-				t1 = t;
-			} finally {
-				if(t1 != null) {
-					try {
-						conn.close();
-					} catch(ThreadDeath td) {
-						throw td;
-					} catch(Throwable t) {
-						t1.addSuppressed(t);
-					}
-				}
+				t1 = AutoCloseables.close(t, conn);
 			}
 		}
 		if(t1 != null) {
@@ -226,11 +215,7 @@ public class Database implements DatabaseAccess {
 		} catch(ThreadDeath td) {
 			throw td;
 		} catch(Throwable t) {
-			if(t1 == null) {
-				t1 = t;
-			} else {
-				t1.addSuppressed(t);
-			}
+			t1 = Throwables.addSuppressed(t1, t);
 		}
 		if(pool != null) {
 			// From pool
@@ -250,23 +235,9 @@ public class Database implements DatabaseAccess {
 			} catch(ThreadDeath td) {
 				throw td;
 			} catch(Throwable t) {
-				if(t1 == null) {
-					t1 = t;
-				} else {
-					t1.addSuppressed(t);
-				}
+				t1 = Throwables.addSuppressed(t1, t);
 			} finally {
-				try {
-					conn.close();
-				} catch(ThreadDeath td) {
-					throw td;
-				} catch(Throwable t) {
-					if(t1 == null) {
-						t1 = t;
-					} else {
-						t1.addSuppressed(t);
-					}
-				}
+				t1 = AutoCloseables.close(t1, conn);
 			}
 		}
 		if(t1 != null) {

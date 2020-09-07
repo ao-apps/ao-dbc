@@ -23,6 +23,8 @@
 package com.aoindustries.dbc;
 
 import com.aoindustries.exception.WrappedException;
+import com.aoindustries.lang.AutoCloseables;
+import com.aoindustries.lang.Throwables;
 import com.aoindustries.sql.WrappedSQLException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -246,17 +248,15 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	/**
 	 * Closes and/or releases the current connection back to the pool.
 	 *
-	 * @param  t  Any exceptions will be added here via {@link Throwable#addSuppressed(java.lang.Throwable)}
+	 * @param  t1  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
+	 *
+	 * @return  The given exception, or new exception, or {@code null} when none given and none new
+	 *
+	 * @see  #close()
+	 * @see  AutoCloseables#close(java.lang.Throwable, java.lang.AutoCloseable)
 	 */
-	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	public void close(Throwable t) {
-		try {
-			close();
-		} catch(ThreadDeath td) {
-			throw td;
-		} catch(Throwable t2) {
-			t.addSuppressed(t2);
-		}
+	public Throwable close(Throwable t1) {
+		return AutoCloseables.close(t1, this);
 	}
 
 	/**
@@ -277,21 +277,23 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	/**
 	 * Rolls back the current connection, if have connection and is not auto-commit.
 	 *
-	 * @param  t  Any exceptions will be added here via {@link Throwable#addSuppressed(java.lang.Throwable)}
+	 * @param  t1  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
 	 *
-	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
+	 * @return  The given exception, or new exception, or {@code null} when none given and none new
+	 *
+	 * @see  #rollback()
+	 * @see  Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	public boolean rollback(Throwable t) {
-		boolean rolledBack = false;
+	public Throwable rollback(Throwable t1) {
 		try {
-			rolledBack = rollback();
+			rollback();
 		} catch(ThreadDeath td) {
 			throw td;
-		} catch(Throwable t2) {
-			t.addSuppressed(t2);
+		} catch(Throwable t) {
+			t1 = Throwables.addSuppressed(t1, t);
 		}
-		return rolledBack;
+		return t1;
 	}
 
 	/**
@@ -318,17 +320,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 					} catch(Throwable t) {
 						t1 = t;
 					} finally {
-						try {
-							c.close();
-						} catch(ThreadDeath td) {
-							throw td;
-						} catch(Throwable t) {
-							if(t1 == null) {
-								t1 = t;
-							} else {
-								t1.addSuppressed(t);
-							}
-						}
+						t1 = AutoCloseables.close(t1, c);
 					}
 				}
 			} finally {
@@ -337,11 +329,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				} catch(ThreadDeath td) {
 					throw td;
 				} catch(Throwable t) {
-					if(t1 == null) {
-						t1 = t;
-					} else {
-						t1.addSuppressed(t);
-					}
+					t1 = Throwables.addSuppressed(t1, t);
 				}
 			}
 			if(t1 != null) {
@@ -361,21 +349,23 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * connection closed.  This close is distinct from {@link #close(java.lang.Throwable)}, which is intended for
 	 * releasing to the underlying pool.
 	 *
-	 * @param  t  Any exceptions will be added here via {@link Throwable#addSuppressed(java.lang.Throwable)}
+	 * @param  t1  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
 	 *
-	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
+	 * @return  The given exception, or new exception, or {@code null} when none given and none new
+	 *
+	 * @see  #rollbackAndClose()
+	 * @see  Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	public boolean rollbackAndClose(Throwable t) {
-		boolean rolledBack = false;
+	public Throwable rollbackAndClose(Throwable t1) {
 		try {
-			rolledBack = rollbackAndClose();
+			rollbackAndClose();
 		} catch(ThreadDeath td) {
 			throw td;
-		} catch(Throwable t2) {
-			t.addSuppressed(t2);
+		} catch(Throwable t) {
+			t1 = Throwables.addSuppressed(t1, t);
 		}
-		return rolledBack;
+		return t1;
 	}
 
 	private static class StreamCloser implements Runnable {
@@ -391,26 +381,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		@Override
 		@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 		public void run() {
-			Throwable t1 = null;
-			try {
-				results.close();
-			} catch(ThreadDeath td) {
-				throw td;
-			} catch(Throwable t) {
-				t1 = t;
-			}
-			try {
-				stmt.close();
-			} catch(ThreadDeath td) {
-				throw td;
-			} catch(Throwable t) {
-				if(t1 == null) {
-					t1 = t;
-				} else {
-					// TODO: ao-lang version for addSuppressed, since an exception can't suppress itself, and it's possible (albeit unlikely) we got the same exception twice.  Use globally
-					t1.addSuppressed(t);
-				}
-			}
+			Throwable t1 = AutoCloseables.close(results, stmt);
 			if(t1 instanceof Error) throw (Error)t1;
 			if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
 			throw new WrappedException(t1);
@@ -418,7 +389,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	@Override
-	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
 	public DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -479,14 +450,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				} catch(ThreadDeath td) {
 					throw td;
 				} catch(Throwable t) {
-					try {
-						results.close();
-					} catch(ThreadDeath td) {
-						throw td;
-					} catch(Throwable t2) {
-						t.addSuppressed(t2);
-					}
-					throw t;
+					throw AutoCloseables.close(t, results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
@@ -494,13 +458,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		} catch(ThreadDeath td) {
 			throw td;
 		} catch(Throwable t) {
-			try {
-				pstmt.close();
-			} catch(ThreadDeath td) {
-				throw td;
-			} catch(Throwable t2) {
-				t.addSuppressed(t2);
-			}
+			t = AutoCloseables.close(t, pstmt);
 			if(t instanceof Error) throw (Error)t;
 			if(t instanceof RuntimeException) throw (RuntimeException)t;
 			if(t instanceof SQLException) throw (SQLException)t;
@@ -509,7 +467,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	@Override
-	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
 	public IntStream intStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -570,14 +528,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				} catch(ThreadDeath td) {
 					throw td;
 				} catch(Throwable t) {
-					try {
-						results.close();
-					} catch(ThreadDeath td) {
-						throw td;
-					} catch(Throwable t2) {
-						t.addSuppressed(t2);
-					}
-					throw t;
+					throw AutoCloseables.close(t, results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
@@ -585,13 +536,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		} catch(ThreadDeath td) {
 			throw td;
 		} catch(Throwable t) {
-			try {
-				pstmt.close();
-			} catch(ThreadDeath td) {
-				throw td;
-			} catch(Throwable t2) {
-				t.addSuppressed(t2);
-			}
+			t = AutoCloseables.close(t, pstmt);
 			if(t instanceof Error) throw (Error)t;
 			if(t instanceof RuntimeException) throw (RuntimeException)t;
 			if(t instanceof SQLException) throw (SQLException)t;
@@ -600,7 +545,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	@Override
-	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
 	public LongStream longStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -661,14 +606,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				} catch(ThreadDeath td) {
 					throw td;
 				} catch(Throwable t) {
-					try {
-						results.close();
-					} catch(ThreadDeath td) {
-						throw td;
-					} catch(Throwable t2) {
-						t.addSuppressed(t2);
-					}
-					throw t;
+					throw AutoCloseables.close(t, results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
@@ -676,13 +614,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		} catch(ThreadDeath td) {
 			throw td;
 		} catch(Throwable t) {
-			try {
-				pstmt.close();
-			} catch(ThreadDeath td) {
-				throw td;
-			} catch(Throwable t2) {
-				t.addSuppressed(t2);
-			}
+			t = AutoCloseables.close(t, pstmt);
 			if(t instanceof Error) throw (Error)t;
 			if(t instanceof RuntimeException) throw (RuntimeException)t;
 			if(t instanceof SQLException) throw (SQLException)t;
@@ -691,7 +623,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	@Override
-	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
 	public <T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -753,14 +685,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				} catch(ThreadDeath td) {
 					throw td;
 				} catch(Throwable t) {
-					try {
-						results.close();
-					} catch(ThreadDeath td) {
-						throw td;
-					} catch(Throwable t2) {
-						t.addSuppressed(t2);
-					}
-					throw t;
+					throw AutoCloseables.close(t, results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
@@ -768,13 +693,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		} catch(ThreadDeath td) {
 			throw td;
 		} catch(Throwable t) {
-			try {
-				pstmt.close();
-			} catch(ThreadDeath td) {
-				throw td;
-			} catch(Throwable t2) {
-				t.addSuppressed(t2);
-			}
+			t = AutoCloseables.close(t, pstmt);
 			if(t instanceof Error) throw (Error)t;
 			if(t instanceof RuntimeException) throw (RuntimeException)t;
 			if(t instanceof SQLException) throw (SQLException)t;
