@@ -148,44 +148,46 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	protected static void setParam(Connection conn, PreparedStatement pstmt, int pos, Object param) throws SQLException {
-		if(param==null) pstmt.setNull(pos, Types.VARCHAR);
-		else if(param instanceof Null) pstmt.setNull(pos, ((Null)param).getType());
-		else if(param instanceof Array) pstmt.setArray(pos, (Array)param);
-		else if(param instanceof BigDecimal) pstmt.setBigDecimal(pos, (BigDecimal)param);
-		else if(param instanceof BigInteger) pstmt.setBigDecimal(pos, new BigDecimal((BigInteger)param));
-		else if(param instanceof Blob) pstmt.setBlob(pos, (Blob)param);
-		else if(param instanceof Boolean) pstmt.setBoolean(pos, (Boolean)param);
-		else if(param instanceof Byte) pstmt.setByte(pos, (Byte)param);
-		else if(param instanceof byte[]) pstmt.setBytes(pos, (byte[])param);
-		else if(param instanceof Clob) pstmt.setClob(pos, (Clob)param);
-		else if(param instanceof Date) pstmt.setDate(pos, (Date)param);
-		else if(param instanceof Double) pstmt.setDouble(pos, (Double)param);
-		else if(param instanceof Float) pstmt.setFloat(pos, (Float)param);
-		else if(param instanceof Integer) pstmt.setInt(pos, (Integer)param);
-		else if(param instanceof InputStream) pstmt.setBinaryStream(pos, (InputStream)param);
-		else if(param instanceof Long) pstmt.setLong(pos, (Long)param);
-		else if(param instanceof NClob) pstmt.setNClob(pos, (NClob)param);
-		else if(param instanceof Reader) pstmt.setCharacterStream(pos, (Reader)param);
-		else if(param instanceof Ref) pstmt.setRef(pos, (Ref)param);
-		else if(param instanceof RowId) pstmt.setRowId(pos, (RowId)param);
-		else if(param instanceof Short) pstmt.setShort(pos, (Short)param);
-		else if(param instanceof SQLXML) pstmt.setSQLXML(pos, (SQLXML)param);
-		else if(param instanceof String) pstmt.setString(pos, (String)param);
-		else if(param instanceof Time) pstmt.setTime(pos, (Time)param);
-		else if(param instanceof Timestamp) pstmt.setTimestamp(pos, (Timestamp)param);
-		else if(param instanceof URL) pstmt.setURL(pos, (URL)param);
-		else if(param instanceof Enum) pstmt.setString(pos, ((Enum)param).name());
+		if(param == null)                     pstmt.setNull           (pos, Types.VARCHAR);
+		else if(param instanceof Null)        pstmt.setNull           (pos, ((Null)param).getType());
+		else if(param instanceof Array)       pstmt.setArray          (pos, (Array)param);
+		else if(param instanceof BigDecimal)  pstmt.setBigDecimal     (pos, (BigDecimal)param);
+		else if(param instanceof BigInteger)  pstmt.setBigDecimal     (pos, new BigDecimal((BigInteger)param));
+		else if(param instanceof Blob)        pstmt.setBlob           (pos, (Blob)param);
+		else if(param instanceof Boolean)     pstmt.setBoolean        (pos, (Boolean)param);
+		else if(param instanceof Byte)        pstmt.setByte           (pos, (Byte)param);
+		else if(param instanceof byte[])      pstmt.setBytes          (pos, (byte[])param);
+		else if(param instanceof Clob)        pstmt.setClob           (pos, (Clob)param);
+		else if(param instanceof Date)        pstmt.setDate           (pos, (Date)param);
+		else if(param instanceof Double)      pstmt.setDouble         (pos, (Double)param);
+		else if(param instanceof Float)       pstmt.setFloat          (pos, (Float)param);
+		else if(param instanceof Integer)     pstmt.setInt            (pos, (Integer)param);
+		else if(param instanceof InputStream) pstmt.setBinaryStream   (pos, (InputStream)param);
+		else if(param instanceof Long)        pstmt.setLong           (pos, (Long)param);
+		else if(param instanceof NClob)       pstmt.setNClob          (pos, (NClob)param);
+		else if(param instanceof Reader)      pstmt.setCharacterStream(pos, (Reader)param);
+		else if(param instanceof Ref)         pstmt.setRef            (pos, (Ref)param);
+		else if(param instanceof RowId)       pstmt.setRowId          (pos, (RowId)param);
+		else if(param instanceof Short)       pstmt.setShort          (pos, (Short)param);
+		else if(param instanceof SQLXML)      pstmt.setSQLXML         (pos, (SQLXML)param);
+		else if(param instanceof String)      pstmt.setString         (pos, (String)param);
+		else if(param instanceof Time)        pstmt.setTime           (pos, (Time)param);
+		else if(param instanceof Timestamp)   pstmt.setTimestamp      (pos, (Timestamp)param);
+		else if(param instanceof URL)         pstmt.setURL            (pos, (URL)param);
+		else if(param instanceof Enum)        pstmt.setString         (pos, ((Enum)param).name());
 		else if(
 			(param instanceof SQLData)
 			|| (param instanceof Struct)
-		) pstmt.setObject(pos, param);
-		else if(param instanceof String[]) {
+		) {
+			pstmt.setObject(pos, param);
+		} else if(param instanceof String[]) {
 			pstmt.setArray(pos, conn.createArrayOf("text", (Object[])param));
 		} else {
 			// Defaults to string with object.toString only when the class has a valueOf(String) method that will reconstitute it in AutoObjectFactory
 			Class<?> clazz = param.getClass();
-			if(AutoObjectFactory.getValueOfStringMethod(clazz)!=null) pstmt.setString(pos, param.toString());
-			else {
+			if(AutoObjectFactory.getValueOfStringMethod(clazz) != null) {
+				pstmt.setString(pos, param.toString());
+			} else {
 				// Call setObject here, to give the database driver a chance to decide what to do
 				pstmt.setObject(pos, param);
 				//throw new SQLException("Unexpected parameter class: "+clazz.getName());
