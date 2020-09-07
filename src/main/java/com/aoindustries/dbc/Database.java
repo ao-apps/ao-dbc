@@ -150,8 +150,8 @@ public class Database implements DatabaseAccess {
 			conn = pool.getConnection(isolationLevel, readOnly, maxConnections);
 			try {
 				assert conn.getAutoCommit();
-				assert conn.getTransactionIsolation() == isolationLevel;
 				assert conn.isReadOnly() == readOnly;
+				assert conn.getTransactionIsolation() == isolationLevel;
 				initSqlDataTypes(conn);
 				initConnection(conn);
 			} catch(ThreadDeath td) {

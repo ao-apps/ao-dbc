@@ -70,31 +70,78 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		return database;
 	}
 
+	/**
+	 * @see  #getConnection(int, boolean, int)
+	 */
 	public Connection getConnection(int isolationLevel, boolean readOnly) throws SQLException {
 		return getConnection(isolationLevel, readOnly, 1);
 	}
 
+	/**
+	 * Gets the connection to the underlying database.
+	 * <p>
+	 * Uses a deferred connection strategy.  If not previously connected, establishes the connection now.  This allows
+	 * applications to create {@link DatabaseConnection} at no cost, only connecting to the database when first needed.
+	 * This is helpful for when a transaction scope is established at a high level, where the actual use (or lack
+	 * thereof) of the database is unknown.
+	 * </p>
+	 * <p>
+	 * The default auto-commit state depends on the read-only and isolation levels.  Upon initial connection,
+	 * auto-commit is enabled.  It then remains unchanged while is read-only and at an isolation level of
+	 * {@link Connection#TRANSACTION_READ_COMMITTED} or below.  This means, conversely, that auto-commit is disabled
+	 * when is either read-write or at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ} or above.
+	 * </p>
+	 * <p>
+	 * When a connection already exists, its read-only mode may be changed, but may not be changed on a connection that
+	 * has auto-commit disabled (which typically means it was either already read-write or at an isolation level of
+	 * {@link Connection#TRANSACTION_REPEATABLE_READ} or above).
+	 * </p>
+	 * <p>
+	 * With the default auto-commit behavior (auto-commit not disabled by application), <strong>it is an error to try to
+	 * change from read-only to read-write while at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
+	 * or above,</strong> as the necessary actions to make the change would break the repeatable-read guarantee.
+	 * </p>
+	 * <p>
+	 * Read-write connections will not be set back to read-only mode when the connection has auto-commit disabled, thus
+	 * <strong>the read-only flag is an optimization and an extra level of protection, but cannot be relied upon due to
+	 * potentially being within the scope of a larger read-write transaction.</strong>
+	 * </p>
+	 * <p>
+	 * When a connection already exists, its isolation level may be increased, but will never be decreased.  However,
+	 * the ability to change the isolation level within a transaction is driver dependent.  It is best to set the
+	 * highest isolation level that will be required at the beginning of the transaction.
+	 * </p>
+	 *
+	 * @see  Connection#setReadOnly(boolean)
+	 * @see  Connection#setTransactionIsolation(int)
+	 * @see  Connection#setAutoCommit(boolean)
+	 */
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
 		Connection c = _conn;
 		if(c == null) {
+			// New connection
 			c = database.getConnection(isolationLevel, readOnly, maxConnections);
-			if(!readOnly || isolationLevel>=Connection.TRANSACTION_REPEATABLE_READ) c.setAutoCommit(false);
+			assert c.getAutoCommit();
+			assert c.isReadOnly() == readOnly;
+			assert c.getTransactionIsolation() == isolationLevel;
 			_conn = c;
-		} else if(c.getTransactionIsolation()<isolationLevel) {
-			if(!c.getAutoCommit()) {
-				// c.commit();
-				c.setAutoCommit(true);
+		} else {
+			// Existing connection
+			if(c.isReadOnly() != readOnly) {
+				if(readOnly) {
+					// Set back to read-only when auto-commit enabled, otherwise leave read-write
+					if(c.getAutoCommit()) c.setReadOnly(true);
+				} else {
+					// Let driver try to set read-write (which may fail if already in transaction)
+					c.setReadOnly(false);
+				}
 			}
-			c.setTransactionIsolation(isolationLevel);
-			if(!readOnly && c.isReadOnly()) c.setReadOnly(false);
-			if(!readOnly || isolationLevel>=Connection.TRANSACTION_REPEATABLE_READ) c.setAutoCommit(false);
-		} else if(!readOnly && c.isReadOnly()) {
-			if(!c.getAutoCommit()) {
-				// May be able to get rid of the commit - setAutoCommit should commit according to the documentation
-				// c.commit();
-				c.setAutoCommit(true);
+			if(c.getTransactionIsolation() < isolationLevel) {
+				// Let driver try to set isolation level (which may fail if already in transaction)
+				c.setTransactionIsolation(isolationLevel);
 			}
-			c.setReadOnly(false);
+		}
+		if(!readOnly || isolationLevel >= Connection.TRANSACTION_REPEATABLE_READ) {
 			c.setAutoCommit(false);
 		}
 		return c;
@@ -156,7 +203,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	@Override
 	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
-		conn.setAutoCommit(false); // TODO: Consolidate this repeated setAutoCommit(false) into getConnection
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			try {
 				pstmt.setFetchSize(FETCH_SIZE);

@@ -127,6 +127,12 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						if the connection is not auto-commit, it will be rolled-back and set to auto-commit.  As this is
 						not expected to happen normally, a warning will be logged.
 					</li>
+					<li>
+						<code>Database.getConnection(…)</code> will no longer perform automatic commits to facilitate
+						read-only and transaction isolation level changes.  Exceptions may now be thrown by the underlying
+						JDBC driver when attempts are made to change read-only state or isolation levels during a
+						transaction; this is a safer behavior.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
