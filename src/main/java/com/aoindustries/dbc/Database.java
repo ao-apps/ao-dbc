@@ -130,6 +130,17 @@ public class Database implements DatabaseAccess {
 
 	private final Map<Connection,Map<String,Class<?>>> oldTypeMaps = new IdentityHashMap<>();
 
+	/**
+	 * Gets a connection to the database.
+	 * The connection will be in {@linkplain Connection#getAutoCommit() auto-commit} mode, and have the given
+	 * {@linkplain Connection#getTransactionIsolation() isolation level} and
+	 * {@linkplain Connection#isReadOnly() read-only mode}.
+	 * <p>
+	 * When obtaining a connection from a {@link DataSource}, if the connection is not in
+	 * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
+	 * be rolled-back and set to auto-commit.
+	 * </p>
+	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
 		Connection conn;
@@ -138,6 +149,9 @@ public class Database implements DatabaseAccess {
 			// From pool
 			conn = pool.getConnection(isolationLevel, readOnly, maxConnections);
 			try {
+				assert conn.getAutoCommit();
+				assert conn.getTransactionIsolation() == isolationLevel;
+				assert conn.isReadOnly() == readOnly;
 				initSqlDataTypes(conn);
 				initConnection(conn);
 			} catch(ThreadDeath td) {
@@ -159,8 +173,13 @@ public class Database implements DatabaseAccess {
 			// From dataSource
 			conn = dataSource.getConnection();
 			try {
-				if(isolationLevel != conn.getTransactionIsolation()) conn.setTransactionIsolation(isolationLevel);
-				if(readOnly != conn.isReadOnly()) conn.setReadOnly(readOnly);
+				if(!conn.getAutoCommit()) {
+					logger.warning("Rolling-back and setting auto-commit on Connection from DataSource that is not in auto-commit mode");
+					conn.rollback();
+					conn.setAutoCommit(true);
+				}
+				if(conn.isReadOnly() != readOnly) conn.setReadOnly(readOnly);
+				if(conn.getTransactionIsolation() != isolationLevel) conn.setTransactionIsolation(isolationLevel);
 				initSqlDataTypes(conn);
 				initConnection(conn);
 			} catch(ThreadDeath td) {

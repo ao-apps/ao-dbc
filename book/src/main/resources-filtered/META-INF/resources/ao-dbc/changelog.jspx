@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-06T09:07:04-05:00"
+		dateModified="2020-09-06T22:55:50-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -122,6 +122,11 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Declared throws of <code>ExtraRowException</code> where it may occur.</li>
 					<li>No longer automatically rollback transaction on <code>ExtraRowException</code>.</li>
+					<li>
+						When <code>Database.getConnection(…)</code> gets a connection from an underlying <code>DataSource</code>,
+						if the connection is not auto-commit, it will be rolled-back and set to auto-commit.  As this is
+						not expected to happen normally, a warning will be logged.
+					</li>
 				</ul>
 			</changelog:release>
 		</c:if>
