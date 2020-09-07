@@ -238,4 +238,12 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 			throw new SQLException(t);
 		}
 	}
+
+	/**
+	 * @return  {@code false}
+	 */
+	@Override
+	public boolean isNullable() {
+		return false;
+	}
 }

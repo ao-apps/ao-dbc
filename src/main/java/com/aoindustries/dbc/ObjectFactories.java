@@ -51,6 +51,13 @@ final public class ObjectFactories {
 
 	public static final ObjectFactory<java.sql.Date> Date = result -> result.getDate(1);
 
+	public static final ObjectFactory<java.lang.Double> Double = result -> {
+		double d = result.getDouble(1);
+		return result.wasNull() ? null : d;
+	};
+
+	// TODO: Float, along with query/update
+
 	public static final ObjectFactory<java.lang.Integer> Integer = result -> {
 		int i = result.getInt(1);
 		return result.wasNull() ? null : i;
@@ -92,6 +99,14 @@ final public class ObjectFactories {
 				throw new SQLException(clazz.getName() + "(java.sql.ResultSet)", t);
 			}
 		}
+
+		/**
+		 * @return  {@code false}
+		 */
+		@Override
+		public boolean isNullable() {
+			return false;
+		}
 	};
 
 	public static final ObjectFactory<java.lang.Short> Short = result -> {
@@ -102,4 +117,89 @@ final public class ObjectFactories {
 	public static final ObjectFactory<java.lang.String> String = result -> result.getString(1);
 
 	public static final ObjectFactory<java.sql.Timestamp> Timestamp = result -> result.getTimestamp(1);
+
+	/**
+	 * Wraps an object factory, throwing {@link NullDataException} on any {@code null} result.
+	 */
+	private static class NotNullE<T,E extends Exception> implements ObjectFactoryE<T,E> {
+
+		private final ObjectFactoryE<T,E> objectFactory;
+
+		private NotNullE(ObjectFactoryE<T,E> objectFactory) {
+			this.objectFactory = objectFactory;
+		}
+
+		@Override
+		public T createObject(ResultSet result) throws NullDataException, SQLException, E {
+			T obj = objectFactory.createObject(result);
+			if(obj == null) throw new NullDataException();
+			return obj;
+		}
+
+		/**
+		 * @return  {@code false}
+		 */
+		@Override
+		final public boolean isNullable() {
+			return false;
+		}
+	}
+
+	/**
+	 * Wraps an object factory, throwing {@link NullDataException} on any {@code null} result.
+	 */
+	private static final class NotNull<T> extends NotNullE<T,RuntimeException> implements ObjectFactory<T> {
+		
+		private NotNull(ObjectFactory<T> objectFactory) {
+			super(objectFactory);
+		}
+	}
+
+	/**
+	 * Wraps an object factory, unless it is already not {@linkplain ObjectFactory#isNullable() nullable}.
+	 *
+	 * @return  If {@linkplain ObjectFactory#isNullable() nullable}, trusts the given object factory to no return
+	 *          {@code null}, otherwise wraps.  Also wraps when assertions are enabled.
+	 */
+	@SuppressWarnings({"AssertWithSideEffects", "overloads"})
+	public static <T,E extends Exception> ObjectFactoryE<T,E> notNull(ObjectFactoryE<T,E> objectFactory) {
+		boolean wrap;
+		if(objectFactory.isNullable()) {
+			// Needs wrapping
+			wrap = true;
+		} else if(objectFactory instanceof NotNull) {
+			// Already wrapped
+			return objectFactory;
+		} else {
+			boolean assertionsEnabled = false;
+			assert (assertionsEnabled = true) : "Detecting enabled assertions";
+			// When assertions enabled, wrap for additional runtime verification
+			wrap = assertionsEnabled;
+		}
+		return wrap ? new NotNullE<>(objectFactory) : objectFactory;
+	}
+
+	/**
+	 * Wraps an object factory, unless it is already not {@linkplain ObjectFactory#isNullable() nullable}.
+	 *
+	 * @return  If {@linkplain ObjectFactory#isNullable() nullable}, trusts the given object factory to no return
+	 *          {@code null}, otherwise wraps.  Also wraps when assertions are enabled.
+	 */
+	@SuppressWarnings({"AssertWithSideEffects", "overloads"})
+	public static <T> ObjectFactory<T> notNull(ObjectFactory<T> objectFactory) {
+		boolean wrap;
+		if(objectFactory.isNullable()) {
+			// Needs wrapping
+			wrap = true;
+		} else if(objectFactory instanceof NotNull) {
+			// Already wrapped
+			return objectFactory;
+		} else {
+			boolean assertionsEnabled = false;
+			assert (assertionsEnabled = true) : "Detecting enabled assertions";
+			// When assertions enabled, wrap for additional runtime verification
+			wrap = assertionsEnabled;
+		}
+		return wrap ? new NotNull<>(objectFactory) : objectFactory;
+	}
 }

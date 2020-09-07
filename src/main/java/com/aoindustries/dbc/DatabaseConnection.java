@@ -42,10 +42,21 @@ import java.sql.RowId;
 import java.sql.SQLData;
 import java.sql.SQLException;
 import java.sql.SQLXML;
+import java.sql.Statement;
 import java.sql.Struct;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * A <code>DatabaseConnection</code> is used to only get actual database connections when needed.
@@ -367,6 +378,411 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		return rolledBack;
 	}
 
+	private static class StreamCloser implements Runnable {
+
+		private final Statement stmt;
+		private final ResultSet results;
+
+		private StreamCloser(Statement stmt, ResultSet results) {
+			this.stmt = stmt;
+			this.results = results;
+		}
+
+		@Override
+		@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+		public void run() {
+			Throwable t1 = null;
+			try {
+				results.close();
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t) {
+				t1 = t;
+			}
+			try {
+				stmt.close();
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t) {
+				if(t1 == null) {
+					t1 = t;
+				} else {
+					// TODO: ao-lang version for addSuppressed, since an exception can't suppress itself, and it's possible (albeit unlikely) we got the same exception twice.  Use globally
+					t1.addSuppressed(t);
+				}
+			}
+			if(t1 instanceof Error) throw (Error)t1;
+			if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
+			throw new WrappedException(t1);
+		}
+	}
+
+	@Override
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	public DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+		Connection conn = getConnection(isolationLevel, readOnly);
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		try {
+			try {
+				pstmt.setFetchSize(FETCH_SIZE);
+				setParams(conn, pstmt, params);
+				ResultSet results = pstmt.executeQuery();
+				try {
+					return StreamSupport.doubleStream(
+						Spliterators.spliteratorUnknownSize(
+							new PrimitiveIterator.OfDouble() {
+								private double next;
+								private boolean nextSet; // next may be null, so extra flag
+
+								@Override
+								@SuppressWarnings("UseSpecificCatch")
+								public boolean hasNext() {
+									try {
+										if(!nextSet && results.next()) {
+											next = results.getDouble(1);
+											if(results.wasNull()) throw new NullDataException();
+											nextSet = true;
+										}
+										return nextSet;
+									} catch(RuntimeException e) {
+										throw e;
+									} catch(Exception e) {
+										throw new WrappedException(e);
+									}
+								}
+
+								@Override
+								@SuppressWarnings("UseSpecificCatch")
+								public double nextDouble() {
+									try {
+										if(nextSet) {
+											nextSet = false;
+											return next;
+										} else if(results.next()) {
+											double d = results.getDouble(1);
+											if(results.wasNull()) throw new NullDataException();
+											return d;
+										} else {
+											throw new NoSuchElementException();
+										}
+									} catch(RuntimeException e) {
+										throw e;
+									} catch(Exception e) {
+										throw new WrappedException(e);
+									}
+								}
+							},
+							Spliterator.ORDERED | Spliterator.NONNULL
+						),
+						false
+					).onClose(new StreamCloser(pstmt, results));
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Throwable t) {
+					try {
+						results.close();
+					} catch(ThreadDeath td) {
+						throw td;
+					} catch(Throwable t2) {
+						t.addSuppressed(t2);
+					}
+					throw t;
+				}
+			} catch(SQLException err) {
+				throw new WrappedSQLException(err, pstmt);
+			}
+		} catch(ThreadDeath td) {
+			throw td;
+		} catch(Throwable t) {
+			try {
+				pstmt.close();
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t2) {
+				t.addSuppressed(t2);
+			}
+			if(t instanceof Error) throw (Error)t;
+			if(t instanceof RuntimeException) throw (RuntimeException)t;
+			if(t instanceof SQLException) throw (SQLException)t;
+			throw new SQLException(t);
+		}
+	}
+
+	@Override
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	public IntStream intStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+		Connection conn = getConnection(isolationLevel, readOnly);
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		try {
+			try {
+				pstmt.setFetchSize(FETCH_SIZE);
+				setParams(conn, pstmt, params);
+				ResultSet results = pstmt.executeQuery();
+				try {
+					return StreamSupport.intStream(
+						Spliterators.spliteratorUnknownSize(
+							new PrimitiveIterator.OfInt() {
+								private int next;
+								private boolean nextSet; // next may be null, so extra flag
+
+								@Override
+								@SuppressWarnings("UseSpecificCatch")
+								public boolean hasNext() {
+									try {
+										if(!nextSet && results.next()) {
+											next = results.getInt(1);
+											if(results.wasNull()) throw new NullDataException();
+											nextSet = true;
+										}
+										return nextSet;
+									} catch(RuntimeException e) {
+										throw e;
+									} catch(Exception e) {
+										throw new WrappedException(e);
+									}
+								}
+
+								@Override
+								@SuppressWarnings("UseSpecificCatch")
+								public int nextInt() {
+									try {
+										if(nextSet) {
+											nextSet = false;
+											return next;
+										} else if(results.next()) {
+											int i = results.getInt(1);
+											if(results.wasNull()) throw new NullDataException();
+											return i;
+										} else {
+											throw new NoSuchElementException();
+										}
+									} catch(RuntimeException e) {
+										throw e;
+									} catch(Exception e) {
+										throw new WrappedException(e);
+									}
+								}
+							},
+							Spliterator.ORDERED | Spliterator.NONNULL
+						),
+						false
+					).onClose(new StreamCloser(pstmt, results));
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Throwable t) {
+					try {
+						results.close();
+					} catch(ThreadDeath td) {
+						throw td;
+					} catch(Throwable t2) {
+						t.addSuppressed(t2);
+					}
+					throw t;
+				}
+			} catch(SQLException err) {
+				throw new WrappedSQLException(err, pstmt);
+			}
+		} catch(ThreadDeath td) {
+			throw td;
+		} catch(Throwable t) {
+			try {
+				pstmt.close();
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t2) {
+				t.addSuppressed(t2);
+			}
+			if(t instanceof Error) throw (Error)t;
+			if(t instanceof RuntimeException) throw (RuntimeException)t;
+			if(t instanceof SQLException) throw (SQLException)t;
+			throw new SQLException(t);
+		}
+	}
+
+	@Override
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	public LongStream longStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+		Connection conn = getConnection(isolationLevel, readOnly);
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		try {
+			try {
+				pstmt.setFetchSize(FETCH_SIZE);
+				setParams(conn, pstmt, params);
+				ResultSet results = pstmt.executeQuery();
+				try {
+					return StreamSupport.longStream(
+						Spliterators.spliteratorUnknownSize(
+							new PrimitiveIterator.OfLong() {
+								private long next;
+								private boolean nextSet; // next may be null, so extra flag
+
+								@Override
+								@SuppressWarnings("UseSpecificCatch")
+								public boolean hasNext() {
+									try {
+										if(!nextSet && results.next()) {
+											next = results.getLong(1);
+											if(results.wasNull()) throw new NullDataException();
+											nextSet = true;
+										}
+										return nextSet;
+									} catch(RuntimeException e) {
+										throw e;
+									} catch(Exception e) {
+										throw new WrappedException(e);
+									}
+								}
+
+								@Override
+								@SuppressWarnings("UseSpecificCatch")
+								public long nextLong() {
+									try {
+										if(nextSet) {
+											nextSet = false;
+											return next;
+										} else if(results.next()) {
+											long l = results.getLong(1);
+											if(results.wasNull()) throw new NullDataException();
+											return l;
+										} else {
+											throw new NoSuchElementException();
+										}
+									} catch(RuntimeException e) {
+										throw e;
+									} catch(Exception e) {
+										throw new WrappedException(e);
+									}
+								}
+							},
+							Spliterator.ORDERED | Spliterator.NONNULL
+						),
+						false
+					).onClose(new StreamCloser(pstmt, results));
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Throwable t) {
+					try {
+						results.close();
+					} catch(ThreadDeath td) {
+						throw td;
+					} catch(Throwable t2) {
+						t.addSuppressed(t2);
+					}
+					throw t;
+				}
+			} catch(SQLException err) {
+				throw new WrappedSQLException(err, pstmt);
+			}
+		} catch(ThreadDeath td) {
+			throw td;
+		} catch(Throwable t) {
+			try {
+				pstmt.close();
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t2) {
+				t.addSuppressed(t2);
+			}
+			if(t instanceof Error) throw (Error)t;
+			if(t instanceof RuntimeException) throw (RuntimeException)t;
+			if(t instanceof SQLException) throw (SQLException)t;
+			throw new SQLException(t);
+		}
+	}
+
+	@Override
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	public <T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+		Connection conn = getConnection(isolationLevel, readOnly);
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		try {
+			try {
+				pstmt.setFetchSize(FETCH_SIZE);
+				setParams(conn, pstmt, params);
+				ResultSet results = pstmt.executeQuery();
+				try {
+					int characteristics = Spliterator.ORDERED;
+					if(!objectFactory.isNullable()) characteristics |= Spliterator.NONNULL;
+					return StreamSupport.stream(
+						Spliterators.spliteratorUnknownSize(
+							new Iterator<T>() {
+								private T next;
+								private boolean nextSet; // next may be null, so extra flag
+
+								@Override
+								@SuppressWarnings("UseSpecificCatch")
+								public boolean hasNext() {
+									try {
+										if(!nextSet && results.next()) {
+											next = objectFactory.createObject(results);
+											nextSet = true;
+										}
+										return nextSet;
+									} catch(RuntimeException e) {
+										throw e;
+									} catch(Exception e) {
+										throw new WrappedException(e);
+									}
+								}
+
+								@Override
+								@SuppressWarnings("UseSpecificCatch")
+								public T next() {
+									try {
+										if(nextSet) {
+											T t = next;
+											next = null;
+											nextSet = false;
+											return t;
+										} else if(results.next()) {
+											return objectFactory.createObject(results);
+										} else {
+											throw new NoSuchElementException();
+										}
+									} catch(RuntimeException e) {
+										throw e;
+									} catch(Exception e) {
+										throw new WrappedException(e);
+									}
+								}
+							},
+							characteristics
+						),
+						false
+					).onClose(new StreamCloser(pstmt, results));
+				} catch(ThreadDeath td) {
+					throw td;
+				} catch(Throwable t) {
+					try {
+						results.close();
+					} catch(ThreadDeath td) {
+						throw td;
+					} catch(Throwable t2) {
+						t.addSuppressed(t2);
+					}
+					throw t;
+				}
+			} catch(SQLException err) {
+				throw new WrappedSQLException(err, pstmt);
+			}
+		} catch(ThreadDeath td) {
+			throw td;
+		} catch(Throwable t) {
+			try {
+				pstmt.close();
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t2) {
+				t.addSuppressed(t2);
+			}
+			if(t instanceof Error) throw (Error)t;
+			if(t instanceof RuntimeException) throw (RuntimeException)t;
+			if(t instanceof SQLException) throw (SQLException)t;
+			throw new SQLException(t);
+		}
+	}
+
+	// TODO: Shorten all to just "query" and "update", with deprecated defaults
 	@Override
 	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);

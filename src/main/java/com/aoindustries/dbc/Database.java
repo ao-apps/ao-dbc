@@ -35,6 +35,10 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 import javax.sql.DataSource;
 
 /**
@@ -448,6 +452,34 @@ public class Database implements DatabaseAccess {
 	 */
 	protected void initConnection(Connection conn) throws SQLException {
 		// Do nothing
+	}
+
+	@Override
+	public DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+		return executeTransaction((DatabaseConnection conn) ->
+			conn.doubleStream(isolationLevel, readOnly, sql, params)
+		);
+	}
+
+	@Override
+	public IntStream intStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+		return executeTransaction((DatabaseConnection conn) ->
+			conn.intStream(isolationLevel, readOnly, sql, params)
+		);
+	}
+
+	@Override
+	public LongStream longStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+		return executeTransaction((DatabaseConnection conn) ->
+			conn.longStream(isolationLevel, readOnly, sql, params)
+		);
+	}
+
+	@Override
+	public <T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+		return executeTransaction(eClass, (DatabaseConnection conn) ->
+			conn.stream(isolationLevel, readOnly, eClass, objectFactory, sql, params)
+		);
 	}
 
 	@Override

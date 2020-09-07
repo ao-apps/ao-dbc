@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2014, 2015, 2019  AO Industries, Inc.
+ * Copyright (C) 2014, 2015, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,6 +24,7 @@ package com.aoindustries.dbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Spliterator;
 
 /**
  * Creates instances of objects of the generics type from a result set.
@@ -37,4 +38,16 @@ public interface ObjectFactoryE<T,E extends Exception> {
 	 * Creates one object from the current values in the ResultSet.
 	 */
 	T createObject(ResultSet result) throws SQLException, E;
+
+	/**
+	 * Can this object factory return {@code null} from {@link #createObject(java.sql.ResultSet)}?
+	 * <p>
+	 * Note: This is used to enable the {@link Spliterator#NONNULL} on streams.
+	 * </p>
+	 *
+	 * @return  {@code true} by default
+	 */
+	default boolean isNullable() {
+		return true;
+	}
 }

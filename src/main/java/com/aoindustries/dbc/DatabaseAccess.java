@@ -37,12 +37,17 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 /**
  * Wraps and simplifies access to a JDBC database.
  *
  * @author  AO Industries, Inc.
  */
+// TODO: Clean-up javadoc consistency (especially use of <code> tags)
 public interface DatabaseAccess {
 
 	/**
@@ -185,11 +190,7 @@ public interface DatabaseAccess {
 			isolationLevel,
 			readOnly,
 			rowRequired,
-			result -> {
-				boolean b = result.getBoolean(1);
-				if(result.wasNull()) throw new NullDataException();
-				return b;
-			},
+			ObjectFactories.notNull(ObjectFactories.Boolean),
 			sql,
 			params
 		);
@@ -278,6 +279,131 @@ public interface DatabaseAccess {
 	}
 
 	/**
+	 * Read-only query the database with a <code>double</code> return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>rowRequired = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #updateDouble(java.lang.String, java.lang.Object[])
+	 */
+	default double executeDoubleQuery(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+		return queryDouble(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a <code>double</code> return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>rowRequired = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #executeDoubleQuery(java.lang.String, java.lang.Object...)
+	 */
+	default double updateDouble(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+		return queryDouble(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+	}
+
+	/**
+	 * Query the database with a <code>double</code> return type.
+	 *
+	 * @return  The value or {@code null} when no row and row not required.
+	 *
+	 * @throws  NullDataException  When has a row, but with NULL value.
+	 */
+	default Double queryDouble(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+		return executeObjectQuery(
+			isolationLevel,
+			readOnly,
+			rowRequired,
+			ObjectFactories.notNull(ObjectFactories.Double),
+			sql,
+			params
+		);
+	}
+
+	/**
+	 * Read-only query the database with a {@link DoubleStream} return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #doubleStreamUpdate(java.lang.String, java.lang.Object[])
+	 */
+	default DoubleStream doubleStream(String sql, Object ... params) throws NullDataException, SQLException {
+		return doubleStream(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a {@link DoubleStream} return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>false</code></li>
+	 * </ul>
+	 *
+	 * @see  #doubleStream(java.lang.String, java.lang.Object[])
+	 */
+	default DoubleStream doubleStreamUpdate(String sql, Object ... params) throws NullDataException, SQLException {
+		return doubleStream(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+	}
+
+	/**
+	 * Query the database with a {@link DoubleStream} return type.
+	 */
+	DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException;
+
+	// TODO: Float
+
+	/**
+	 * Read-only query the database with an <code>int</code> return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>rowRequired = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #executeIntUpdate(java.lang.String, java.lang.Object...)
+	 */
+	default int executeIntQuery(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+		return executeIntQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with an <code>int</code> return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>rowRequired = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #executeIntQuery(java.lang.String, java.lang.Object...)
+	 */
+	default int executeIntUpdate(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+		return executeIntQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+	}
+
+	/**
+	 * Query the database with an <code>int</code> return type.
+	 *
+	 * @return  The value or {@code null} when no row and row not required.
+	 *
+	 * @throws  NullDataException  When has a row, but with NULL value.
+	 */
+	default Integer executeIntQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+		return executeObjectQuery(
+			isolationLevel,
+			readOnly,
+			rowRequired,
+			ObjectFactories.notNull(ObjectFactories.Integer),
+			sql,
+			params
+		);
+	}
+
+	/**
 	 * Read-only query the database with an <code>IntList</code> return type.
 	 * <ul>
 	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
@@ -325,50 +451,77 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with an <code>int</code> return type.
+	 * Read-only query the database with an {@link IntStream} return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #intStreamUpdate(java.lang.String, java.lang.Object[])
+	 */
+	default IntStream intStream(String sql, Object ... params) throws NullDataException, SQLException {
+		return intStream(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with an {@link IntStream} return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>false</code></li>
+	 * </ul>
+	 *
+	 * @see  #intStream(java.lang.String, java.lang.Object[])
+	 */
+	default IntStream intStreamUpdate(String sql, Object ... params) throws NullDataException, SQLException {
+		return intStream(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+	}
+
+	/**
+	 * Query the database with an {@link IntStream} return type.
+	 */
+	IntStream intStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException;
+
+	/**
+	 * Read-only query the database with a <code>long</code> return type.
 	 * <ul>
 	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
 	 *   <li>readOnly = <code>true</code></li>
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
-	 * @see  #executeIntUpdate(java.lang.String, java.lang.Object...)
+	 * @see  #executeLongUpdate(java.lang.String, java.lang.Object...)
 	 */
-	default int executeIntQuery(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return executeIntQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+	default long executeLongQuery(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+		return executeLongQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
 	}
 
 	/**
-	 * Read-write query the database with an <code>int</code> return type.
+	 * Read-write query the database with a <code>long</code> return type.
 	 * <ul>
 	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
 	 *   <li>readOnly = <code>false</code></li>
 	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
-	 * @see  #executeIntQuery(java.lang.String, java.lang.Object...)
+	 * @see  #executeLongQuery(java.lang.String, java.lang.Object...)
 	 */
-	default int executeIntUpdate(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return executeIntQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+	default long executeLongUpdate(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+		return executeLongQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
 	}
 
 	/**
-	 * Query the database with an <code>int</code> return type.
+	 * Query the database with a <code>long</code> return type.
 	 *
 	 * @return  The value or {@code null} when no row and row not required.
 	 *
 	 * @throws  NullDataException  When has a row, but with NULL value.
 	 */
-	default Integer executeIntQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
+	default Long executeLongQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
 		return executeObjectQuery(
 			isolationLevel,
 			readOnly,
 			rowRequired,
-			result -> {
-				int i = result.getInt(1);
-				if(result.wasNull()) throw new NullDataException();
-				return i;
-			},
+			ObjectFactories.notNull(ObjectFactories.Long),
 			sql,
 			params
 		);
@@ -422,54 +575,35 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>long</code> return type.
+	 * Read-only query the database with a {@link LongStream} return type.
 	 * <ul>
 	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
 	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
-	 * @see  #executeLongUpdate(java.lang.String, java.lang.Object...)
+	 * @see  #longStreamUpdate(java.lang.String, java.lang.Object[])
 	 */
-	default long executeLongQuery(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return executeLongQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+	default LongStream longStream(String sql, Object ... params) throws NullDataException, SQLException {
+		return longStream(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
 	}
 
 	/**
-	 * Read-write query the database with a <code>long</code> return type.
+	 * Read-write query the database with a {@link LongStream} return type.
 	 * <ul>
 	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
 	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
 	 * </ul>
 	 *
-	 * @see  #executeLongQuery(java.lang.String, java.lang.Object...)
+	 * @see  #longStream(java.lang.String, java.lang.Object[])
 	 */
-	default long executeLongUpdate(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return executeLongQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+	default LongStream longStreamUpdate(String sql, Object ... params) throws NullDataException, SQLException {
+		return longStream(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
 	}
 
 	/**
-	 * Query the database with a <code>long</code> return type.
-	 *
-	 * @return  The value or {@code null} when no row and row not required.
-	 *
-	 * @throws  NullDataException  When has a row, but with NULL value.
+	 * Query the database with a {@link LongStream} return type.
 	 */
-	default Long executeLongQuery(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return executeObjectQuery(
-			isolationLevel,
-			readOnly,
-			rowRequired,
-			result -> {
-				long l = result.getLong(1);
-				if(result.wasNull()) throw new NullDataException();
-				return l;
-			},
-			sql,
-			params
-		);
-	}
+	LongStream longStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException;
 
 	/**
 	 * Read-only query the database with a <code>&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
@@ -639,9 +773,7 @@ public interface DatabaseAccess {
 	 * Query the database with a <code>List&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
 	 */
 	default <T> List<T> executeObjectListQuery(int isolationLevel, boolean readOnly, Class<T> clazz, String sql, Object ... params) throws SQLException {
-		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<>(), new ObjectFactories.Object<>(clazz), sql, params)
-		);
+		return executeObjectListQuery(isolationLevel, readOnly, new ObjectFactories.Object<>(clazz), sql, params);
 	}
 
 	/**
@@ -674,9 +806,7 @@ public interface DatabaseAccess {
 	 * Query the database with a <code>List&lt;T&gt;</code> return type, objects are created with the provided factory.
 	 */
 	default <T> List<T> executeObjectListQuery(int isolationLevel, boolean readOnly, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
-		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<>(), objectFactory, sql, params)
-		);
+		return executeObjectListQuery(isolationLevel, readOnly, RuntimeException.class, objectFactory, sql, params);
 	}
 
 	/**
@@ -713,6 +843,103 @@ public interface DatabaseAccess {
 			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<>(), eClass, objectFactory, sql, params)
 		);
 	}
+
+	/**
+	 * Read-only query the database with a <code>Stream&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #streamUpdate(java.lang.Class, java.lang.String, java.lang.Object[])
+	 */
+	default <T> Stream<T> stream(Class<T> clazz, String sql, Object ... params) throws SQLException {
+		return stream(Connection.TRANSACTION_READ_COMMITTED, true, clazz, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a <code>Stream&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>false</code></li>
+	 * </ul>
+	 *
+	 * @see  #stream(java.lang.Class, java.lang.String, java.lang.Object[])
+	 */
+	default <T> Stream<T> streamUpdate(Class<T> clazz, String sql, Object ... params) throws SQLException {
+		return stream(Connection.TRANSACTION_READ_COMMITTED, false, clazz, sql, params);
+	}
+
+	/**
+	 * Query the database with a <code>Stream&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 */
+	default <T> Stream<T> stream(int isolationLevel, boolean readOnly, Class<T> clazz, String sql, Object ... params) throws SQLException {
+		return stream(isolationLevel, readOnly, new ObjectFactories.Object<>(clazz), sql, params);
+	}
+
+	/**
+	 * Read-only query the database with a <code>Stream&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #streamUpdate(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object[])
+	 */
+	default <T> Stream<T> stream(ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
+		return stream(Connection.TRANSACTION_READ_COMMITTED, true, objectFactory, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a <code>Stream&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>false</code></li>
+	 * </ul>
+	 *
+	 * @see  #stream(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object[])
+	 */
+	default <T> Stream<T> streamUpdate(ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
+		return stream(Connection.TRANSACTION_READ_COMMITTED, false, objectFactory, sql, params);
+	}
+
+	/**
+	 * Query the database with a <code>Stream&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 */
+	default <T> Stream<T> stream(int isolationLevel, boolean readOnly, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
+		return stream(isolationLevel, readOnly, RuntimeException.class, objectFactory, sql, params);
+	}
+
+	/**
+	 * Read-only query the database with a <code>Stream&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #streamUpdate(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object[])
+	 */
+	default <T,E extends Exception> Stream<T> stream(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+		return stream(Connection.TRANSACTION_READ_COMMITTED, true, eClass, objectFactory, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a <code>Stream&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>false</code></li>
+	 * </ul>
+	 *
+	 * @see  #stream(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object[])
+	 */
+	default <T,E extends Exception> Stream<T> streamUpdate(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+		return stream(Connection.TRANSACTION_READ_COMMITTED, false, eClass, objectFactory, sql, params);
+	}
+
+	/**
+	 * Query the database with a <code>Stream&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 */
+	<T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E;
 
 	/**
 	 * Read-only query the database with a <code>Collection&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
@@ -893,41 +1120,6 @@ public interface DatabaseAccess {
 	<T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E;
 
 	/**
-	 * Read-only query the database with a {@code List<Short>} return type.
-	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 * </ul>
-	 *
-	 * @see  #executeShortListUpdate(java.lang.String, java.lang.Object...)
-	 */
-	default List<Short> executeShortListQuery(String sql, Object ... params) throws SQLException {
-		return executeShortListQuery(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
-	}
-
-	/**
-	 * Read-write query the database with a {@code List<Short>} return type.
-	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 * </ul>
-	 *
-	 * @see  #executeShortListQuery(java.lang.String, java.lang.Object...)
-	 */
-	default List<Short> executeShortListUpdate(String sql, Object ... params) throws SQLException {
-		return executeShortListQuery(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
-	}
-
-	/**
-	 * Query the database with a {@code List<Short>} return type.
-	 */
-	default List<Short> executeShortListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
-		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<>(), ObjectFactories.Short, sql, params)
-		);
-	}
-
-	/**
 	 * Read-only query the database with a <code>short</code> return type.
 	 * <ul>
 	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
@@ -967,14 +1159,76 @@ public interface DatabaseAccess {
 			isolationLevel,
 			readOnly,
 			rowRequired,
-			result -> {
-				short s = result.getShort(1);
-				if(result.wasNull()) throw new NullDataException();
-				return s;
-			},
+			ObjectFactories.notNull(ObjectFactories.Short),
 			sql,
 			params
 		);
+	}
+
+	/**
+	 * Read-only query the database with a {@code List<Short>} return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #executeShortListUpdate(java.lang.String, java.lang.Object...)
+	 */
+	default List<Short> executeShortListQuery(String sql, Object ... params) throws SQLException {
+		return executeShortListQuery(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a {@code List<Short>} return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>false</code></li>
+	 * </ul>
+	 *
+	 * @see  #executeShortListQuery(java.lang.String, java.lang.Object...)
+	 */
+	default List<Short> executeShortListUpdate(String sql, Object ... params) throws SQLException {
+		return executeShortListQuery(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+	}
+
+	/**
+	 * Query the database with a {@code List<Short>} return type.
+	 */
+	default List<Short> executeShortListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
+		return executeObjectListQuery(isolationLevel, readOnly, ObjectFactories.Short, sql, params);
+	}
+
+	/**
+	 * Read-only query the database with a {@code Stream<Short>} return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #streamShortUpdate(java.lang.String, java.lang.Object...)
+	 */
+	default Stream<Short> streamShort(String sql, Object ... params) throws SQLException {
+		return streamShort(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a {@code Stream<Short>} return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>false</code></li>
+	 * </ul>
+	 *
+	 * @see  #streamShort(java.lang.String, java.lang.Object[])
+	 */
+	default Stream<Short> streamShortUpdate(String sql, Object ... params) throws SQLException {
+		return streamShort(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+	}
+
+	/**
+	 * Query the database with a {@code Stream<Short>} return type.
+	 */
+	default Stream<Short> streamShort(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
+		return stream(isolationLevel, readOnly, ObjectFactories.Short, sql, params);
 	}
 
 	/**
@@ -1048,9 +1302,40 @@ public interface DatabaseAccess {
 	 * Query the database with a <code>List&lt;String&gt;</code> return type.
 	 */
 	default List<String> executeStringListQuery(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
-		return AoCollections.optimalUnmodifiableList(
-			executeObjectCollectionQuery(isolationLevel, readOnly, new ArrayList<>(), ObjectFactories.String, sql, params)
-		);
+		return executeObjectListQuery(isolationLevel, readOnly, ObjectFactories.String, sql, params);
+	}
+
+	/**
+	 * Read-only query the database with a <code>Stream&lt;String&gt;</code> return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>true</code></li>
+	 * </ul>
+	 *
+	 * @see  #streamStringUpdate(java.lang.String, java.lang.Object...)
+	 */
+	default Stream<String> streamString(String sql, Object ... params) throws SQLException {
+		return streamString(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a <code>Stream&lt;String&gt;</code> return type.
+	 * <ul>
+	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
+	 *   <li>readOnly = <code>false</code></li>
+	 * </ul>
+	 *
+	 * @see  #streamString(java.lang.String, java.lang.Object[])
+	 */
+	default Stream<String> streamStringUpdate(String sql, Object ... params) throws SQLException {
+		return streamString(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+	}
+
+	/**
+	 * Query the database with a <code>Stream&lt;String&gt;</code> return type.
+	 */
+	default Stream<String> streamString(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
+		return stream(isolationLevel, readOnly, ObjectFactories.String, sql, params);
 	}
 
 	/**
