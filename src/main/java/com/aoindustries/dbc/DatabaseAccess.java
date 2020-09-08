@@ -1439,20 +1439,21 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database, calling the {@link ResultSetHandler} once.
+	 * Read-only query the database, calling the {@link ResultSetCallable} once.
 	 * <ul>
 	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
-	 * @see  #update(com.aoindustries.dbc.ResultSetHandler, java.lang.String, java.lang.Object...)
+	 * @see  #update(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)
 	 */
-	default <T> T query(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
-		return query(Connection.TRANSACTION_READ_COMMITTED, true, resultSetHandler, sql, params);
+	@SuppressWarnings("overloads")
+	default <T> T query(ResultSetCallable<T> resultSetCallable, String sql, Object ... params) throws SQLException {
+		return query(Connection.TRANSACTION_READ_COMMITTED, true, resultSetCallable, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #query(com.aoindustries.dbc.ResultSetHandler, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #query(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> T executeQuery(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
@@ -1460,20 +1461,21 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database, calling the {@link ResultSetHandler} once.
+	 * Read-write query the database, calling the {@link ResultSetCallable} once.
 	 * <ul>
 	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
-	 * @see  #query(com.aoindustries.dbc.ResultSetHandler, java.lang.String, java.lang.Object...)
+	 * @see  #query(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)
 	 */
-	default <T> T update(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
-		return query(Connection.TRANSACTION_READ_COMMITTED, false, resultSetHandler, sql, params);
+	@SuppressWarnings("overloads")
+	default <T> T update(ResultSetCallable<T> resultSetCallable, String sql, Object ... params) throws SQLException {
+		return query(Connection.TRANSACTION_READ_COMMITTED, false, resultSetCallable, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #update(com.aoindustries.dbc.ResultSetHandler, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #update(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> T executeUpdate(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
@@ -1481,14 +1483,15 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database, calling the {@link ResultSetHandler} once.
+	 * Query the database, calling the {@link ResultSetCallable} once.
 	 */
-	default <T> T query(int isolationLevel, boolean readOnly, ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
-		return query(isolationLevel, readOnly, RuntimeException.class, resultSetHandler, sql, params);
+	@SuppressWarnings("overloads")
+	default <T> T query(int isolationLevel, boolean readOnly, ResultSetCallable<T> resultSetCallable, String sql, Object ... params) throws SQLException {
+		return query(isolationLevel, readOnly, RuntimeException.class, resultSetCallable, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #query(int, boolean, com.aoindustries.dbc.ResultSetHandler, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #query(int, boolean, com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> T executeQuery(int isolationLevel, boolean readOnly, ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
@@ -1496,20 +1499,21 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database, calling the {@link ResultSetHandlerE} once.
+	 * Read-only query the database, calling the {@link ResultSetCallableE} once.
 	 * <ul>
 	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
-	 * @see  #update(java.lang.Class, com.aoindustries.dbc.ResultSetHandlerE, java.lang.String, java.lang.Object...)
+	 * @see  #update(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,E extends Exception> T query(Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
-		return query(Connection.TRANSACTION_READ_COMMITTED, true, eClass, resultSetHandler, sql, params);
+	@SuppressWarnings("overloads")
+	default <T,E extends Exception> T query(Class<E> eClass, ResultSetCallableE<T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+		return query(Connection.TRANSACTION_READ_COMMITTED, true, eClass, resultSetCallable, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #query(java.lang.Class, com.aoindustries.dbc.ResultSetHandlerE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #query(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T,E extends Exception> T executeQuery(Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
@@ -1517,20 +1521,21 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database, calling the {@link ResultSetHandlerE} once.
+	 * Read-write query the database, calling the {@link ResultSetCallableE} once.
 	 * <ul>
 	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
-	 * @see  #query(java.lang.Class, com.aoindustries.dbc.ResultSetHandlerE, java.lang.String, java.lang.Object...)
+	 * @see  #query(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,E extends Exception> T update(Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
-		return query(Connection.TRANSACTION_READ_COMMITTED, false, eClass, resultSetHandler, sql, params);
+	@SuppressWarnings("overloads")
+	default <T,E extends Exception> T update(Class<E> eClass, ResultSetCallableE<T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+		return query(Connection.TRANSACTION_READ_COMMITTED, false, eClass, resultSetCallable, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #update(java.lang.Class, com.aoindustries.dbc.ResultSetHandlerE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #update(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T,E extends Exception> T executeUpdate(Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
@@ -1538,17 +1543,105 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database, calling the {@link ResultSetHandlerE} once.
+	 * Query the database, calling the {@link ResultSetCallableE} once.
 	 */
-	<T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E;
+	@SuppressWarnings("overloads")
+	<T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetCallableE<T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E;
 
 	/**
-	 * @deprecated  Please use {@link #query(int, boolean, java.lang.Class, com.aoindustries.dbc.ResultSetHandlerE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #query(int, boolean, java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
 		return query(isolationLevel, readOnly, eClass, resultSetHandler, sql, params);
 	}
+
+	/**
+	 * Read-only query the database, calling the {@link ResultSetRunnable} once.
+	 * <ul>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 * </ul>
+	 *
+	 * @see  #update(com.aoindustries.dbc.ResultSetRunnable, java.lang.String, java.lang.Object...)
+	 */
+	@SuppressWarnings("overloads")
+	default void query(ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
+		query(Connection.TRANSACTION_READ_COMMITTED, true, resultSetRunnable, sql, params);
+	}
+
+	/**
+	 * Read-write query the database, calling the {@link ResultSetRunnable} once.
+	 * <ul>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 * </ul>
+	 *
+	 * @see  #query(com.aoindustries.dbc.ResultSetRunnable, java.lang.String, java.lang.Object...)
+	 */
+	@SuppressWarnings("overloads")
+	default void update(ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
+		query(Connection.TRANSACTION_READ_COMMITTED, false, resultSetRunnable, sql, params);
+	}
+
+	/**
+	 * Query the database, calling the {@link ResultSetRunnable} once.
+	 */
+	@SuppressWarnings("overloads")
+	default void query(int isolationLevel, boolean readOnly, ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
+		query(isolationLevel, readOnly, RuntimeException.class, resultSetRunnable, sql, params);
+	}
+
+	/**
+	 * Read-only query the database, calling the {@link ResultSetRunnableE} once.
+	 * <ul>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 * </ul>
+	 *
+	 * @see  #update(java.lang.Class, com.aoindustries.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object...)
+	 */
+	@SuppressWarnings("overloads")
+	default <E extends Exception> void query(Class<E> eClass, ResultSetRunnableE<E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
+		query(Connection.TRANSACTION_READ_COMMITTED, true, eClass, resultSetRunnable, sql, params);
+	}
+
+	/**
+	 * Read-write query the database, calling the {@link ResultSetRunnableE} once.
+	 * <ul>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 * </ul>
+	 *
+	 * @see  #query(java.lang.Class, com.aoindustries.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object...)
+	 */
+	@SuppressWarnings("overloads")
+	default <E extends Exception> void update(Class<E> eClass, ResultSetRunnableE<E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
+		query(Connection.TRANSACTION_READ_COMMITTED, false, eClass, resultSetRunnable, sql, params);
+	}
+
+	/**
+	 * Query the database, calling the {@link ResultSetRunnableE} once.
+	 */
+	@SuppressWarnings("overloads")
+	default <E extends Exception> void query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetRunnableE<E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
+		query(
+			isolationLevel,
+			readOnly,
+			eClass,
+			(ResultSet results) -> {
+				resultSetRunnable.run(results);
+				return null;
+			},
+			sql,
+			params
+		);
+	}
+
+	// TODO: Variants that return the ResultSet?
+	//       Closing the ResultSet would also close its associated PreparedStatement along with all the other usual cleanup
+	//       This variant could then be used as the basis for the stream* implementations.
+	//       This would be consistent with the proposed transaction() methods that would return the DatabaseConnection
 
 	/**
 	 * Read-only query the database with a {@code short} return type.
@@ -1888,6 +1981,9 @@ public interface DatabaseAccess {
 	/**
 	 * Performs an update on the database and returns the number of rows affected.
 	 */
+	// TODO: Variant(s) that check the number of items updated when 1 expected, throws NoRowException, ExtraRowException
+	//       Call it update1?  updateSingle?  updateRow?
+	//       Implement as a functional interface "UpdateValidator" (int) -> SQLException?
 	int update(String sql, Object ... params) throws SQLException;
 
 	/**

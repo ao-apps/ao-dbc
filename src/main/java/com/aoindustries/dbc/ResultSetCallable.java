@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2014, 2015, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,18 +22,21 @@
  */
 package com.aoindustries.dbc;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Target that may be used by {@link Database#transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)}
- * and allows any arbitrary exception type in addition to the usual SQLException.
- *
- * @see  Database#transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+ * Processes the results from a query.  This is called only once.
+ * Iteration over the results is up to the implementation.
  *
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface DatabaseCallableE<V,E extends Exception> {
+public interface ResultSetCallable<T> extends ResultSetCallableE<T,RuntimeException> {
 
-	V call(DatabaseConnection db) throws SQLException, E;
+	/**
+	 * Process one set of results.
+	 */
+	@Override
+	T call(ResultSet results) throws SQLException;
 }

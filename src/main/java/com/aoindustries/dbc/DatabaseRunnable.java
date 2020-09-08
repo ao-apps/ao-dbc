@@ -25,9 +25,9 @@ package com.aoindustries.dbc;
 import java.sql.SQLException;
 
 /**
- * Target that may be used by {@link Database#executeTransaction(com.aoindustries.dbc.DatabaseRunnable)}.
+ * Target that may be used by {@link Database#transaction(com.aoindustries.dbc.DatabaseRunnable)}.
  *
- * @see  Database#executeTransaction(com.aoindustries.dbc.DatabaseRunnable)
+ * @see  Database#transaction(com.aoindustries.dbc.DatabaseRunnable)
  *
  * @author  AO Industries, Inc.
  */

@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-07T21:40:44-05:00"
+		dateModified="2020-09-08T05:07:41-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -105,14 +105,15 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					<li>Created <code>ObjectFactory</code> instances for common types in <code>ObjectFactories</code>.</li>
 					<li>
 						<p>
-							<code>execute*Query</code> and <code>execute*Update</code> that return Java primitives,
-							along with the specialized primitive-list <code>executeIntList*</code> and <code>executeLongList*</code>,
-							now throw a new <code>NullDataException</code> when the result returns a <code>NULL</code> value.
+							<code>execute*Query(…)</code> and <code>execute*Update(…)</code> that return Java primitives,
+							along with the specialized primitive-list <code>executeIntList*(…)</code> and
+							<code>executeLongList*(…)</code>, now throw a new <code>NullDataException</code> when the
+							result returns a <code>NULL</code> value.
 						</p>
 						<p>
-							Previously, the default conversion was used.  Any code that relied on this default conversion will
-							need to be updated: a small lambda on <code>executeObjectQuery</code> or
-							<code>executeObjectUpdate</code> would do the trick.
+							Previously, the default conversion was used.  Any code that relied on this default conversion
+							will need to be updated: a small lambda on <code>queryObject(…)</code> or
+							<code>updateObject(…)</code> would do the trick.
 						</p>
 					</li>
 					<li>
@@ -123,30 +124,43 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					<li>Declared throws of <code>ExtraRowException</code> where it may occur.</li>
 					<li>No longer automatically rollback transaction on <code>ExtraRowException</code>.</li>
 					<li>
-						When <code>Database.getConnection(…)</code> gets a connection from an underlying <code>DataSource</code>,
-						if the connection is not auto-commit, it will be rolled-back and set to auto-commit.  As this is
-						not expected to happen normally, a warning will be logged.
+						When <code>Database.getConnection(…)</code> gets a connection from an underlying
+						<code>DataSource</code>, if the connection is not auto-commit, it will be rolled-back and set to
+						auto-commit.  As this is not expected to happen normally, a warning will be logged.
 					</li>
 					<li>
-						<code>Database.getConnection(…)</code> will no longer perform automatic commits to facilitate
-						read-only and transaction isolation level changes.  Exceptions may now be thrown by the underlying
-						JDBC driver when attempts are made to change read-only state or isolation levels during a
-						transaction; this is a safer behavior.
+						<code>Database.getConnection(…)</code> will no longer perform automatic commits that were to
+						facilitate read-only and transaction isolation level changes.  Exceptions may now be thrown by
+						the underlying JDBC driver when attempts are made to change read-only state or isolation levels
+						during a transaction; this is a safer behavior.
 					</li>
 					<li>Added support for primitive <code>double</code> and <code>float</code> queries and updates.</li>
 					<li>Added support for Java 8+ streaming queries and updates.</li>
 					<li>
-						Deprecated <code>executeShortList*</code> methods.  These offer no performance advantage over
-						<code>queryList</code> combined with <code>ObjectFactories.Short</code>, plus we do not have
+						Deprecated <code>executeShortList*(…)</code> methods.  These offer no performance advantage over
+						<code>queryList(…)</code> combined with <code>ObjectFactories.Short</code>, plus we do not have
 						this type of list method for other wrapper types.
 					</li>
 					<li>
-						Deprecated <code>executeObject*</code> methods that accept a <code><![CDATA[Class&lt;T&gt;]]></code>
+						Deprecated <code>executeObject*(…)</code> methods that accept a <code><![CDATA[Class&lt;T&gt;]]></code>
 						parameter.  This class has its constructor accessed via reflection.  This construct has been
 						obsoleted by constructor lamdas <code>Class::new</code> used as <code>ObjectFactory</code>.
 					</li>
-					<li>Renamed <code>execute*Query</code> methods to <code>query*</code>.</li>
-					<li>Renamed <code>execute*Update</code> methods to <code>update*</code>.</li>
+					<li>Renamed <code>execute*Query(…)</code> methods to <code>query*(…)</code>.</li>
+					<li>Renamed <code>execute*Update(…)</code> methods to <code>update*(…)</code>.</li>
+					<li>
+						Deprecated <code>ResultSetHandler</code> and <code>ResultSetHandlerE</code> in favor of new
+						<code>ResultSetRunnable</code>, <code>ResultSetRunnableE</code>, <code>ResultSetCallable</code>,
+						and <code>ResultSetCallableE</code>.  Having both runnable and callable variants allows
+						implementations to not return anything.  Previously, to satisfy the interface, something always
+						had to be returned, even if just a <code>(Void)null</code>.
+					</li>
+					<li>Renamed <code>Database.executeTransaction(…)</code> to <code>Database.transaction(…)</code>.</li>
+					<li>
+						Added new methods <code>Database.transaction(Runnable)</code> and
+						<code>Database.transaction(Callable)</code>, which are useful when a transaction scope is
+						needed, but the <code>DatabaseConnection</code> itself is not required.
+					</li>
 					<!-- TODO: Change exception upper-bounds to Throwable? -->
 				</ul>
 			</changelog:release>

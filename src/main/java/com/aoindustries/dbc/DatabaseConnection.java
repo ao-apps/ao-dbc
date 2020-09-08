@@ -358,6 +358,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * @see  Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	// TODO: Only close if connection is invalid?
+	// TODO: Combine with rollback, and automatically close if connection is invalid?
 	public Throwable rollbackAndClose(Throwable t1) {
 		try {
 			rollbackAndClose();
@@ -694,14 +696,14 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	@Override
-	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
+	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetCallableE<T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			try {
 				pstmt.setFetchSize(FETCH_SIZE);
 				setParams(conn, pstmt, params);
 				try (ResultSet results = pstmt.executeQuery()) {
-					return resultSetHandler.handleResultSet(results);
+					return resultSetCallable.call(results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);

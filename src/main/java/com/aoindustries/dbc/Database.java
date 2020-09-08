@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.DoubleStream;
@@ -83,6 +84,12 @@ public class Database implements DatabaseAccess {
 		this.logger = logger;
 	}
 
+	// TODO: Furthermore, create a "transaction" method that returns a DatabaseConnection intended for try-with-resources.
+	//       This "transaction" would only actually close the connection on the outer-most transaction.
+	//       Would this mean that "DatabaseConnection" would become a class named "Transaction"?
+	//           Would this rename make sense, because connections and transactions are different things?
+	//       Separate CloseableDatabaseConnection
+	// TODO: Make this protected "newDatabaseConnection", deprecate this and make it final
 	public DatabaseConnection createDatabaseConnection() {
 		return new DatabaseConnection(this);
 	}
@@ -150,6 +157,8 @@ public class Database implements DatabaseAccess {
 	 * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
 	 * be rolled-back and set to auto-commit.
 	 * </p>
+	 *
+	 * @see  #releaseConnection(java.sql.Connection)
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
@@ -204,6 +213,10 @@ public class Database implements DatabaseAccess {
 		return conn;
 	}
 
+	/**
+	 * @see  #getConnection(int, boolean, int)
+	 */
+	// TODO: Don't use releaseConnection.  Instead, close the return Connection, which would release to the underlying pool
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public void releaseConnection(Connection conn) throws SQLException {
 		Throwable t1 = null;
@@ -265,44 +278,56 @@ public class Database implements DatabaseAccess {
 	private final ThreadLocal<DatabaseConnection> transactionConnection = new ThreadLocal<>();
 
 	/**
-	 * Checks if currently in a transaction.
+	 * Checks if the current thread is in a transaction.
 	 *
-	 * @see #executeTransaction(com.aoindustries.dbc.DatabaseCallable)
-	 * @see #executeTransaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
-	 * @see #executeTransaction(com.aoindustries.dbc.DatabaseRunnable)
-	 * @see #executeTransaction(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
+	 * @see #transaction(java.lang.Runnable)
+	 * @see #transaction(com.aoindustries.dbc.DatabaseRunnable)
+	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
+	 * @see #transaction(java.util.concurrent.Callable)
+	 * @see #transaction(com.aoindustries.dbc.DatabaseCallable)
+	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
 	 */
 	public boolean isInTransaction() {
 		return transactionConnection.get()!=null;
 	}
 
 	/**
-	 * @see #executeTransaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 * @see #transaction(com.aoindustries.dbc.DatabaseRunnable)
 	 *
 	 * @see #isInTransaction()
 	 */
 	@SuppressWarnings("overloads")
-	// TODO: Rename "transaction"
-	public void executeTransaction(DatabaseRunnable runnable) throws SQLException {
-		executeTransaction(
-			RuntimeException.class,
-			(DatabaseConnection db) -> {
-				runnable.run(db);
-				return null;
-			}
-		);
+	public void transaction(Runnable runnable) throws SQLException {
+		transaction((DatabaseConnection db) -> runnable.run());
 	}
 
 	/**
-	 * @see #executeTransaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
 	 *
 	 * @see #isInTransaction()
 	 */
-	public <E extends Exception> void executeTransaction(
-		Class<E> eClass,
-		DatabaseRunnableE<E> runnable
-	) throws SQLException, E {
-		executeTransaction(
+	@SuppressWarnings("overloads")
+	public void transaction(DatabaseRunnable runnable) throws SQLException {
+		transaction(RuntimeException.class, runnable::run);
+	}
+
+	/**
+	 * @deprecated  Please use {@link #transaction(com.aoindustries.dbc.DatabaseRunnable)}
+	 */
+	@Deprecated
+	@SuppressWarnings("overloads")
+	final public void executeTransaction(DatabaseRunnable runnable) throws SQLException {
+		transaction(runnable);
+	}
+
+	/**
+	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 *
+	 * @see #isInTransaction()
+	 */
+	@SuppressWarnings("overloads")
+	public <E extends Exception> void transaction(Class<E> eClass, DatabaseRunnableE<E> runnable) throws SQLException, E {
+		transaction(
 			eClass,
 			(DatabaseConnection db) -> {
 				runnable.run(db);
@@ -311,17 +336,50 @@ public class Database implements DatabaseAccess {
 		);
 	}
 
-   /**
-	 * @see #executeTransaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	/**
+	 * @deprecated  Please use {@link #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)}
+	 */
+	@Deprecated
+	@SuppressWarnings("overloads")
+	final public <E extends Exception> void executeTransaction(Class<E> eClass, DatabaseRunnableE<E> runnable) throws SQLException, E {
+		transaction(eClass, runnable);
+	}
+
+	/**
+	 * @see #transaction(com.aoindustries.dbc.DatabaseCallable)
 	 *
 	 * @see #isInTransaction()
 	 */
 	@SuppressWarnings("overloads")
-	public <V> V executeTransaction(DatabaseCallable<V> callable) throws SQLException {
-		return executeTransaction(
-			RuntimeException.class,
-			(DatabaseConnection db) -> callable.call(db)
-		);
+	public <V> V transaction(Callable<V> callable) throws SQLException {
+		return transaction((DatabaseConnection db) -> {
+			try {
+				return callable.call();
+			} catch(RuntimeException | SQLException e) {
+				throw e;
+			} catch(Exception e) {
+				throw new SQLException(e);
+			}
+		});
+	}
+
+	/**
+	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 *
+	 * @see #isInTransaction()
+	 */
+	@SuppressWarnings("overloads")
+	public <V> V transaction(DatabaseCallable<V> callable) throws SQLException {
+		return transaction(RuntimeException.class, callable::call);
+	}
+
+	/**
+	 * @deprecated  Please use {@link #transaction(com.aoindustries.dbc.DatabaseCallable)}
+	 */
+	@Deprecated
+	@SuppressWarnings("overloads")
+	final public <V> V executeTransaction(DatabaseCallable<V> callable) throws SQLException {
+		return transaction(callable);
 	}
 
 	/**
@@ -346,11 +404,8 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	@SuppressWarnings({"ThrowableResultIgnored", "UseSpecificCatch"})
-	public <V,E extends Exception> V executeTransaction(
-		Class<E> eClass,
-		DatabaseCallableE<V,E> callable
-	) throws SQLException, E {
+	@SuppressWarnings({"ThrowableResultIgnored", "UseSpecificCatch", "overloads"})
+	public <V,E extends Exception> V transaction(Class<E> eClass, DatabaseCallableE<V,E> callable) throws SQLException, E {
 		DatabaseConnection conn = transactionConnection.get();
 		if(conn != null) {
 			// Reuse existing connection
@@ -398,6 +453,15 @@ public class Database implements DatabaseAccess {
 		}
 	}
 
+	/**
+	 * @deprecated  Please use {@link #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)}
+	 */
+	@Deprecated
+	@SuppressWarnings("overloads")
+	final public <V,E extends Exception> V executeTransaction(Class<E> eClass, DatabaseCallableE<V,E> callable) throws SQLException, E {
+		return transaction(eClass, callable);
+	}
+
 	@Override
 	public String toString() {
 		return "Database("+(pool!=null ? pool.toString() : dataSource.toString())+")";
@@ -432,42 +496,42 @@ public class Database implements DatabaseAccess {
 
 	@Override
 	public DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return executeTransaction((DatabaseConnection conn) ->
+		return transaction((DatabaseConnection conn) ->
 			conn.doubleStream(isolationLevel, readOnly, sql, params)
 		);
 	}
 
 	@Override
 	public IntStream intStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return executeTransaction((DatabaseConnection conn) ->
+		return transaction((DatabaseConnection conn) ->
 			conn.intStream(isolationLevel, readOnly, sql, params)
 		);
 	}
 
 	@Override
 	public LongStream longStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return executeTransaction((DatabaseConnection conn) ->
+		return transaction((DatabaseConnection conn) ->
 			conn.longStream(isolationLevel, readOnly, sql, params)
 		);
 	}
 
 	@Override
 	public <T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		return executeTransaction(eClass, (DatabaseConnection conn) ->
+		return transaction(eClass, (DatabaseConnection conn) ->
 			conn.stream(isolationLevel, readOnly, eClass, objectFactory, sql, params)
 		);
 	}
 
 	@Override
-	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
-		return executeTransaction(eClass, (DatabaseConnection conn) ->
-			conn.query(isolationLevel, readOnly, eClass, resultSetHandler, sql, params)
+	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetCallableE<T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+		return transaction(eClass, (DatabaseConnection conn) ->
+			conn.query(isolationLevel, readOnly, eClass, resultSetCallable, sql, params)
 		);
 	}
 
 	@Override
 	public int update(String sql, Object ... params) throws SQLException {
-		return executeTransaction((DatabaseConnection conn) ->
+		return transaction((DatabaseConnection conn) ->
 			conn.update(sql, params)
 		);
 	}
