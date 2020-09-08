@@ -44,9 +44,9 @@ import java.util.stream.Stream;
 import javax.sql.DataSource;
 
 /**
- * Wraps and simplifies access to a JDBC database.  If used directly as a <code>DatabaseAccess</code> each individual call is a separate transaction.
+ * Wraps and simplifies access to a JDBC database.  If used directly as a {@link DatabaseAccess} each individual call is a separate transaction.
  * If the current thread is already in a transaction, the calls will be performed using the connection associated with that transaction.
- * For transactions across multiple statements, use <code>DatabaseConnection</code>.
+ * For transactions across multiple statements, use {@link DatabaseConnection}.
  *
  * @see  #createDatabaseConnection
  * @see  DatabaseConnection
@@ -88,14 +88,18 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * Gets the pool or <code>null</code> if using a <code>DataSource</code>.
+	 * Gets the pool or {@code null} if using a {@link DataSource}.
+	 *
+	 * @see  #getDataSource()
 	 */
 	public AOConnectionPool getConnectionPool() {
 		return pool;
 	}
 
 	/**
-	 * Gets the data source or <code>null</code> if using an <code>AOConnectionPool</code>.
+	 * Gets the data source or {@code null} if using an {@link AOConnectionPool}.
+	 *
+	 * @see  #getConnectionPool()
 	 */
 	public DataSource getDataSource() {
 		return dataSource;
@@ -278,6 +282,7 @@ public class Database implements DatabaseAccess {
 	 * @see #isInTransaction()
 	 */
 	@SuppressWarnings("overloads")
+	// TODO: Rename "transaction"
 	public void executeTransaction(DatabaseRunnable runnable) throws SQLException {
 		executeTransaction(
 			RuntimeException.class,

@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2010, 2011, 2014, 2015, 2019  AO Industries, Inc.
+ * Copyright (C) 2010, 2011, 2014, 2015, 2019, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,7 +25,7 @@ package com.aoindustries.dbc;
 import java.sql.SQLException;
 
 /**
- * Target that may be used by <code>Database.executeTransaction</code>.
+ * Target that may be used by {@link Database#executeTransaction(com.aoindustries.dbc.DatabaseCallable)}.
  *
  * @see  Database#executeTransaction(com.aoindustries.dbc.DatabaseCallable)
  *

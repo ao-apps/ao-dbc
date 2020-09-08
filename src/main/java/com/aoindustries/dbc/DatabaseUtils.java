@@ -43,7 +43,7 @@ final class DatabaseUtils {
 
 	/**
 	 * Gets a user-friendly description of the provided result in a string formatted like
-	 * <code>('value', 'value', 'long_value_cutoff_at_32_characte…', int_value, NULL, …)</code>. 
+	 * {@code ('value', 'value', 'long_value_cutoff_at_32_characte…', int_value, NULL, …)}. 
 	 * This must not be used generate SQL statements - it is just to provide user display.
 	 */
 	@SuppressWarnings("fallthrough")

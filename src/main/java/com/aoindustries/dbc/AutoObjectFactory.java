@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Creates instances of objects by using reflection and passing-in the parameters in the same
  * order as the matching constructor.  For unknown classes, will try to find any
- * <code>valueOf(int)</code> or <code>valueOf(String)</code> methods to create the object instance.
+ * {@code valueOf(int)} or {@code valueOf(String)} methods to create the object instance.
  *
  * @author  AO Industries, Inc.
  */
@@ -62,7 +62,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 	private static final ConcurrentMap<Class<?>,Method> valueOfIntMethods = new ConcurrentHashMap<>();
 
 	/**
-	 * Gets the <code>valueOf(int)</code> for the provided class or <code>null</code> if doesn't
+	 * Gets the {@code valueOf(int)} for the provided class or {@code null} if doesn't
 	 * exist or is non-static or non-public.
 	 */
 	public static Method getValueOfIntMethod(Class<?> clazz) {
@@ -85,7 +85,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 	private static final ConcurrentMap<Class<?>,Method> valueOfStringMethods = new ConcurrentHashMap<>();
 
 	/**
-	 * Gets the <code>valueOf(String)</code> for the provided class or <code>null</code> if doesn't
+	 * Gets the {@code valueOf(String)} for the provided class or {@code null} if doesn't
 	 * exist or is non-static or non-public.
 	 */
 	public static Method getValueOfStringMethod(Class<?> clazz) {

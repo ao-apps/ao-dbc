@@ -61,7 +61,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * A <code>DatabaseConnection</code> is used to only get actual database connections when needed.
+ * A {@link DatabaseConnection} represents the scope of an overall transaction.
+ * It is used to only get actual database connections when needed.
  *
  * @see  Database
  *

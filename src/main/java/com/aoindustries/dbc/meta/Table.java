@@ -198,7 +198,7 @@ public class Table {
 	private Index getPrimaryKeyCache;
 
 	/**
-	 * Gets the primary key for this table or <code>null</code> if not found.
+	 * Gets the primary key for this table or {@code null} if not found.
 	 */
 	public Index getPrimaryKey() throws SQLException {
 		synchronized(getPrimaryKeyLock) {

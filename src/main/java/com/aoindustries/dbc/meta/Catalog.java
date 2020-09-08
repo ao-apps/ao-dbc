@@ -126,7 +126,7 @@ public class Catalog {
 	 *
 	 * TODO: Check is symmetric in JUnit test
 	 *
-	 * @param tableTypes  the set of tables types or <code>null</code> for all types
+	 * @param tableTypes  the set of tables types or {@code null} for all types
 	 */
 	public SymmetricGraph<Table,Edge<Table>,SQLException> getForeignKeyGraph(final Set<String> tableTypes) {
 		return new SymmetricGraph<Table, Edge<Table>, SQLException>() {

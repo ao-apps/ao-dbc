@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -47,7 +48,6 @@ import java.util.stream.Stream;
  *
  * @author  AO Industries, Inc.
  */
-// TODO: Clean-up javadoc consistency (especially use of <code> tags)
 public interface DatabaseAccess {
 
 	/**
@@ -110,11 +110,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>BigDecimal</code> return type.
+	 * Read-only query the database with a {@link BigDecimal} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -134,11 +134,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>BigDecimal</code> return type.
+	 * Read-write query the database with a {@link BigDecimal} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -158,7 +158,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>BigDecimal</code> return type.
+	 * Query the database with a {@link BigDecimal} return type.
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
@@ -175,11 +175,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>boolean</code> return type.
+	 * Read-only query the database with a {@code boolean} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateBoolean(java.lang.String, java.lang.Object...)
@@ -197,11 +197,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>boolean</code> return type.
+	 * Read-write query the database with a {@code boolean} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #queryBoolean(java.lang.String, java.lang.Object...)
@@ -219,7 +219,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>boolean</code> return type.
+	 * Query the database with a {@link Boolean} return type.
 	 *
 	 * @return  The value or {@code null} when no row and row not required.
 	 *
@@ -245,11 +245,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>byte[]</code> return type.
+	 * Read-only query the database with a {@code byte[]} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -269,11 +269,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>byte[]</code> return type.
+	 * Read-write query the database with a {@code byte[]} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -293,7 +293,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>byte[]</code> return type.
+	 * Query the database with a {@code byte[]} return type.
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
@@ -310,11 +310,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>java.sql.Date</code> return type.
+	 * Read-only query the database with a {@link Date} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -334,11 +334,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>java.sql.Date</code> return type.
+	 * Read-write query the database with a {@link Date} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -358,7 +358,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>java.sql.Date</code> return type.
+	 * Query the database with a {@link Date} return type.
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
@@ -375,11 +375,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>double</code> return type.
+	 * Read-only query the database with a {@code double} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateDouble(java.lang.String, java.lang.Object...)
@@ -389,11 +389,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>double</code> return type.
+	 * Read-write query the database with a {@code double} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #queryDouble(java.lang.String, java.lang.Object...)
@@ -403,7 +403,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>double</code> return type.
+	 * Query the database with a {@link Double} return type.
 	 *
 	 * @return  The value or {@code null} when no row and row not required.
 	 *
@@ -423,8 +423,8 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link DoubleStream} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #doubleStreamUpdate(java.lang.String, java.lang.Object...)
@@ -436,8 +436,8 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@link DoubleStream} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #doubleStream(java.lang.String, java.lang.Object...)
@@ -452,11 +452,11 @@ public interface DatabaseAccess {
 	DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException;
 
 	/**
-	 * Read-only query the database with a <code>float</code> return type.
+	 * Read-only query the database with a {@code float} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateFloat(java.lang.String, java.lang.Object...)
@@ -466,11 +466,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>float</code> return type.
+	 * Read-write query the database with a {@code float} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #queryFloat(java.lang.String, java.lang.Object...)
@@ -480,7 +480,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>float</code> return type.
+	 * Query the database with a {@link Float} return type.
 	 *
 	 * @return  The value or {@code null} when no row and row not required.
 	 *
@@ -498,11 +498,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with an <code>int</code> return type.
+	 * Read-only query the database with an {@code int} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateInt(java.lang.String, java.lang.Object...)
@@ -520,11 +520,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with an <code>int</code> return type.
+	 * Read-write query the database with an {@code int} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #queryInt(java.lang.String, java.lang.Object...)
@@ -542,7 +542,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with an <code>int</code> return type.
+	 * Query the database with an {@link Integer} return type.
 	 *
 	 * @return  The value or {@code null} when no row and row not required.
 	 *
@@ -568,10 +568,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with an <code>IntList</code> return type.
+	 * Read-only query the database with an {@link IntList} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateIntList(java.lang.String, java.lang.Object...)
@@ -589,10 +589,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with an <code>IntList</code> return type.
+	 * Read-write query the database with an {@link IntList} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #queryIntList(java.lang.String, java.lang.Object...)
@@ -610,7 +610,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with an <code>IntList</code> return type.
+	 * Query the database with an {@link IntList} return type.
 	 */
 	default IntList queryIntList(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
 		return query(
@@ -641,8 +641,8 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with an {@link IntStream} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #intStreamUpdate(java.lang.String, java.lang.Object...)
@@ -654,8 +654,8 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with an {@link IntStream} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #intStream(java.lang.String, java.lang.Object...)
@@ -670,11 +670,11 @@ public interface DatabaseAccess {
 	IntStream intStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException;
 
 	/**
-	 * Read-only query the database with a <code>long</code> return type.
+	 * Read-only query the database with a {@code long} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateLong(java.lang.String, java.lang.Object...)
@@ -692,11 +692,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>long</code> return type.
+	 * Read-write query the database with a {@code long} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #queryLong(java.lang.String, java.lang.Object...)
@@ -714,7 +714,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>long</code> return type.
+	 * Query the database with a {@link Long} return type.
 	 *
 	 * @return  The value or {@code null} when no row and row not required.
 	 *
@@ -740,10 +740,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>LongList</code> return type.
+	 * Read-only query the database with a {@link LongList} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateLongList(java.lang.String, java.lang.Object...)
@@ -761,10 +761,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>LongList</code> return type.
+	 * Read-write query the database with a {@link LongList} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #queryLongList(java.lang.String, java.lang.Object...)
@@ -782,7 +782,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>LongList</code> return type.
+	 * Query the database with a {@link LongList} return type.
 	 */
 	default LongList queryLongList(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
 		return query(
@@ -813,8 +813,8 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link LongStream} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #longStreamUpdate(java.lang.String, java.lang.Object...)
@@ -826,8 +826,8 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@link LongStream} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #longStream(java.lang.String, java.lang.Object...)
@@ -842,11 +842,11 @@ public interface DatabaseAccess {
 	LongStream longStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException;
 
 	/**
-	 * Read-only query the database with a <code>&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 * Read-only query the database with a {@code <T>} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -862,11 +862,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 * Read-write query the database with a {@code <T>} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -882,7 +882,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 * Query the database with a {@code <T>} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 *
@@ -895,11 +895,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-only query the database with a {@code <T>} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -919,11 +919,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-write query the database with a {@code <T>} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -943,7 +943,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Query the database with a {@code <T>} return type, objects are created with the provided factory.
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
@@ -960,11 +960,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-only query the database with a {@code <T>} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -984,11 +984,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-write query the database with a {@code <T>} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -1008,7 +1008,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Query the database with a {@code <T>} return type, objects are created with the provided factory.
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
@@ -1040,10 +1040,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>List&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 * Read-only query the database with a {@link List List&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #executeObjectListUpdate(java.lang.Class, java.lang.String, java.lang.Object...)
@@ -1057,10 +1057,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>List&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 * Read-write query the database with a {@link List List&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #executeObjectListQuery(java.lang.Class, java.lang.String, java.lang.Object...)
@@ -1074,7 +1074,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>List&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 * Query the database with a {@link List List&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 *
 	 * @deprecated  Please use {@link #queryList(int, boolean, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with a constructor lambda {@code Class::new}.
@@ -1085,10 +1085,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>List&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-only query the database with a {@link List List&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
@@ -1106,10 +1106,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>List&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-write query the database with a {@link List List&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #queryList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
@@ -1127,7 +1127,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>List&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Query the database with a {@link List List&lt;T&gt;} return type, objects are created with the provided factory.
 	 */
 	default <T> List<T> queryList(int isolationLevel, boolean readOnly, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
 		return queryList(isolationLevel, readOnly, RuntimeException.class, objectFactory, sql, params);
@@ -1142,10 +1142,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>List&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-only query the database with a {@link List List&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateList(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
@@ -1163,10 +1163,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>List&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-write query the database with a {@link List List&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #queryList(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
@@ -1184,7 +1184,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>List&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Query the database with a {@link List List&lt;T&gt;} return type, objects are created with the provided factory.
 	 */
 	default <T,E extends Exception> List<T> queryList(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return AoCollections.optimalUnmodifiableList(
@@ -1201,10 +1201,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>Stream&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-only query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #streamUpdate(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
@@ -1214,10 +1214,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>Stream&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-write query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #stream(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
@@ -1227,17 +1227,17 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>Stream&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
 	 */
 	default <T> Stream<T> stream(int isolationLevel, boolean readOnly, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
 		return stream(isolationLevel, readOnly, RuntimeException.class, objectFactory, sql, params);
 	}
 
 	/**
-	 * Read-only query the database with a <code>Stream&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-only query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #streamUpdate(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
@@ -1247,10 +1247,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>Stream&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-write query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #stream(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
@@ -1260,15 +1260,15 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>Stream&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
 	 */
 	<T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E;
 
 	/**
-	 * Read-only query the database with a <code>Collection&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 * Read-only query the database with a {@link Collection Collection&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #executeObjectCollectionUpdate(java.util.Collection, java.lang.Class, java.lang.String, java.lang.Object...)
@@ -1282,10 +1282,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>Collection&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 * Read-write query the database with a {@link Collection Collection&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #executeObjectCollectionQuery(java.util.Collection, java.lang.Class, java.lang.String, java.lang.Object...)
@@ -1299,7 +1299,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>Collection&lt;T&gt;</code> return type.  Class &lt;T&gt; must have a contructor that takes a single argument of <code>ResultSet</code>.
+	 * Query the database with a {@link Collection Collection&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 *
 	 * @deprecated  Please use {@link #queryCollection(int, boolean, java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with a constructor lambda {@code Class::new}.
@@ -1310,10 +1310,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>Collection&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-only query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateCollection(java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
@@ -1331,10 +1331,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>Collection&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-write query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #queryCollection(java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
@@ -1352,7 +1352,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>Collection&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
 	 */
 	default <T,C extends Collection<? super T>> C queryCollection(int isolationLevel, boolean readOnly, C collection, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
 		return queryCollection(isolationLevel, readOnly, collection, RuntimeException.class, objectFactory, sql, params);
@@ -1367,10 +1367,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>Collection&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-only query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateCollection(java.util.Collection, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
@@ -1388,10 +1388,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>Collection&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Read-write query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #queryCollection(java.util.Collection, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
@@ -1409,7 +1409,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>Collection&lt;T&gt;</code> return type, objects are created with the provided factory.
+	 * Query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
 	 */
 	default <T,C extends Collection<? super T>,E extends Exception> C queryCollection(int isolationLevel, boolean readOnly, C collection, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return query(
@@ -1439,10 +1439,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database, calling the <code>ResultSetHandler</code> once.
+	 * Read-only query the database, calling the {@link ResultSetHandler} once.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #update(com.aoindustries.dbc.ResultSetHandler, java.lang.String, java.lang.Object...)
@@ -1460,10 +1460,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database, calling the <code>ResultSetHandler</code> once.
+	 * Read-write query the database, calling the {@link ResultSetHandler} once.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #query(com.aoindustries.dbc.ResultSetHandler, java.lang.String, java.lang.Object...)
@@ -1481,7 +1481,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database, calling the <code>ResultSetHandler</code> once.
+	 * Query the database, calling the {@link ResultSetHandler} once.
 	 */
 	default <T> T query(int isolationLevel, boolean readOnly, ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
 		return query(isolationLevel, readOnly, RuntimeException.class, resultSetHandler, sql, params);
@@ -1496,10 +1496,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database, calling the <code>ResultSetHandlerE</code> once.
+	 * Read-only query the database, calling the {@link ResultSetHandlerE} once.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #update(java.lang.Class, com.aoindustries.dbc.ResultSetHandlerE, java.lang.String, java.lang.Object...)
@@ -1517,10 +1517,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database, calling the <code>ResultSetHandlerE</code> once.
+	 * Read-write query the database, calling the {@link ResultSetHandlerE} once.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #query(java.lang.Class, com.aoindustries.dbc.ResultSetHandlerE, java.lang.String, java.lang.Object...)
@@ -1538,7 +1538,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database, calling the <code>ResultSetHandlerE</code> once.
+	 * Query the database, calling the {@link ResultSetHandlerE} once.
 	 */
 	<T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E;
 
@@ -1551,11 +1551,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>short</code> return type.
+	 * Read-only query the database with a {@code short} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateShort(java.lang.String, java.lang.Object...)
@@ -1573,11 +1573,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>short</code> return type.
+	 * Read-write query the database with a {@code short} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #queryShort(java.lang.String, java.lang.Object...)
@@ -1595,7 +1595,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>short</code> return type.
+	 * Query the database with a {@link Short} return type.
 	 *
 	 * @return  The value or {@code null} when no row and row not required.
 	 *
@@ -1623,8 +1623,8 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@code List<Short>} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #executeShortListUpdate(java.lang.String, java.lang.Object...)
@@ -1640,8 +1640,8 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@code List<Short>} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #executeShortListQuery(java.lang.String, java.lang.Object...)
@@ -1666,11 +1666,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>String</code> return type.
+	 * Read-only query the database with a {@link String} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -1690,11 +1690,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>String</code> return type.
+	 * Read-write query the database with a {@link String} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -1714,7 +1714,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>String</code> return type.
+	 * Query the database with a {@link String} return type.
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
@@ -1731,10 +1731,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>List&lt;String&gt;</code> return type.
+	 * Read-only query the database with a {@link List List&lt;String&gt;} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateStringList(java.lang.String, java.lang.Object...)
@@ -1752,10 +1752,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>List&lt;String&gt;</code> return type.
+	 * Read-write query the database with a {@link List List&lt;String&gt;} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #queryStringList(java.lang.String, java.lang.Object...)
@@ -1773,7 +1773,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>List&lt;String&gt;</code> return type.
+	 * Query the database with a {@link List List&lt;String&gt;} return type.
 	 */
 	default List<String> queryStringList(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
 		return queryList(isolationLevel, readOnly, ObjectFactories.String, sql, params);
@@ -1788,10 +1788,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-only query the database with a <code>Stream&lt;String&gt;</code> return type.
+	 * Read-only query the database with a {@link Stream Stream&lt;String&gt;} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #streamStringUpdate(java.lang.String, java.lang.Object...)
@@ -1801,10 +1801,10 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>Stream&lt;String&gt;</code> return type.
+	 * Read-write query the database with a {@link Stream Stream&lt;String&gt;} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #streamString(java.lang.String, java.lang.Object...)
@@ -1814,18 +1814,18 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>Stream&lt;String&gt;</code> return type.
+	 * Query the database with a {@link Stream Stream&lt;String&gt;} return type.
 	 */
 	default Stream<String> streamString(int isolationLevel, boolean readOnly, String sql, Object ... params) throws SQLException {
 		return stream(isolationLevel, readOnly, ObjectFactories.String, sql, params);
 	}
 
 	/**
-	 * Read-only query the database with a <code>Timestamp</code> return type.
+	 * Read-only query the database with a {@link Timestamp} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>true</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -1845,11 +1845,11 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Read-write query the database with a <code>Timestamp</code> return type.
+	 * Read-write query the database with a {@link Timestamp} return type.
 	 * <ul>
-	 *   <li>isolationLevel = <code>Connection.TRANSACTION_READ_COMMITTED</code></li>
-	 *   <li>readOnly = <code>false</code></li>
-	 *   <li>rowRequired = <code>true</code></li>
+	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
 	 *
 	 * @return  The value or {@code null} when row with null value.
@@ -1869,7 +1869,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * Query the database with a <code>Timestamp</code> return type.
+	 * Query the database with a {@link Timestamp} return type.
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
