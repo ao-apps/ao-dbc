@@ -341,7 +341,7 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	@SuppressWarnings("UseSpecificCatch")
+	@SuppressWarnings({"ThrowableResultIgnored", "UseSpecificCatch"})
 	public <V,E extends Exception> V executeTransaction(
 		Class<E> eClass,
 		DatabaseCallableE<V,E> callable
@@ -454,16 +454,16 @@ public class Database implements DatabaseAccess {
 	}
 
 	@Override
-	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
+	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
 		return executeTransaction(eClass, (DatabaseConnection conn) ->
-			conn.executeQuery(isolationLevel, readOnly, eClass, resultSetHandler, sql, params)
+			conn.query(isolationLevel, readOnly, eClass, resultSetHandler, sql, params)
 		);
 	}
 
 	@Override
-	public int executeUpdate(String sql, Object ... params) throws SQLException {
+	public int update(String sql, Object ... params) throws SQLException {
 		return executeTransaction((DatabaseConnection conn) ->
-			conn.executeUpdate(sql, params)
+			conn.update(sql, params)
 		);
 	}
 }

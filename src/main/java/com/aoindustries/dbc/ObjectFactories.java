@@ -71,6 +71,11 @@ final public class ObjectFactories {
 		return result.wasNull() ? null : l;
 	};
 
+	/**
+	 *
+	 * @deprecated  Please use a constructor lambda {@code Class::new}.
+	 */
+	@Deprecated
 	public static class Object<T> implements ObjectFactory<T> {
 
 		private final Class<T> clazz;
@@ -161,7 +166,7 @@ final public class ObjectFactories {
 	/**
 	 * Wraps an object factory, unless it is already not {@linkplain ObjectFactory#isNullable() nullable}.
 	 *
-	 * @return  If {@linkplain ObjectFactory#isNullable() nullable}, trusts the given object factory to no return
+	 * @return  If {@linkplain ObjectFactory#isNullable() nullable}, trusts the given object factory to not return
 	 *          {@code null}, otherwise wraps.  Also wraps when assertions are enabled.
 	 */
 	@SuppressWarnings({"AssertWithSideEffects", "overloads"})
@@ -185,7 +190,7 @@ final public class ObjectFactories {
 	/**
 	 * Wraps an object factory, unless it is already not {@linkplain ObjectFactory#isNullable() nullable}.
 	 *
-	 * @return  If {@linkplain ObjectFactory#isNullable() nullable}, trusts the given object factory to no return
+	 * @return  If {@linkplain ObjectFactory#isNullable() nullable}, trusts the given object factory to not return
 	 *          {@code null}, otherwise wraps.  Also wraps when assertions are enabled.
 	 */
 	@SuppressWarnings({"AssertWithSideEffects", "overloads"})

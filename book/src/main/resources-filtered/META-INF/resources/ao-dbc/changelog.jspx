@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-07T08:05:14-05:00"
+		dateModified="2020-09-07T21:40:44-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -135,6 +135,19 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Added support for primitive <code>double</code> and <code>float</code> queries and updates.</li>
 					<li>Added support for Java 8+ streaming queries and updates.</li>
+					<li>
+						Deprecated <code>executeShortList*</code> methods.  These offer no performance advantage over
+						<code>queryList</code> combined with <code>ObjectFactories.Short</code>, plus we do not have
+						this type of list method for other wrapper types.
+					</li>
+					<li>
+						Deprecated <code>executeObject*</code> methods that accept a <code><![CDATA[Class&lt;T&gt;]]></code>
+						parameter.  This class has its constructor accessed via reflection.  This construct has been
+						obsoleted by constructor lamdas <code>Class::new</code> used as <code>ObjectFactory</code>.
+					</li>
+					<li>Renamed <code>execute*Query</code> methods to <code>query*</code>.</li>
+					<li>Renamed <code>execute*Update</code> methods to <code>update*</code>.</li>
+					<!-- TODO: Change exception upper-bounds to Throwable? -->
 				</ul>
 			</changelog:release>
 		</c:if>

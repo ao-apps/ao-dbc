@@ -379,7 +379,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		}
 
 		@Override
-		@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 		public void run() {
 			Throwable t1 = AutoCloseables.close(results, stmt);
 			if(t1 instanceof Error) throw (Error)t1;
@@ -406,7 +405,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 								private boolean nextSet; // next may be null, so extra flag
 
 								@Override
-								@SuppressWarnings("UseSpecificCatch")
 								public boolean hasNext() {
 									try {
 										if(!nextSet && results.next()) {
@@ -423,7 +421,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 								}
 
 								@Override
-								@SuppressWarnings("UseSpecificCatch")
 								public double nextDouble() {
 									try {
 										if(nextSet) {
@@ -484,7 +481,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 								private boolean nextSet; // next may be null, so extra flag
 
 								@Override
-								@SuppressWarnings("UseSpecificCatch")
 								public boolean hasNext() {
 									try {
 										if(!nextSet && results.next()) {
@@ -501,7 +497,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 								}
 
 								@Override
-								@SuppressWarnings("UseSpecificCatch")
 								public int nextInt() {
 									try {
 										if(nextSet) {
@@ -562,7 +557,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 								private boolean nextSet; // next may be null, so extra flag
 
 								@Override
-								@SuppressWarnings("UseSpecificCatch")
 								public boolean hasNext() {
 									try {
 										if(!nextSet && results.next()) {
@@ -579,7 +573,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 								}
 
 								@Override
-								@SuppressWarnings("UseSpecificCatch")
 								public long nextLong() {
 									try {
 										if(nextSet) {
@@ -642,7 +635,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 								private boolean nextSet; // next may be null, so extra flag
 
 								@Override
-								@SuppressWarnings("UseSpecificCatch")
 								public boolean hasNext() {
 									try {
 										if(!nextSet && results.next()) {
@@ -658,7 +650,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 								}
 
 								@Override
-								@SuppressWarnings("UseSpecificCatch")
 								public T next() {
 									try {
 										if(nextSet) {
@@ -701,9 +692,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		}
 	}
 
-	// TODO: Shorten all to just "query" and "update", with deprecated defaults
 	@Override
-	public <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
+	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			try {
@@ -719,7 +709,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	@Override
-	public int executeUpdate(String sql, Object ... params) throws SQLException {
+	public int update(String sql, Object ... params) throws SQLException {
 		Connection conn = getConnection(Connection.TRANSACTION_READ_COMMITTED, false);
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			try {
