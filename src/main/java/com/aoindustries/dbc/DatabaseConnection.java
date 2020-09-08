@@ -216,6 +216,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		}
 	}
 
+	// TODO: Restore default isolation levels and read-only state on commit and rollback?
 	public void commit() throws SQLException {
 		Connection c = _conn;
 		if(c != null && !c.getAutoCommit()) c.commit();
@@ -237,6 +238,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	/**
 	 * Closes and/or releases the current connection back to the pool.
 	 */
+	// TODO: If auto-commit is disabled, will roll-back and enable before closing.
 	@Override
 	public void close() throws SQLException {
 		Connection c = _conn;
@@ -698,6 +700,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	@Override
 	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetCallableE<T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
+		// TODO: Use regular Statement when there are no params?  Interaction with PostgreSQL prepared statement caching?
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			try {
 				pstmt.setFetchSize(FETCH_SIZE);
@@ -723,4 +726,13 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 			}
 		}
 	}
+
+	// TODO: variants of update method that passes Iterable<Object[]> params (or Iterable<Iterable<?>>, or Object[][])
+	//       that would perform a batch update.  Do not even prepare statement when iterable is empty.
+	//
+	//       There might also be room for the opposite of ObjectFactory, maybe PreparedStatementFactory, which would
+	//       set the prepared statement values.  This might be what is iterated.
+	//       Expose default Object[] -> pstmt as a helper?  A set of PreparedStatementFactories?
+	//
+	//       How would streaming fit into this?
 }

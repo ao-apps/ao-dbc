@@ -35,5 +35,9 @@ import java.sql.SQLException;
 public interface DatabaseCallable<V> extends DatabaseCallableE<V,RuntimeException> {
 
 	@Override
+	// TODO: Should these take DatabaseAccess instead?
+	//       This would support non-transactional, auto-commit, direct usage through Database,
+	//       which might be more optimal for one-off actions.
+	//       DatabaseAccess might have to gain some methods, though, such as close()/rollback()/commit(), which would be no-ops?
 	V call(DatabaseConnection db) throws SQLException;
 }

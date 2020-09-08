@@ -217,6 +217,7 @@ public class Database implements DatabaseAccess {
 	 * @see  #getConnection(int, boolean, int)
 	 */
 	// TODO: Don't use releaseConnection.  Instead, close the return Connection, which would release to the underlying pool
+	// TODO: If auto-commit is disabled, will roll-back and enable before closing (confirm done by DataSource version, too)
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public void releaseConnection(Connection conn) throws SQLException {
 		Throwable t1 = null;
