@@ -1046,6 +1046,8 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
+	 * @return  An unmodifiable list
+	 *
 	 * @see  #executeObjectListUpdate(java.lang.Class, java.lang.String, java.lang.Object...)
 	 *
 	 * @deprecated  Please use {@link #queryList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
@@ -1063,6 +1065,8 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
+	 * @return  An unmodifiable list
+	 *
 	 * @see  #executeObjectListQuery(java.lang.Class, java.lang.String, java.lang.Object...)
 	 *
 	 * @deprecated  Please use {@link #updateList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
@@ -1075,6 +1079,8 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a {@link List List&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
+	 *
+	 * @return  An unmodifiable list
 	 *
 	 * @deprecated  Please use {@link #queryList(int, boolean, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with a constructor lambda {@code Class::new}.
@@ -1090,6 +1096,8 @@ public interface DatabaseAccess {
 	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
+	 *
+	 * @return  An unmodifiable list
 	 *
 	 * @see  #updateList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
@@ -1112,6 +1120,8 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
+	 * @return  An unmodifiable list
+	 *
 	 * @see  #queryList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> List<T> updateList(ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
@@ -1128,6 +1138,8 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a {@link List List&lt;T&gt;} return type, objects are created with the provided factory.
+	 *
+	 * @return  An unmodifiable list
 	 */
 	default <T> List<T> queryList(int isolationLevel, boolean readOnly, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
 		return queryList(isolationLevel, readOnly, RuntimeException.class, objectFactory, sql, params);
@@ -1147,6 +1159,8 @@ public interface DatabaseAccess {
 	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
+	 *
+	 * @return  An unmodifiable list
 	 *
 	 * @see  #updateList(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
@@ -1169,6 +1183,8 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
+	 * @return  An unmodifiable list
+	 *
 	 * @see  #queryList(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T,E extends Exception> List<T> updateList(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
@@ -1185,6 +1201,8 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a {@link List List&lt;T&gt;} return type, objects are created with the provided factory.
+	 *
+	 * @return  An unmodifiable list
 	 */
 	default <T,E extends Exception> List<T> queryList(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return AoCollections.optimalUnmodifiableList(
