@@ -71,6 +71,8 @@ import java.util.stream.StreamSupport;
  */
 public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
+	// TODO: Larger value now, since systems have more RAM generally?
+	// TODO: Share value with aoserv-master?
 	private static final int FETCH_SIZE = 1000;
 
 	private final Database database;
