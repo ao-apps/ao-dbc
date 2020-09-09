@@ -84,11 +84,6 @@ public class Database implements DatabaseAccess {
 		this.logger = logger;
 	}
 
-	// TODO: Furthermore, create a "transaction" method that returns a DatabaseConnection intended for try-with-resources.
-	//       This "transaction" would only actually close the connection on the outer-most transaction.
-	//       Would this mean that "DatabaseConnection" would become a class named "Transaction"?
-	//           Would this rename make sense, because connections and transactions are different things?
-	//       Separate CloseableDatabaseConnection
 	// TODO: Make this protected "newDatabaseConnection", deprecate this and make it final
 	public DatabaseConnection createDatabaseConnection() {
 		return new DatabaseConnection(this);
