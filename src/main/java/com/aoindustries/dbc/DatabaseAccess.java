@@ -27,8 +27,8 @@ import com.aoindustries.collections.IntArrayList;
 import com.aoindustries.collections.IntList;
 import com.aoindustries.collections.LongArrayList;
 import com.aoindustries.collections.LongList;
+import com.aoindustries.sql.Connections;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -112,7 +112,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link BigDecimal} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -122,7 +122,7 @@ public interface DatabaseAccess {
 	 * @see  #updateBigDecimal(java.lang.String, java.lang.Object...)
 	 */
 	default BigDecimal queryBigDecimal(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return queryBigDecimal(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+		return queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
 	}
 
 	/**
@@ -136,7 +136,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@link BigDecimal} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -146,7 +146,7 @@ public interface DatabaseAccess {
 	 * @see  #queryBigDecimal(java.lang.String, java.lang.Object...)
 	 */
 	default BigDecimal updateBigDecimal(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return queryBigDecimal(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+		return queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
 	}
 
 	/**
@@ -177,7 +177,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@code boolean} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -185,7 +185,7 @@ public interface DatabaseAccess {
 	 * @see  #updateBoolean(java.lang.String, java.lang.Object...)
 	 */
 	default boolean queryBoolean(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return queryBoolean(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+		return queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
 	}
 
 	/**
@@ -199,7 +199,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@code boolean} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -207,7 +207,7 @@ public interface DatabaseAccess {
 	 * @see  #queryBoolean(java.lang.String, java.lang.Object...)
 	 */
 	default boolean updateBoolean(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return queryBoolean(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+		return queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
 	}
 
 	/**
@@ -247,7 +247,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@code byte[]} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -257,7 +257,7 @@ public interface DatabaseAccess {
 	 * @see  #updateByteArray(java.lang.String, java.lang.Object...)
 	 */
 	default byte[] queryByteArray(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return queryByteArray(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+		return queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
 	}
 
 	/**
@@ -271,7 +271,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@code byte[]} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -281,7 +281,7 @@ public interface DatabaseAccess {
 	 * @see  #queryByteArray(java.lang.String, java.lang.Object...)
 	 */
 	default byte[] updateByteArray(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return queryByteArray(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+		return queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
 	}
 
 	/**
@@ -312,7 +312,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link Date} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -322,7 +322,7 @@ public interface DatabaseAccess {
 	 * @see  #updateDate(java.lang.String, java.lang.Object...)
 	 */
 	default Date queryDate(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return queryDate(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+		return queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
 	}
 
 	/**
@@ -336,7 +336,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@link Date} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -346,7 +346,7 @@ public interface DatabaseAccess {
 	 * @see  #queryDate(java.lang.String, java.lang.Object...)
 	 */
 	default Date updateDate(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return queryDate(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+		return queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
 	}
 
 	/**
@@ -377,7 +377,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@code double} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -385,13 +385,13 @@ public interface DatabaseAccess {
 	 * @see  #updateDouble(java.lang.String, java.lang.Object...)
 	 */
 	default double queryDouble(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return queryDouble(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+		return queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
 	}
 
 	/**
 	 * Read-write query the database with a {@code double} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -399,7 +399,7 @@ public interface DatabaseAccess {
 	 * @see  #queryDouble(java.lang.String, java.lang.Object...)
 	 */
 	default double updateDouble(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return queryDouble(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+		return queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
 	}
 
 	/**
@@ -423,27 +423,27 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link DoubleStream} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #doubleStreamUpdate(java.lang.String, java.lang.Object...)
 	 */
 	default DoubleStream doubleStream(String sql, Object ... params) throws NullDataException, SQLException {
-		return doubleStream(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+		return doubleStream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
 	}
 
 	/**
 	 * Read-write query the database with a {@link DoubleStream} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #doubleStream(java.lang.String, java.lang.Object...)
 	 */
 	default DoubleStream doubleStreamUpdate(String sql, Object ... params) throws NullDataException, SQLException {
-		return doubleStream(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+		return doubleStream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
 	}
 
 	/**
@@ -454,7 +454,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@code float} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -462,13 +462,13 @@ public interface DatabaseAccess {
 	 * @see  #updateFloat(java.lang.String, java.lang.Object...)
 	 */
 	default float queryFloat(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return queryFloat(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+		return queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
 	}
 
 	/**
 	 * Read-write query the database with a {@code float} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -476,7 +476,7 @@ public interface DatabaseAccess {
 	 * @see  #queryFloat(java.lang.String, java.lang.Object...)
 	 */
 	default float updateFloat(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return queryFloat(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+		return queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
 	}
 
 	/**
@@ -500,7 +500,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with an {@code int} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -508,7 +508,7 @@ public interface DatabaseAccess {
 	 * @see  #updateInt(java.lang.String, java.lang.Object...)
 	 */
 	default int queryInt(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return queryInt(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+		return queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
 	}
 
 	/**
@@ -522,7 +522,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with an {@code int} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -530,7 +530,7 @@ public interface DatabaseAccess {
 	 * @see  #queryInt(java.lang.String, java.lang.Object...)
 	 */
 	default int updateInt(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return queryInt(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+		return queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
 	}
 
 	/**
@@ -570,14 +570,14 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with an {@link IntList} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateIntList(java.lang.String, java.lang.Object...)
 	 */
 	default IntList queryIntList(String sql, Object ... params) throws NullDataException, SQLException {
-		return queryIntList(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+		return queryIntList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
 	}
 
 	/**
@@ -591,14 +591,14 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with an {@link IntList} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #queryIntList(java.lang.String, java.lang.Object...)
 	 */
 	default IntList updateIntList(String sql, Object ... params) throws NullDataException, SQLException {
-		return queryIntList(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+		return queryIntList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
 	}
 
 	/**
@@ -641,27 +641,27 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with an {@link IntStream} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #intStreamUpdate(java.lang.String, java.lang.Object...)
 	 */
 	default IntStream intStream(String sql, Object ... params) throws NullDataException, SQLException {
-		return intStream(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+		return intStream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
 	}
 
 	/**
 	 * Read-write query the database with an {@link IntStream} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #intStream(java.lang.String, java.lang.Object...)
 	 */
 	default IntStream intStreamUpdate(String sql, Object ... params) throws NullDataException, SQLException {
-		return intStream(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+		return intStream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
 	}
 
 	/**
@@ -672,7 +672,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@code long} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -680,7 +680,7 @@ public interface DatabaseAccess {
 	 * @see  #updateLong(java.lang.String, java.lang.Object...)
 	 */
 	default long queryLong(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return queryLong(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+		return queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
 	}
 
 	/**
@@ -694,7 +694,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@code long} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -702,7 +702,7 @@ public interface DatabaseAccess {
 	 * @see  #queryLong(java.lang.String, java.lang.Object...)
 	 */
 	default long updateLong(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return queryLong(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+		return queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
 	}
 
 	/**
@@ -742,14 +742,14 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link LongList} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateLongList(java.lang.String, java.lang.Object...)
 	 */
 	default LongList queryLongList(String sql, Object ... params) throws NullDataException, SQLException {
-		return queryLongList(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+		return queryLongList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
 	}
 
 	/**
@@ -763,14 +763,14 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@link LongList} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #queryLongList(java.lang.String, java.lang.Object...)
 	 */
 	default LongList updateLongList(String sql, Object ... params) throws NullDataException, SQLException {
-		return queryLongList(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+		return queryLongList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
 	}
 
 	/**
@@ -813,27 +813,27 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link LongStream} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #longStreamUpdate(java.lang.String, java.lang.Object...)
 	 */
 	default LongStream longStream(String sql, Object ... params) throws NullDataException, SQLException {
-		return longStream(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+		return longStream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
 	}
 
 	/**
 	 * Read-write query the database with a {@link LongStream} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #longStream(java.lang.String, java.lang.Object...)
 	 */
 	default LongStream longStreamUpdate(String sql, Object ... params) throws NullDataException, SQLException {
-		return longStream(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+		return longStream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
 	}
 
 	/**
@@ -844,7 +844,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@code <T>} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -858,13 +858,13 @@ public interface DatabaseAccess {
 	 */
 	@Deprecated
 	default <T> T executeObjectQuery(Class<T> clazz, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, true, true, clazz, sql, params);
+		return executeObjectQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, clazz, sql, params);
 	}
 
 	/**
 	 * Read-write query the database with a {@code <T>} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -878,7 +878,7 @@ public interface DatabaseAccess {
 	 */
 	@Deprecated
 	default <T> T executeObjectUpdate(Class<T> clazz, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return executeObjectQuery(Connection.TRANSACTION_READ_COMMITTED, false, true, clazz, sql, params);
+		return executeObjectQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, clazz, sql, params);
 	}
 
 	/**
@@ -897,7 +897,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@code <T>} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -907,7 +907,7 @@ public interface DatabaseAccess {
 	 * @see  #updateObject(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> T queryObject(ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return queryObject(Connection.TRANSACTION_READ_COMMITTED, true, true, objectFactory, sql, params);
+		return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, objectFactory, sql, params);
 	}
 
 	/**
@@ -921,7 +921,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@code <T>} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -931,7 +931,7 @@ public interface DatabaseAccess {
 	 * @see  #queryObject(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> T updateObject(ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return queryObject(Connection.TRANSACTION_READ_COMMITTED, false, true, objectFactory, sql, params);
+		return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, objectFactory, sql, params);
 	}
 
 	/**
@@ -962,7 +962,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@code <T>} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -972,7 +972,7 @@ public interface DatabaseAccess {
 	 * @see  #updateObject(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T,E extends Exception> T queryObject(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, E {
-		return queryObject(Connection.TRANSACTION_READ_COMMITTED, true, true, eClass, objectFactory, sql, params);
+		return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, eClass, objectFactory, sql, params);
 	}
 
 	/**
@@ -986,7 +986,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@code <T>} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -996,7 +996,7 @@ public interface DatabaseAccess {
 	 * @see  #queryObject(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T,E extends Exception> T updateObject(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, E {
-		return queryObject(Connection.TRANSACTION_READ_COMMITTED, false, true, eClass, objectFactory, sql, params);
+		return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, eClass, objectFactory, sql, params);
 	}
 
 	/**
@@ -1042,7 +1042,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link List List&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
@@ -1055,13 +1055,13 @@ public interface DatabaseAccess {
 	 */
 	@Deprecated
 	default <T> List<T> executeObjectListQuery(Class<T> clazz, String sql, Object ... params) throws SQLException {
-		return executeObjectListQuery(Connection.TRANSACTION_READ_COMMITTED, true, clazz, sql, params);
+		return executeObjectListQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, true, clazz, sql, params);
 	}
 
 	/**
 	 * Read-write query the database with a {@link List List&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
@@ -1074,7 +1074,7 @@ public interface DatabaseAccess {
 	 */
 	@Deprecated
 	default <T> List<T> executeObjectListUpdate(Class<T> clazz, String sql, Object ... params) throws SQLException {
-		return executeObjectListQuery(Connection.TRANSACTION_READ_COMMITTED, false, clazz, sql, params);
+		return executeObjectListQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, false, clazz, sql, params);
 	}
 
 	/**
@@ -1093,7 +1093,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link List List&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
@@ -1102,7 +1102,7 @@ public interface DatabaseAccess {
 	 * @see  #updateList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> List<T> queryList(ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
-		return queryList(Connection.TRANSACTION_READ_COMMITTED, true, objectFactory, sql, params);
+		return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, objectFactory, sql, params);
 	}
 
 	/**
@@ -1116,7 +1116,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@link List List&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
@@ -1125,7 +1125,7 @@ public interface DatabaseAccess {
 	 * @see  #queryList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> List<T> updateList(ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
-		return queryList(Connection.TRANSACTION_READ_COMMITTED, false, objectFactory, sql, params);
+		return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, objectFactory, sql, params);
 	}
 
 	/**
@@ -1156,7 +1156,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link List List&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
@@ -1165,7 +1165,7 @@ public interface DatabaseAccess {
 	 * @see  #updateList(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T,E extends Exception> List<T> queryList(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		return queryList(Connection.TRANSACTION_READ_COMMITTED, true, eClass, objectFactory, sql, params);
+		return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, objectFactory, sql, params);
 	}
 
 	/**
@@ -1179,7 +1179,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@link List List&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
@@ -1188,7 +1188,7 @@ public interface DatabaseAccess {
 	 * @see  #queryList(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T,E extends Exception> List<T> updateList(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		return queryList(Connection.TRANSACTION_READ_COMMITTED, false, eClass, objectFactory, sql, params);
+		return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, objectFactory, sql, params);
 	}
 
 	/**
@@ -1221,27 +1221,27 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #streamUpdate(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> Stream<T> stream(ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
-		return stream(Connection.TRANSACTION_READ_COMMITTED, true, objectFactory, sql, params);
+		return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, objectFactory, sql, params);
 	}
 
 	/**
 	 * Read-write query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #stream(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> Stream<T> streamUpdate(ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
-		return stream(Connection.TRANSACTION_READ_COMMITTED, false, objectFactory, sql, params);
+		return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, objectFactory, sql, params);
 	}
 
 	/**
@@ -1254,27 +1254,27 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #streamUpdate(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T,E extends Exception> Stream<T> stream(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		return stream(Connection.TRANSACTION_READ_COMMITTED, true, eClass, objectFactory, sql, params);
+		return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, objectFactory, sql, params);
 	}
 
 	/**
 	 * Read-write query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #stream(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T,E extends Exception> Stream<T> streamUpdate(Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		return stream(Connection.TRANSACTION_READ_COMMITTED, false, eClass, objectFactory, sql, params);
+		return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, objectFactory, sql, params);
 	}
 
 	/**
@@ -1285,7 +1285,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link Collection Collection&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
@@ -1296,13 +1296,13 @@ public interface DatabaseAccess {
 	 */
 	@Deprecated
 	default <T,C extends Collection<? super T>> C executeObjectCollectionQuery(C collection, Class<T> clazz, String sql, Object ... params) throws SQLException {
-		return executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, true, collection, clazz, sql, params);
+		return executeObjectCollectionQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, true, collection, clazz, sql, params);
 	}
 
 	/**
 	 * Read-write query the database with a {@link Collection Collection&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
@@ -1313,7 +1313,7 @@ public interface DatabaseAccess {
 	 */
 	@Deprecated
 	default <T,C extends Collection<? super T>> C executeObjectCollectionUpdate(C collection, Class<T> clazz, String sql, Object ... params) throws SQLException {
-		return executeObjectCollectionQuery(Connection.TRANSACTION_READ_COMMITTED, false, collection, clazz, sql, params);
+		return executeObjectCollectionQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, false, collection, clazz, sql, params);
 	}
 
 	/**
@@ -1330,14 +1330,14 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateCollection(java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T,C extends Collection<? super T>> C queryCollection(C collection, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
-		return queryCollection(Connection.TRANSACTION_READ_COMMITTED, true, collection, objectFactory, sql, params);
+		return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, collection, objectFactory, sql, params);
 	}
 
 	/**
@@ -1351,14 +1351,14 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #queryCollection(java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T,C extends Collection<? super T>> C updateCollection(C collection, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
-		return queryCollection(Connection.TRANSACTION_READ_COMMITTED, false, collection, objectFactory, sql, params);
+		return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, collection, objectFactory, sql, params);
 	}
 
 	/**
@@ -1387,14 +1387,14 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateCollection(java.util.Collection, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T,C extends Collection<? super T>,E extends Exception> C queryCollection(C collection, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		return queryCollection(Connection.TRANSACTION_READ_COMMITTED, true, collection, eClass, objectFactory, sql, params);
+		return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, collection, eClass, objectFactory, sql, params);
 	}
 
 	/**
@@ -1408,14 +1408,14 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #queryCollection(java.util.Collection, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T,C extends Collection<? super T>,E extends Exception> C updateCollection(C collection, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		return queryCollection(Connection.TRANSACTION_READ_COMMITTED, false, collection, eClass, objectFactory, sql, params);
+		return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, collection, eClass, objectFactory, sql, params);
 	}
 
 	/**
@@ -1459,7 +1459,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database, calling the {@link ResultSetCallable} once.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
@@ -1467,7 +1467,7 @@ public interface DatabaseAccess {
 	 */
 	@SuppressWarnings("overloads")
 	default <T> T query(ResultSetCallable<T> resultSetCallable, String sql, Object ... params) throws SQLException {
-		return query(Connection.TRANSACTION_READ_COMMITTED, true, resultSetCallable, sql, params);
+		return query(Connections.DEFAULT_TRANSACTION_ISOLATION, true, resultSetCallable, sql, params);
 	}
 
 	/**
@@ -1481,7 +1481,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database, calling the {@link ResultSetCallable} once.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
@@ -1489,7 +1489,7 @@ public interface DatabaseAccess {
 	 */
 	@SuppressWarnings("overloads")
 	default <T> T update(ResultSetCallable<T> resultSetCallable, String sql, Object ... params) throws SQLException {
-		return query(Connection.TRANSACTION_READ_COMMITTED, false, resultSetCallable, sql, params);
+		return query(Connections.DEFAULT_TRANSACTION_ISOLATION, false, resultSetCallable, sql, params);
 	}
 
 	/**
@@ -1519,7 +1519,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database, calling the {@link ResultSetCallableE} once.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
@@ -1527,7 +1527,7 @@ public interface DatabaseAccess {
 	 */
 	@SuppressWarnings("overloads")
 	default <T,E extends Exception> T query(Class<E> eClass, ResultSetCallableE<T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
-		return query(Connection.TRANSACTION_READ_COMMITTED, true, eClass, resultSetCallable, sql, params);
+		return query(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, resultSetCallable, sql, params);
 	}
 
 	/**
@@ -1541,7 +1541,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database, calling the {@link ResultSetCallableE} once.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
@@ -1549,7 +1549,7 @@ public interface DatabaseAccess {
 	 */
 	@SuppressWarnings("overloads")
 	default <T,E extends Exception> T update(Class<E> eClass, ResultSetCallableE<T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
-		return query(Connection.TRANSACTION_READ_COMMITTED, false, eClass, resultSetCallable, sql, params);
+		return query(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, resultSetCallable, sql, params);
 	}
 
 	/**
@@ -1577,7 +1577,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database, calling the {@link ResultSetRunnable} once.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
@@ -1585,13 +1585,13 @@ public interface DatabaseAccess {
 	 */
 	@SuppressWarnings("overloads")
 	default void query(ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
-		query(Connection.TRANSACTION_READ_COMMITTED, true, resultSetRunnable, sql, params);
+		query(Connections.DEFAULT_TRANSACTION_ISOLATION, true, resultSetRunnable, sql, params);
 	}
 
 	/**
 	 * Read-write query the database, calling the {@link ResultSetRunnable} once.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
@@ -1599,7 +1599,7 @@ public interface DatabaseAccess {
 	 */
 	@SuppressWarnings("overloads")
 	default void update(ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
-		query(Connection.TRANSACTION_READ_COMMITTED, false, resultSetRunnable, sql, params);
+		query(Connections.DEFAULT_TRANSACTION_ISOLATION, false, resultSetRunnable, sql, params);
 	}
 
 	/**
@@ -1613,7 +1613,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database, calling the {@link ResultSetRunnableE} once.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
@@ -1621,13 +1621,13 @@ public interface DatabaseAccess {
 	 */
 	@SuppressWarnings("overloads")
 	default <E extends Exception> void query(Class<E> eClass, ResultSetRunnableE<E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
-		query(Connection.TRANSACTION_READ_COMMITTED, true, eClass, resultSetRunnable, sql, params);
+		query(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, resultSetRunnable, sql, params);
 	}
 
 	/**
 	 * Read-write query the database, calling the {@link ResultSetRunnableE} once.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
@@ -1635,7 +1635,7 @@ public interface DatabaseAccess {
 	 */
 	@SuppressWarnings("overloads")
 	default <E extends Exception> void update(Class<E> eClass, ResultSetRunnableE<E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
-		query(Connection.TRANSACTION_READ_COMMITTED, false, eClass, resultSetRunnable, sql, params);
+		query(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, resultSetRunnable, sql, params);
 	}
 
 	/**
@@ -1664,7 +1664,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@code short} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -1672,7 +1672,7 @@ public interface DatabaseAccess {
 	 * @see  #updateShort(java.lang.String, java.lang.Object...)
 	 */
 	default short queryShort(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return queryShort(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+		return queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
 	}
 
 	/**
@@ -1686,7 +1686,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@code short} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -1694,7 +1694,7 @@ public interface DatabaseAccess {
 	 * @see  #queryShort(java.lang.String, java.lang.Object...)
 	 */
 	default short updateShort(String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
-		return queryShort(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+		return queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
 	}
 
 	/**
@@ -1734,7 +1734,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@code List<Short>} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
@@ -1745,13 +1745,13 @@ public interface DatabaseAccess {
 	 */
 	@Deprecated
 	default List<Short> executeShortListQuery(String sql, Object ... params) throws SQLException {
-		return executeShortListQuery(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+		return executeShortListQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
 	}
 
 	/**
 	 * Read-write query the database with a {@code List<Short>} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
@@ -1762,7 +1762,7 @@ public interface DatabaseAccess {
 	 */
 	@Deprecated
 	default List<Short> executeShortListUpdate(String sql, Object ... params) throws SQLException {
-		return executeShortListQuery(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+		return executeShortListQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
 	}
 
 	/**
@@ -1779,7 +1779,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link String} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -1789,7 +1789,7 @@ public interface DatabaseAccess {
 	 * @see  #updateString(java.lang.String, java.lang.Object...)
 	 */
 	default String queryString(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return queryString(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+		return queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
 	}
 
 	/**
@@ -1803,7 +1803,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@link String} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -1813,7 +1813,7 @@ public interface DatabaseAccess {
 	 * @see  #queryString(java.lang.String, java.lang.Object...)
 	 */
 	default String updateString(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return queryString(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+		return queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
 	}
 
 	/**
@@ -1844,14 +1844,14 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link List List&lt;String&gt;} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #updateStringList(java.lang.String, java.lang.Object...)
 	 */
 	default List<String> queryStringList(String sql, Object ... params) throws SQLException {
-		return queryStringList(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+		return queryStringList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
 	}
 
 	/**
@@ -1865,14 +1865,14 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@link List List&lt;String&gt;} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #queryStringList(java.lang.String, java.lang.Object...)
 	 */
 	default List<String> updateStringList(String sql, Object ... params) throws SQLException {
-		return queryStringList(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+		return queryStringList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
 	}
 
 	/**
@@ -1901,27 +1901,27 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link Stream Stream&lt;String&gt;} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
 	 * @see  #streamStringUpdate(java.lang.String, java.lang.Object...)
 	 */
 	default Stream<String> streamString(String sql, Object ... params) throws SQLException {
-		return streamString(Connection.TRANSACTION_READ_COMMITTED, true, sql, params);
+		return streamString(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
 	}
 
 	/**
 	 * Read-write query the database with a {@link Stream Stream&lt;String&gt;} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
 	 * @see  #streamString(java.lang.String, java.lang.Object...)
 	 */
 	default Stream<String> streamStringUpdate(String sql, Object ... params) throws SQLException {
-		return streamString(Connection.TRANSACTION_READ_COMMITTED, false, sql, params);
+		return streamString(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
 	}
 
 	/**
@@ -1934,7 +1934,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-only query the database with a {@link Timestamp} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -1944,7 +1944,7 @@ public interface DatabaseAccess {
 	 * @see  #updateTimestamp(java.lang.String, java.lang.Object...)
 	 */
 	default Timestamp queryTimestamp(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return queryTimestamp(Connection.TRANSACTION_READ_COMMITTED, true, true, sql, params);
+		return queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
 	}
 
 	/**
@@ -1958,7 +1958,7 @@ public interface DatabaseAccess {
 	/**
 	 * Read-write query the database with a {@link Timestamp} return type.
 	 * <ul>
-	 *   <li>isolationLevel = {@link Connection#TRANSACTION_READ_COMMITTED}</li>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
 	 *   <li>rowRequired = {@code true}</li>
 	 * </ul>
@@ -1968,7 +1968,7 @@ public interface DatabaseAccess {
 	 * @see  #queryTimestamp(java.lang.String, java.lang.Object...)
 	 */
 	default Timestamp updateTimestamp(String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
-		return queryTimestamp(Connection.TRANSACTION_READ_COMMITTED, false, true, sql, params);
+		return queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
 	}
 
 	/**

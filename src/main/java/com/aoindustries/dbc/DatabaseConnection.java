@@ -25,6 +25,7 @@ package com.aoindustries.dbc;
 import com.aoindustries.exception.WrappedException;
 import com.aoindustries.lang.AutoCloseables;
 import com.aoindustries.lang.Throwables;
+import com.aoindustries.sql.Connections;
 import com.aoindustries.sql.WrappedSQLException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -716,7 +717,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
 	@Override
 	public int update(String sql, Object ... params) throws SQLException {
-		Connection conn = getConnection(Connection.TRANSACTION_READ_COMMITTED, false);
+		Connection conn = getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false);
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			try {
 				setParams(conn, pstmt, params);
