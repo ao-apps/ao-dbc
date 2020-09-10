@@ -22,6 +22,8 @@
  */
 package com.aoindustries.dbc;
 
+import static com.aoindustries.encoding.TextInPsqlEncoder.textInPsqlEncoder;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -87,21 +89,35 @@ final class DatabaseUtils {
 					if(value == null) {
 						sb.append("NULL");
 					} else {
-						sb.append('\'');
-						int i;
-						for (i = 0; i < value.length(); i++) {
-							if(i >= AUTO_ELLIPSIS_LEN) {
-								sb.append('…');
-								break;
+						try {
+							textInPsqlEncoder.writePrefixTo(sb);
+							for (
+								int i = 0, chars = 0, len = value.length(), codePoint, charCount;
+								i < len;
+								i += charCount, chars++
+							) {
+								codePoint = value.codePointAt(i);
+								charCount = Character.charCount(codePoint);
+								if(chars >= AUTO_ELLIPSIS_LEN) {
+									sb.append('…');
+									break;
+								}
+								// PostgreSQL encoder does not support NULL, handle it here instead of exception
+								if(codePoint == 0) {
+									sb.append("\\x00");
+								} else if(charCount == 2) {
+									textInPsqlEncoder.append(Character.highSurrogate(codePoint), sb);
+									textInPsqlEncoder.append(Character.lowSurrogate(codePoint), sb);
+								} else {
+									assert charCount == 1;
+									textInPsqlEncoder.append((char)codePoint, sb);
+								}
 							}
-							char ch = value.charAt(i);
-							if(ch == '\'') sb.append("''");
-							else if (ch == '\\' || ch == '"' || ch == '%' || ch == '_') {
-								sb.append('\\');
-							}
-							sb.append(ch);
+							textInPsqlEncoder.writeSuffixTo(sb);
+						} catch(IOException e) {
+							// TODO: This pattern is used may places, define in ao-lang?
+							throw new AssertionError("IOException should not occur on StringBuilder", e);
 						}
-						sb.append('\'');
 					}
 					break;
 			}

@@ -22,6 +22,7 @@
  */
 package com.aoindustries.dbc;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -39,11 +40,19 @@ public class NullDataException extends SQLException {
 		super(reason);
 	}
 
+	public NullDataException(ResultSet result) throws SQLException {
+		super(DatabaseUtils.getRow(result));
+	}
+
 	public NullDataException(Throwable cause) {
 		super(cause);
 	}
 
 	public NullDataException(String reason, Throwable cause) {
 		super(reason, cause);
+	}
+
+	public NullDataException(ResultSet result, Throwable cause) throws SQLException {
+		super(DatabaseUtils.getRow(result), cause);
 	}
 }

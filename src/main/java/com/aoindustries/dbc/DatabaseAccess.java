@@ -620,7 +620,7 @@ public interface DatabaseAccess {
 				IntList list = new IntArrayList();
 				while(results.next()) {
 					int i = results.getInt(1);
-					if(results.wasNull()) throw new NullDataException();
+					if(results.wasNull()) throw new NullDataException(results);
 					list.add(i);
 				}
 				return list;
@@ -792,7 +792,7 @@ public interface DatabaseAccess {
 				LongList list = new LongArrayList();
 				while(results.next()) {
 					long l = results.getLong(1);
-					if(results.wasNull()) throw new NullDataException();
+					if(results.wasNull()) throw new NullDataException(results);
 					list.add(l);
 				}
 				return list;
@@ -1020,7 +1020,7 @@ public interface DatabaseAccess {
 			results -> {
 				if(results.next()) {
 					T object = objectFactory.createObject(results);
-					if(results.next()) throw new ExtraRowException();
+					if(results.next()) throw new ExtraRowException(results);
 					return object;
 				}
 				if(rowRequired) throw new NoRowException();

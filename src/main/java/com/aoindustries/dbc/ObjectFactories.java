@@ -140,7 +140,7 @@ final public class ObjectFactories {
 		@Override
 		public T createObject(ResultSet result) throws NullDataException, SQLException, E {
 			T obj = objectFactory.createObject(result);
-			if(obj == null) throw new NullDataException();
+			if(obj == null) throw new NullDataException(result);
 			return obj;
 		}
 

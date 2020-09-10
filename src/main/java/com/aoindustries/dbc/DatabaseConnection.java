@@ -466,7 +466,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 									try {
 										if(!nextSet && results.next()) {
 											next = results.getDouble(1);
-											if(results.wasNull()) throw new NullDataException();
+											if(results.wasNull()) throw new NullDataException(results);
 											nextSet = true;
 										}
 										return nextSet;
@@ -485,7 +485,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 											return next;
 										} else if(results.next()) {
 											double d = results.getDouble(1);
-											if(results.wasNull()) throw new NullDataException();
+											if(results.wasNull()) throw new NullDataException(results);
 											return d;
 										} else {
 											throw new NoSuchElementException();
@@ -542,7 +542,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 									try {
 										if(!nextSet && results.next()) {
 											next = results.getInt(1);
-											if(results.wasNull()) throw new NullDataException();
+											if(results.wasNull()) throw new NullDataException(results);
 											nextSet = true;
 										}
 										return nextSet;
@@ -561,7 +561,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 											return next;
 										} else if(results.next()) {
 											int i = results.getInt(1);
-											if(results.wasNull()) throw new NullDataException();
+											if(results.wasNull()) throw new NullDataException(results);
 											return i;
 										} else {
 											throw new NoSuchElementException();
@@ -618,7 +618,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 									try {
 										if(!nextSet && results.next()) {
 											next = results.getLong(1);
-											if(results.wasNull()) throw new NullDataException();
+											if(results.wasNull()) throw new NullDataException(results);
 											nextSet = true;
 										}
 										return nextSet;
@@ -637,7 +637,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 											return next;
 										} else if(results.next()) {
 											long l = results.getLong(1);
-											if(results.wasNull()) throw new NullDataException();
+											if(results.wasNull()) throw new NullDataException(results);
 											return l;
 										} else {
 											throw new NoSuchElementException();

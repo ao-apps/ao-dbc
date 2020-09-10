@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2013, 2015  AO Industries, Inc.
+ * Copyright (C) 2013, 2015, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.dbc;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -39,11 +40,19 @@ public class ExtraRowException extends SQLException {
 		super(reason);
 	}
 
+	public ExtraRowException(ResultSet result) throws SQLException {
+		super(DatabaseUtils.getRow(result));
+	}
+
 	public ExtraRowException(Throwable cause) {
 		super(cause);
 	}
 
 	public ExtraRowException(String reason, Throwable cause) {
 		super(reason, cause);
+	}
+
+	public ExtraRowException(ResultSet result, Throwable cause) throws SQLException {
+		super(DatabaseUtils.getRow(result), cause);
 	}
 }
