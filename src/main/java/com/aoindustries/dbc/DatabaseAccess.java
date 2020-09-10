@@ -38,6 +38,8 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.Spliterator;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -1220,6 +1222,10 @@ public interface DatabaseAccess {
 
 	/**
 	 * Read-only query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
+	 * <p>
+	 * When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
+	 * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
+	 * </p>
 	 * <ul>
 	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
@@ -1233,6 +1239,10 @@ public interface DatabaseAccess {
 
 	/**
 	 * Read-write query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
+	 * <p>
+	 * When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
+	 * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
+	 * </p>
 	 * <ul>
 	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
@@ -1246,6 +1256,10 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
+	 * <p>
+	 * When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
+	 * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
+	 * </p>
 	 */
 	default <T> Stream<T> stream(int isolationLevel, boolean readOnly, ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws SQLException {
 		return stream(isolationLevel, readOnly, RuntimeException.class, objectFactory, sql, params);
@@ -1253,6 +1267,10 @@ public interface DatabaseAccess {
 
 	/**
 	 * Read-only query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
+	 * <p>
+	 * When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
+	 * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
+	 * </p>
 	 * <ul>
 	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code true}</li>
@@ -1266,6 +1284,10 @@ public interface DatabaseAccess {
 
 	/**
 	 * Read-write query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
+	 * <p>
+	 * When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
+	 * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
+	 * </p>
 	 * <ul>
 	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
 	 *   <li>readOnly = {@code false}</li>
@@ -1279,8 +1301,119 @@ public interface DatabaseAccess {
 
 	/**
 	 * Query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
+	 * <p>
+	 * When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
+	 * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
+	 * </p>
 	 */
 	<T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<? extends T,E> objectFactory, String sql, Object ... params) throws SQLException, E;
+
+	/**
+	 * Read-only query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
+	 * <p>
+	 * Always has the characteristic {@link Spliterator#NONNULL}.
+	 * </p>
+	 * <ul>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 * </ul>
+	 *
+	 * @see  #streamOptionalUpdate(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 */
+	default <T> Stream<Optional<T>> streamOptional(ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws SQLException {
+		return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, true, objectFactory, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
+	 * <p>
+	 * Always has the characteristic {@link Spliterator#NONNULL}.
+	 * </p>
+	 * <ul>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 * </ul>
+	 *
+	 * @see  #streamOptional(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 */
+	default <T> Stream<Optional<T>> streamOptionalUpdate(ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws SQLException {
+		return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, false, objectFactory, sql, params);
+	}
+
+	/**
+	 * Query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
+	 * <p>
+	 * Always has the characteristic {@link Spliterator#NONNULL}.
+	 * </p>
+	 */
+	default <T> Stream<Optional<T>> streamOptional(int isolationLevel, boolean readOnly, ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws SQLException {
+		return streamOptional(isolationLevel, readOnly, RuntimeException.class, objectFactory, sql, params);
+	}
+
+	/**
+	 * Read-only query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
+	 * <p>
+	 * Always has the characteristic {@link Spliterator#NONNULL}.
+	 * </p>
+	 * <ul>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 * </ul>
+	 *
+	 * @see  #streamOptionalUpdate(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 */
+	default <T,E extends Exception> Stream<Optional<T>> streamOptional(Class<E> eClass, ObjectFactoryE<? extends T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+		return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, objectFactory, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
+	 * <p>
+	 * Always has the characteristic {@link Spliterator#NONNULL}.
+	 * </p>
+	 * <ul>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 * </ul>
+	 *
+	 * @see  #streamOptional(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 */
+	default <T,E extends Exception> Stream<Optional<T>> streamOptionalUpdate(Class<E> eClass, ObjectFactoryE<? extends T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+		return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, objectFactory, sql, params);
+	}
+
+	/**
+	 * Query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
+	 * <p>
+	 * Always has the characteristic {@link Spliterator#NONNULL}.
+	 * </p>
+	 */
+	default <T,E extends Exception> Stream<Optional<T>> streamOptional(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<? extends T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+		boolean isNullable = objectFactory.isNullable();
+		return stream(
+			isolationLevel,
+			readOnly,
+			eClass,
+			new ObjectFactoryE<Optional<T>,E>() {
+				@Override
+				public Optional<T> createObject(ResultSet result) throws SQLException, E {
+					T t = objectFactory.createObject(result);
+					if(isNullable) {
+						return Optional.ofNullable(t);
+					} else {
+						if(t == null) throw new NullDataException(result);
+						return Optional.of(t);
+					}
+				}
+				@Override
+				public boolean isNullable() {
+					return false;
+				}
+			},
+			sql,
+			params
+		);
+	}
 
 	/**
 	 * Read-only query the database with a {@link Collection Collection&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
