@@ -672,8 +672,66 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		}
 	}
 
+	private static class ResultSetIterator<T,E extends Exception> implements Iterator<T> {
+
+		private final ObjectFactoryE<? extends T,E> objectFactory;
+		private final ResultSet results;
+		private final boolean isNullable;
+
+		private T next;
+		private boolean nextSet; // next may be null, so extra flag
+
+		private ResultSetIterator(ObjectFactoryE<? extends T,E> objectFactory, boolean isNullable, ResultSet results) {
+			this.objectFactory = objectFactory;
+			this.results = results;
+			this.isNullable = isNullable;
+		}
+
+		private T createAndCheckNullable(ResultSet results) throws SQLException, E {
+			T t = objectFactory.createObject(results);
+			if(t == null && !isNullable) throw new NullDataException(results);
+			return t;
+		}
+
+		@Override
+		public boolean hasNext() {
+			try {
+				if(!nextSet && results.next()) {
+					next = createAndCheckNullable(results);
+					nextSet = true;
+				}
+				return nextSet;
+			} catch(RuntimeException e) {
+				throw e;
+			} catch(Exception e) {
+				throw new WrappedException(e);
+			}
+		}
+
+		@Override
+		public T next() {
+			try {
+				if(nextSet) {
+					T t = next;
+					next = null;
+					nextSet = false;
+					return t;
+				} else if(results.next()) {
+					return createAndCheckNullable(results);
+				} else {
+					throw new NoSuchElementException();
+				}
+			} catch(RuntimeException e) {
+				throw e;
+			} catch(Exception e) {
+				throw new WrappedException(e);
+			}
+		}
+	}
+
 	@Override
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
+	// TODO: Take an optional int for additional characteristics?  Might be useful for DISTINCT and SORTED, in particular.
 	public <T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<? extends T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -683,53 +741,39 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				setParams(conn, pstmt, params);
 				ResultSet results = pstmt.executeQuery();
 				try {
-					int characteristics = Spliterator.ORDERED;
-					if(!objectFactory.isNullable()) characteristics |= Spliterator.NONNULL;
-					return StreamSupport.stream(
-						Spliterators.spliteratorUnknownSize(
-							new Iterator<T>() {
-								private T next;
-								private boolean nextSet; // next may be null, so extra flag
-
-								@Override
-								public boolean hasNext() {
-									try {
-										if(!nextSet && results.next()) {
-											next = objectFactory.createObject(results);
-											nextSet = true;
-										}
-										return nextSet;
-									} catch(RuntimeException e) {
-										throw e;
-									} catch(Exception e) {
-										throw new WrappedException(e);
-									}
+					Spliterator<T> spliterator;
+					{
+						int characteristics = Spliterator.ORDERED | Spliterator.IMMUTABLE;
+						boolean isNullable = objectFactory.isNullable();
+						if(!isNullable) characteristics |= Spliterator.NONNULL;
+						int resultType = results.getType();
+						switch(resultType) {
+							case ResultSet.TYPE_FORWARD_ONLY :
+								spliterator = Spliterators.spliteratorUnknownSize(
+									new ResultSetIterator<T,E>(objectFactory, isNullable, results),
+									characteristics
+								);
+								break;
+							case ResultSet.TYPE_SCROLL_INSENSITIVE :
+								characteristics |= Spliterator.SIZED;
+								// Fall-through
+							case ResultSet.TYPE_SCROLL_SENSITIVE :
+								int rowCount = 0;
+								if(results.last()) {
+									rowCount = results.getRow();
+									results.beforeFirst();
 								}
-
-								@Override
-								public T next() {
-									try {
-										if(nextSet) {
-											T t = next;
-											next = null;
-											nextSet = false;
-											return t;
-										} else if(results.next()) {
-											return objectFactory.createObject(results);
-										} else {
-											throw new NoSuchElementException();
-										}
-									} catch(RuntimeException e) {
-										throw e;
-									} catch(Exception e) {
-										throw new WrappedException(e);
-									}
-								}
-							},
-							characteristics
-						),
-						false
-					).onClose(new StreamCloser(pstmt, results));
+								spliterator = Spliterators.spliterator(
+									new ResultSetIterator<T,E>(objectFactory, isNullable, results),
+									rowCount,
+									characteristics
+								);
+								break;
+							default :
+								throw new AssertionError(resultType);
+						}
+					}
+					return StreamSupport.stream(spliterator, false).onClose(new StreamCloser(pstmt, results));
 				} catch(ThreadDeath td) {
 					throw td;
 				} catch(Throwable t) {
