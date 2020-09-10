@@ -106,10 +106,10 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 		return existing==notExists ? null : existing;
 	}
 
-	private final Class<T> clazz;
+	private final Class<? extends T> clazz;
 	private final Object[] prefixParams;
 
-	public AutoObjectFactory(Class<T> clazz, Object... prefixParams) {
+	public AutoObjectFactory(Class<? extends T> clazz, Object... prefixParams) {
 		this.clazz = clazz;
 		this.prefixParams = prefixParams;
 	}

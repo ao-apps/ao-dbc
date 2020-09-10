@@ -78,10 +78,10 @@ final public class ObjectFactories {
 	@Deprecated
 	public static class Object<T> implements ObjectFactory<T> {
 
-		private final Class<T> clazz;
-		private final Constructor<T> constructor;
+		private final Class<? extends T> clazz;
+		private final Constructor<? extends T> constructor;
 
-		public Object(Class<T> clazz) throws SQLException {
+		public Object(Class<? extends T> clazz) throws SQLException {
 			this.clazz = clazz;
 			try {
 				this.constructor = clazz.getConstructor(ResultSet.class);
@@ -131,9 +131,9 @@ final public class ObjectFactories {
 	 */
 	private static class NotNullE<T,E extends Exception> implements ObjectFactoryE<T,E> {
 
-		private final ObjectFactoryE<T,E> objectFactory;
+		private final ObjectFactoryE<? extends T,E> objectFactory;
 
-		private NotNullE(ObjectFactoryE<T,E> objectFactory) {
+		private NotNullE(ObjectFactoryE<? extends T,E> objectFactory) {
 			this.objectFactory = objectFactory;
 		}
 
@@ -158,7 +158,7 @@ final public class ObjectFactories {
 	 */
 	private static final class NotNull<T> extends NotNullE<T,RuntimeException> implements ObjectFactory<T> {
 		
-		private NotNull(ObjectFactory<T> objectFactory) {
+		private NotNull(ObjectFactory<? extends T> objectFactory) {
 			super(objectFactory);
 		}
 	}

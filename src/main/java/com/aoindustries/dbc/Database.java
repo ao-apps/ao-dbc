@@ -30,7 +30,6 @@ import java.sql.Connection;
 import java.sql.SQLData;
 import java.sql.SQLException;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -595,14 +594,14 @@ public class Database implements DatabaseAccess {
 	}
 
 	@Override
-	public <T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	public <T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<? extends T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return transaction(eClass, (DatabaseConnection conn) ->
 			conn.stream(isolationLevel, readOnly, eClass, objectFactory, sql, params)
 		);
 	}
 
 	@Override
-	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetCallableE<T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetCallableE<? extends T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
 		return transaction(eClass, (DatabaseConnection conn) ->
 			conn.query(isolationLevel, readOnly, eClass, resultSetCallable, sql, params)
 		);

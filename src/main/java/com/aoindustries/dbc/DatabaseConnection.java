@@ -674,7 +674,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
 	@Override
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
-	public <T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	public <T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<? extends T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		try {
@@ -750,7 +750,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	@Override
-	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetCallableE<T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetCallableE<? extends T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		// TODO: Use regular Statement when there are no params?  Interaction with PostgreSQL prepared statement caching?
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
