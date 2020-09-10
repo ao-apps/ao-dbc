@@ -25,6 +25,7 @@ package com.aoindustries.dbc;
 import com.aoindustries.exception.WrappedException;
 import com.aoindustries.lang.AutoCloseables;
 import com.aoindustries.lang.Throwables;
+import com.aoindustries.sql.AOConnectionPool;
 import com.aoindustries.sql.Connections;
 import com.aoindustries.sql.WrappedSQLException;
 import java.io.InputStream;
@@ -60,6 +61,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import javax.sql.DataSource;
 
 /**
  * A {@link DatabaseConnection} represents the scope of an overall transaction.
@@ -88,8 +90,48 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	/**
+	 * Gets a read/write connection to the database with a transaction level of {@link Connections#DEFAULT_TRANSACTION_ISOLATION}
+	 * and a maximum connections of 1.
+	 *
+	 * @return The read/write connection to the database
+	 *
 	 * @see  #getConnection(int, boolean, int)
 	 */
+	// Note: Matches AOConnectionPool.getConnection()
+	public Connection getConnection() throws SQLException {
+		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, 1);
+	}
+
+	/**
+	 * Gets a connection to the database with a transaction level of {@link Connections#DEFAULT_TRANSACTION_ISOLATION}
+	 * and a maximum connections of 1.
+	 *
+	 * @param readOnly The {@link Connection#setReadOnly(boolean) read-only flag}
+	 *
+	 * @return The connection to the database
+	 *
+	 * @see  #getConnection(int, boolean, int)
+	 */
+	// Note: Matches AOConnectionPool.getConnection(boolean)
+	public Connection getConnection(boolean readOnly) throws SQLException {
+		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, readOnly, 1);
+	}
+
+	/**
+	 * Gets a connection to the database with a maximum connections of 1.
+	 * <p>
+	 * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
+	 * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
+	 * </p>
+	 *
+	 * @param isolationLevel The {@link Connection#setTransactionIsolation(int) transaction isolation level}
+	 * @param readOnly The {@link Connection#setReadOnly(boolean) read-only flag}
+	 *
+	 * @return The connection to the database
+	 *
+	 * @see  #getConnection(int, boolean, int)
+	 */
+	// Note: Matches AOConnectionPool.getConnection(int, boolean)
 	public Connection getConnection(int isolationLevel, boolean readOnly) throws SQLException {
 		return getConnection(isolationLevel, readOnly, 1);
 	}
@@ -129,10 +171,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * highest isolation level that will be required at the beginning of the transaction.
 	 * </p>
 	 *
+	 * @see  Database#getConnection(int, boolean, int)
 	 * @see  Connection#setReadOnly(boolean)
 	 * @see  Connection#setTransactionIsolation(int)
 	 * @see  Connection#setAutoCommit(boolean)
 	 */
+	// Note: Matches AOConnectionPool.getConnection(int, boolean, int)
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
 		Connection c = _conn;
 		if(c == null) {
@@ -240,8 +284,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
 	/**
 	 * Closes and/or releases the current connection back to the pool.
+	 * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
+	 *
+	 * @see  Database#releaseConnection(java.sql.Connection)
+	 * @see  #close(java.lang.Throwable)
 	 */
-	// TODO: If auto-commit is disabled, will roll-back and enable before closing.
 	@Override
 	public void close() throws SQLException {
 		Connection c = _conn;
@@ -253,6 +300,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
 	/**
 	 * Closes and/or releases the current connection back to the pool.
+	 * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
 	 *
 	 * @param  t1  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
 	 *
@@ -270,6 +318,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 *
 	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
 	 */
+	// TODO: Change return value to be true only on actual rollback
 	public boolean rollback() throws SQLException {
 		Connection c = _conn;
 		if(c != null && !c.isClosed()) {

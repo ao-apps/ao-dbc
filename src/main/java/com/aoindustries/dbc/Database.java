@@ -29,14 +29,12 @@ import com.aoindustries.sql.AOConnectionPool;
 import java.sql.Connection;
 import java.sql.SQLData;
 import java.sql.SQLException;
-import java.sql.SQLWarning;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.Callable;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -84,8 +82,41 @@ public class Database implements DatabaseAccess {
 		this.logger = logger;
 	}
 
-	// TODO: Make this protected "newDatabaseConnection", deprecate this and make it final
-	public DatabaseConnection createDatabaseConnection() {
+	/**
+	 * Creates a new {@link DatabaseConnection} instance.  The instance must be closed
+	 * via {@link DatabaseConnection#close()} or {@link DatabaseConnection#close(java.lang.Throwable)}.
+	 * <p>
+	 * Note that the close methods will rollback any transaction in progress, so it is up to the caller to
+	 * perform any necessary {@link DatabaseConnection#commit()}.
+	 * </p>
+	 *
+	 * @deprecated  Direct use of this method is discouraged, as this is intended for instantiation and initialization
+	 *              of {@link DatabaseConnection} only.  Please use one of the various transaction methods, which
+	 *              enforce the transaction semantics.
+	 *
+	 * @see #transaction(java.lang.Runnable)
+	 * @see #transaction(com.aoindustries.dbc.DatabaseRunnable)
+	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
+	 * @see #transaction(java.util.concurrent.Callable)
+	 * @see #transaction(com.aoindustries.dbc.DatabaseCallable)
+	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 *
+	 * @see #newDatabaseConnection()
+	 */
+	@Deprecated
+	final public DatabaseConnection createDatabaseConnection() {
+		return newDatabaseConnection();
+	}
+
+	/**
+	 * Creates a new {@link DatabaseConnection} instance.  The instance must be closed
+	 * via {@link DatabaseConnection#close()} or {@link DatabaseConnection#close(java.lang.Throwable)}.
+	 * <p>
+	 * Note that the close methods will rollback any transaction in progress, so it is up to the caller to
+	 * perform any necessary {@link DatabaseConnection#commit()}.
+	 * </p>
+	 */
+	protected DatabaseConnection newDatabaseConnection() {
 		return new DatabaseConnection(this);
 	}
 
@@ -130,9 +161,7 @@ public class Database implements DatabaseAccess {
 		if(sqlDataTypes == null) {
 			// Load custom types from ServiceLoader
 			Map<String,Class<?>> newMap = new LinkedHashMap<>();
-			Iterator<SQLData> iter = ServiceLoader.load(SQLData.class).iterator();
-			while(iter.hasNext()) {
-				SQLData sqlData = iter.next();
+			for(SQLData sqlData : ServiceLoader.load(SQLData.class)) {
 				newMap.put(sqlData.getSQLTypeName(), sqlData.getClass());
 			}
 			sqlDataTypes = newMap;
@@ -141,6 +170,68 @@ public class Database implements DatabaseAccess {
 	}
 
 	private final Map<Connection,Map<String,Class<?>>> oldTypeMaps = new IdentityHashMap<>();
+
+	/**
+	 * Whenever a new connection is obtained from the pool or the dataSource,
+	 * it is passed here for initialization of {@link #getSqlDataTypes()}.
+	 *
+	 * @see  #deinitSqlDataTypes(java.sql.Connection)
+	 * @see  #getConnection(int, boolean, int)
+	 */
+	protected void initSqlDataTypes(Connection conn) throws SQLException {
+		// Load custom types from ServiceLoader
+		Map<String,Class<?>> newTypes = getSqlDataTypes();
+		int size = newTypes.size();
+		if(size != 0) {
+			Map<String,Class<?>> typeMap = conn.getTypeMap();
+			// Note: We get "null" back from PostgreSQL driver, despite documentation of returning empty
+			if(typeMap == null) typeMap = new LinkedHashMap<>(size*4/3+1);
+			oldTypeMaps.put(conn, new LinkedHashMap<>(typeMap));
+			typeMap.putAll(newTypes);
+			conn.setTypeMap(typeMap);
+		}
+	}
+
+	/**
+	 * Before a connection is release back to the pool or the dataSource,
+	 * it is passed here for de-initialization of {@link #getSqlDataTypes()}.
+	 *
+	 * @see  #initSqlDataTypes(java.sql.Connection)
+	 * @see  #releaseConnection(java.sql.Connection)
+	 */
+	protected void deinitSqlDataTypes(Connection conn) throws SQLException {
+		// TODO: Do not remove on release and avoid re-adding for performance?
+		Map<String,Class<?>> oldTypeMap = oldTypeMaps.remove(conn);
+		if(oldTypeMap != null && !conn.isClosed()) conn.setTypeMap(oldTypeMap);
+	}
+
+	/**
+	 * Whenever a new connection is obtained from the pool or the dataSource,
+	 * it is passed here for any custom initialization routine.
+	 * <p>
+	 * This default implementation does nothing.
+	 * </p>
+	 *
+	 * @see  #deinitConnection(java.sql.Connection)
+	 * @see  #getConnection(int, boolean, int)
+	 */
+	protected void initConnection(Connection conn) throws SQLException {
+		// Do nothing
+	}
+
+	/**
+	 * Before a connection is released back to the pool or the dataSource,
+	 * it is passed here for any custom de-initialization routine.
+	 * <p>
+	 * This default implementation does nothing.
+	 * </p>
+	 *
+	 * @see  #initConnection(java.sql.Connection)
+	 * @see  #releaseConnection(java.sql.Connection)
+	 */
+	protected void deinitConnection(Connection conn) throws SQLException {
+		// Do nothing
+	}
 
 	/**
 	 * Gets a connection to the database.
@@ -154,6 +245,9 @@ public class Database implements DatabaseAccess {
 	 * </p>
 	 *
 	 * @see  #releaseConnection(java.sql.Connection)
+	 * @see  DatabaseConnection#getConnection(int, boolean, int)
+	 * @see  #initSqlDataTypes(java.sql.Connection)
+	 * @see  #initConnection(java.sql.Connection)
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
@@ -209,22 +303,29 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
+	 * Closes and/or releases the given connection back to the pool.
+	 * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
+	 *
 	 * @see  #getConnection(int, boolean, int)
+	 * @see  DatabaseConnection#close()
+	 * @see  #deinitConnection(java.sql.Connection)
+	 * @see  #deinitSqlDataTypes(java.sql.Connection)
 	 */
 	// TODO: Don't use releaseConnection.  Instead, close the return Connection, which would release to the underlying pool
-	// TODO: If auto-commit is disabled, will roll-back and enable before closing (confirm done by DataSource version, too)
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public void releaseConnection(Connection conn) throws SQLException {
 		Throwable t1 = null;
-		// Restore custom types
-		Boolean closed = null; // Only call conn.isClosed() once
+		// Perform custom de-initialization
 		try {
-			// TODO: Do not remove on release and avoid re-adding for performance?
-			Map<String,Class<?>> oldTypeMap = oldTypeMaps.remove(conn);
-			if(oldTypeMap != null) {
-				if(closed == null) closed = conn.isClosed();
-				if(!closed) conn.setTypeMap(oldTypeMap);
-			}
+			deinitConnection(conn);
+		} catch(ThreadDeath td) {
+			throw td;
+		} catch(Throwable t) {
+			t1 = Throwables.addSuppressed(t1, t);
+		}
+		// Restore custom types
+		try {
+			deinitSqlDataTypes(conn);
 		} catch(ThreadDeath td) {
 			throw td;
 		} catch(Throwable t) {
@@ -236,14 +337,23 @@ public class Database implements DatabaseAccess {
 		} else {
 			// From dataSource
 			try {
-				// Log warnings here, like done by AOConnectionPool.logConnection(Connection)
-				if(closed == null) closed = conn.isClosed();
-				if(!closed) {
-					if(logger.isLoggable(Level.WARNING)) {
-						SQLWarning warning = conn.getWarnings();
-						if(warning != null) logger.log(Level.WARNING, null, warning);
+				if(!conn.isClosed()) {
+					// Log warnings before release and/or close
+					try {
+						AOConnectionPool.defaultLogConnection(conn, logger);
+					} catch(ThreadDeath td) {
+						throw td;
+					} catch(Throwable t) {
+						t1 = Throwables.addSuppressed(t1, t);
 					}
-					conn.clearWarnings();
+					// Reset connections as they are released
+					try {
+						AOConnectionPool.defaultResetConnection(conn);
+					} catch(ThreadDeath td) {
+						throw td;
+					} catch(Throwable t) {
+						t1 = Throwables.addSuppressed(t1, t);
+					}
 				}
 			} catch(ThreadDeath td) {
 				throw td;
@@ -461,33 +571,6 @@ public class Database implements DatabaseAccess {
 	@Override
 	public String toString() {
 		return "Database("+(pool!=null ? pool.toString() : dataSource.toString())+")";
-	}
-
-	/**
-	 * Whenever a new connection is obtained from the pool or the dataSource,
-	 * it is passed here for initialization of {@link #getSqlDataTypes()}.
-	 */
-	protected void initSqlDataTypes(Connection conn) throws SQLException {
-		// Load custom types from ServiceLoader
-		Map<String,Class<?>> newTypes = getSqlDataTypes();
-		int size = newTypes.size();
-		if(size != 0) {
-			Map<String,Class<?>> typeMap = conn.getTypeMap();
-			// Note: We get "null" back from PostgreSQL driver, despite documentation of returning empty
-			if(typeMap == null) typeMap = new LinkedHashMap<>(size*4/3+1);
-			oldTypeMaps.put(conn, new LinkedHashMap<>(typeMap));
-			typeMap.putAll(newTypes);
-			conn.setTypeMap(typeMap);
-		}
-	}
-
-	/**
-	 * Whenever a new connection is obtained from the pool or the dataSource,
-	 * it is passed here for any initialization routine.
-	 * This default implementation does nothing.
-	 */
-	protected void initConnection(Connection conn) throws SQLException {
-		// Do nothing
 	}
 
 	@Override
