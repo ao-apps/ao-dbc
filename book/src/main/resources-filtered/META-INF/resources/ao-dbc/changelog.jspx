@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-10T06:07:08-05:00"
+		dateModified="2020-09-10T23:24:29-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -168,8 +168,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						<code>newDatabaseConnection()</code>.
 					</li>
 					<li>
-						Added overloads of <code>DatabaseConnection.getConnection(…)</code>, paralleling the methods of
-						the underlying <code>AOConnectionPool</code>.
+						Added overloads of <code>Database.getConnection(…)</code> and
+						<code>DatabaseConnection.getConnection(…)</code>, paralleling the methods of the underlying
+						<code>AOConnectionPool</code>.
 					</li>
 					<li>
 						<code>NullDataException</code> and <code>ExtraRowException</code> now include a summary of the

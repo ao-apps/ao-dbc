@@ -25,7 +25,6 @@ package com.aoindustries.dbc;
 import com.aoindustries.exception.WrappedException;
 import com.aoindustries.lang.AutoCloseables;
 import com.aoindustries.lang.Throwables;
-import com.aoindustries.sql.AOConnectionPool;
 import com.aoindustries.sql.Connections;
 import com.aoindustries.sql.WrappedSQLException;
 import java.io.InputStream;
@@ -61,7 +60,6 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import javax.sql.DataSource;
 
 /**
  * A {@link DatabaseConnection} represents the scope of an overall transaction.
@@ -90,28 +88,33 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	/**
-	 * Gets a read/write connection to the database with a transaction level of {@link Connections#DEFAULT_TRANSACTION_ISOLATION}
-	 * and a maximum connections of 1.
+	 * Gets a read/write connection to the database with a transaction level of
+	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION} (or higher) and a maximum connections of 1.
 	 *
 	 * @return The read/write connection to the database
 	 *
 	 * @see  #getConnection(int, boolean, int)
+	 * @see  Database#getConnection()
 	 */
+	// Note: Matches Database.getConnection()
 	// Note: Matches AOConnectionPool.getConnection()
 	public Connection getConnection() throws SQLException {
 		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, 1);
 	}
 
 	/**
-	 * Gets a connection to the database with a transaction level of {@link Connections#DEFAULT_TRANSACTION_ISOLATION}
-	 * and a maximum connections of 1.
+	 * Gets a connection to the database with a transaction level of
+	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION} (or higher) and a maximum connections of 1.
 	 *
-	 * @param readOnly The {@link Connection#setReadOnly(boolean) read-only flag}
+	 * @param  readOnly  The {@link Connection#setReadOnly(boolean) read-only flag}.  Please note: a read-write connection
+	 *                   will always be returned while already in the scope of an overall read-write transaction.
 	 *
 	 * @return The connection to the database
 	 *
 	 * @see  #getConnection(int, boolean, int)
+	 * @see  Database#getConnection(boolean)
 	 */
+	// Note: Matches Database.getConnection(boolean)
 	// Note: Matches AOConnectionPool.getConnection(boolean)
 	public Connection getConnection(boolean readOnly) throws SQLException {
 		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, readOnly, 1);
@@ -119,18 +122,20 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
 	/**
 	 * Gets a connection to the database with a maximum connections of 1.
-	 * <p>
-	 * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
-	 * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
-	 * </p>
 	 *
-	 * @param isolationLevel The {@link Connection#setTransactionIsolation(int) transaction isolation level}
-	 * @param readOnly The {@link Connection#setReadOnly(boolean) read-only flag}
+	 * @param  isolationLevel  The {@link Connection#setTransactionIsolation(int) transaction isolation level}.  Please
+	 *                         note: a connection of a higher transaction isolation level may be returned while already
+	 *                         in the scope of an overall transaction.
+	 *
+	 * @param  readOnly  The {@link Connection#setReadOnly(boolean) read-only flag}.  Please note: a read-write connection
+	 *                   will always be returned while already in the scope of an overall read-write transaction.
 	 *
 	 * @return The connection to the database
 	 *
 	 * @see  #getConnection(int, boolean, int)
+	 * @see  Database#getConnection(int, boolean)
 	 */
+	// Note: Matches Database.getConnection(int, boolean)
 	// Note: Matches AOConnectionPool.getConnection(int, boolean)
 	public Connection getConnection(int isolationLevel, boolean readOnly) throws SQLException {
 		return getConnection(isolationLevel, readOnly, 1);
@@ -171,11 +176,19 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * highest isolation level that will be required at the beginning of the transaction.
 	 * </p>
 	 *
+	 * @param  isolationLevel  The {@link Connection#setTransactionIsolation(int) transaction isolation level}.  Please
+	 *                         note: a connection of a higher transaction isolation level may be returned while already
+	 *                         in the scope of an overall transaction.
+	 *
+	 * @param  readOnly  The {@link Connection#setReadOnly(boolean) read-only flag}.  Please note: a read-write connection
+	 *                   will always be returned while already in the scope of an overall read-write transaction.
+	 *
 	 * @see  Database#getConnection(int, boolean, int)
 	 * @see  Connection#setReadOnly(boolean)
 	 * @see  Connection#setTransactionIsolation(int)
 	 * @see  Connection#setAutoCommit(boolean)
 	 */
+	// Note: Matches Database.getConnection(int, boolean, int)
 	// Note: Matches AOConnectionPool.getConnection(int, boolean, int)
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
 		Connection c = _conn;

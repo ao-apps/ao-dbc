@@ -26,6 +26,7 @@ import com.aoindustries.exception.WrappedException;
 import com.aoindustries.lang.AutoCloseables;
 import com.aoindustries.lang.Throwables;
 import com.aoindustries.sql.AOConnectionPool;
+import com.aoindustries.sql.Connections;
 import java.sql.Connection;
 import java.sql.SQLData;
 import java.sql.SQLException;
@@ -233,10 +234,89 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * Gets a connection to the database.
-	 * The connection will be in {@linkplain Connection#getAutoCommit() auto-commit} mode, and have the given
+	 * Gets a read/write connection to the database with a transaction level of
+	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION} and a maximum connections of 1.
+	 * <p>
+	 * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
+	 * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
+	 * </p>
+	 * <p>
+	 * When obtaining a connection from a {@link DataSource}, if the connection is not in
+	 * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
+	 * be rolled-back and set to auto-commit.
+	 * </p>
+	 *
+	 * @return The read/write connection to the database
+	 *
+	 * @see  #getConnection(int, boolean, int)
+	 * @see  DatabaseConnection#getConnection()
+	 */
+	// Note: Matches DatabaseConnection.getConnection()
+	// Note: Matches AOConnectionPool.getConnection()
+	public Connection getConnection() throws SQLException {
+		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, 1);
+	}
+
+	/**
+	 * Gets a connection to the database with a transaction level of
+	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION} and a maximum connections of 1.
+	 * <p>
+	 * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
+	 * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
+	 * </p>
+	 * <p>
+	 * When obtaining a connection from a {@link DataSource}, if the connection is not in
+	 * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
+	 * be rolled-back and set to auto-commit.
+	 * </p>
+	 *
+	 * @param readOnly The {@link Connection#setReadOnly(boolean) read-only flag}
+	 *
+	 * @return The connection to the database
+	 *
+	 * @see  #getConnection(int, boolean, int)
+	 * @see  DatabaseConnection#getConnection(boolean)
+	 */
+	// Note: Matches DatabaseConnection.getConnection(boolean)
+	// Note: Matches AOConnectionPool.getConnection(boolean)
+	public Connection getConnection(boolean readOnly) throws SQLException {
+		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, readOnly, 1);
+	}
+
+	/**
+	 * Gets a connection to the database with a maximum connections of 1.
+	 * <p>
+	 * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
+	 * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
+	 * </p>
+	 * <p>
+	 * When obtaining a connection from a {@link DataSource}, if the connection is not in
+	 * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
+	 * be rolled-back and set to auto-commit.
+	 * </p>
+	 *
+	 * @param isolationLevel The {@link Connection#setTransactionIsolation(int) transaction isolation level}
+	 * @param readOnly The {@link Connection#setReadOnly(boolean) read-only flag}
+	 *
+	 * @return The connection to the database
+	 *
+	 * @see  #getConnection(int, boolean, int)
+	 * @see  DatabaseConnection#getConnection(int, boolean)
+	 */
+	// Note: Matches DatabaseConnection.getConnection(int, boolean)
+	// Note: Matches AOConnectionPool.getConnection(int, boolean)
+	public Connection getConnection(int isolationLevel, boolean readOnly) throws SQLException {
+		return getConnection(isolationLevel, readOnly, 1);
+	}
+
+	/**
+	 * Gets a connection to the database with the given
 	 * {@linkplain Connection#getTransactionIsolation() isolation level} and
 	 * {@linkplain Connection#isReadOnly() read-only mode}.
+	 * <p>
+	 * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
+	 * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
+	 * </p>
 	 * <p>
 	 * When obtaining a connection from a {@link DataSource}, if the connection is not in
 	 * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
@@ -248,6 +328,8 @@ public class Database implements DatabaseAccess {
 	 * @see  #initSqlDataTypes(java.sql.Connection)
 	 * @see  #initConnection(java.sql.Connection)
 	 */
+	// Note: Matches DatabaseConnection.getConnection(int, boolean, int)
+	// Note: Matches AOConnectionPool.getConnection(int, boolean, int)
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
 		Connection conn;
@@ -405,6 +487,8 @@ public class Database implements DatabaseAccess {
 	public void transaction(Runnable runnable) throws SQLException {
 		transaction((DatabaseConnection db) -> runnable.run());
 	}
+
+	// TODO: transactionR and transactionC
 
 	/**
 	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
