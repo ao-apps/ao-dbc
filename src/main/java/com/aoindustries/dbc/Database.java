@@ -343,17 +343,9 @@ public class Database implements DatabaseAccess {
 				assert conn.getTransactionIsolation() == isolationLevel;
 				initSqlDataTypes(conn);
 				initConnection(conn);
-			} catch(ThreadDeath td) {
-				throw td;
 			} catch(Throwable t) {
 				t1 = Throwables.addSuppressed(t1, t);
-				try {
-					pool.releaseConnection(conn);
-				} catch(ThreadDeath td) {
-					throw td;
-				} catch(Throwable t2) {
-					t1 = Throwables.addSuppressed(t1, t2);
-				}
+				t1 = AutoCloseables.close(t1, conn);
 			}
 		} else {
 			// From dataSource
@@ -368,10 +360,9 @@ public class Database implements DatabaseAccess {
 				if(conn.getTransactionIsolation() != isolationLevel) conn.setTransactionIsolation(isolationLevel);
 				initSqlDataTypes(conn);
 				initConnection(conn);
-			} catch(ThreadDeath td) {
-				throw td;
 			} catch(Throwable t) {
-				t1 = AutoCloseables.close(t, conn);
+				t1 = Throwables.addSuppressed(t1, t);
+				t1 = AutoCloseables.close(t1, conn);
 			}
 		}
 		if(t1 != null) {
@@ -399,22 +390,18 @@ public class Database implements DatabaseAccess {
 		// Perform custom de-initialization
 		try {
 			deinitConnection(conn);
-		} catch(ThreadDeath td) {
-			throw td;
 		} catch(Throwable t) {
 			t1 = Throwables.addSuppressed(t1, t);
 		}
 		// Restore custom types
 		try {
 			deinitSqlDataTypes(conn);
-		} catch(ThreadDeath td) {
-			throw td;
 		} catch(Throwable t) {
 			t1 = Throwables.addSuppressed(t1, t);
 		}
 		if(pool != null) {
 			// From pool
-			pool.releaseConnection(conn);
+			conn.close();
 		} else {
 			// From dataSource
 			try {
@@ -422,22 +409,16 @@ public class Database implements DatabaseAccess {
 					// Log warnings before release and/or close
 					try {
 						AOConnectionPool.defaultLogConnection(conn, logger);
-					} catch(ThreadDeath td) {
-						throw td;
 					} catch(Throwable t) {
 						t1 = Throwables.addSuppressed(t1, t);
 					}
 					// Reset connections as they are released
 					try {
 						AOConnectionPool.defaultResetConnection(conn);
-					} catch(ThreadDeath td) {
-						throw td;
 					} catch(Throwable t) {
 						t1 = Throwables.addSuppressed(t1, t);
 					}
 				}
-			} catch(ThreadDeath td) {
-				throw td;
 			} catch(Throwable t) {
 				t1 = Throwables.addSuppressed(t1, t);
 			} finally {
@@ -544,10 +525,10 @@ public class Database implements DatabaseAccess {
 		return transaction((DatabaseConnection db) -> {
 			try {
 				return callable.call();
-			} catch(RuntimeException | SQLException e) {
+			} catch(Error | RuntimeException | SQLException e) {
 				throw e;
-			} catch(Exception e) {
-				throw new SQLException(e);
+			} catch(Throwable t) {
+				throw new SQLException(t);
 			}
 		});
 	}
@@ -576,7 +557,6 @@ public class Database implements DatabaseAccess {
 	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
 	 * </p>
 	 * <ol>
-	 * <li>Returns immediately on {@link ThreadDeath}.</li>
 	 * <li>Rolls-back the transaction on {@link Error} or {@link RuntimeException}.</li>
 	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
 	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
@@ -595,27 +575,24 @@ public class Database implements DatabaseAccess {
 	 */
 	@SuppressWarnings({"ThrowableResultIgnored", "UseSpecificCatch", "overloads"})
 	public <V,E extends Exception> V transaction(Class<E> eClass, DatabaseCallableE<V,E> callable) throws SQLException, E {
+		Throwable t1 = null;
 		DatabaseConnection conn = transactionConnection.get();
 		if(conn != null) {
 			// Reuse existing connection
 			try {
 				return callable.call(conn);
-			} catch(ThreadDeath | NoRowException | NullDataException | ExtraRowException e) {
+			} catch(NoRowException | NullDataException | ExtraRowException e) {
 				throw e;
-			} catch(Error | RuntimeException e) {
-				conn.rollback(e);
-				throw e;
-			} catch(SQLException err) {
-				conn.rollbackAndClose(err);
-				throw err;
+			} catch(SQLException e) {
+				t1 = Throwables.addSuppressed(t1, e);
+				t1 = conn.rollbackAndClose(t1);
 			} catch(Throwable t) {
-				conn.rollback(t);
-				if(eClass.isInstance(t)) throw eClass.cast(t);
-				throw new WrappedException(t);
+				t1 = Throwables.addSuppressed(t1, t);
+				t1 = conn.rollback(t1);
 			}
 		} else {
 			// Create new connection
-			try (DatabaseConnection newConn = createDatabaseConnection()) {
+			try (DatabaseConnection newConn = newDatabaseConnection()) {
 				try {
 					transactionConnection.set(newConn);
 					try {
@@ -625,21 +602,24 @@ public class Database implements DatabaseAccess {
 					} finally {
 						transactionConnection.remove();
 					}
-				} catch(ThreadDeath td) {
-					throw td;
-				} catch(Error | RuntimeException | NoRowException | NullDataException | ExtraRowException e) {
-					newConn.rollback(e);
-					throw e;
-				} catch(SQLException err) {
-					newConn.rollbackAndClose(err);
-					throw err;
+				} catch(NoRowException | NullDataException | ExtraRowException e) {
+					t1 = Throwables.addSuppressed(t1, e);
+					t1 = newConn.rollback(t1);
+				} catch(SQLException e) {
+					t1 = Throwables.addSuppressed(t1, e);
+					t1 = newConn.rollbackAndClose(t1);
 				} catch(Throwable t) {
-					newConn.rollback(t);
-					if(eClass.isInstance(t)) throw eClass.cast(t);
-					throw new WrappedException(t);
+					t1 = Throwables.addSuppressed(t1, t);
+					t1 = newConn.rollback(t1);
 				}
 			}
 		}
+		assert t1 != null;
+		if(t1 instanceof Error) throw (Error)t1;
+		if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
+		if(t1 instanceof SQLException) throw (SQLException)t1;
+		if(eClass.isInstance(t1)) throw eClass.cast(t1);
+		throw new SQLException(t1);
 	}
 
 	/**

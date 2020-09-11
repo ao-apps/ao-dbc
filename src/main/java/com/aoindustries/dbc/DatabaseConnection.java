@@ -356,8 +356,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	public Throwable rollback(Throwable t1) {
 		try {
 			rollback();
-		} catch(ThreadDeath td) {
-			throw td;
 		} catch(Throwable t) {
 			t1 = Throwables.addSuppressed(t1, t);
 		}
@@ -371,6 +369,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 *
 	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
 	 */
+	// TODO: Abort if coming from AOConnectionPool?  Some other way to force closed?  Rely in isValid instead of this manual approach?
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public boolean rollbackAndClose() throws SQLException {
 		Connection c = _conn;
@@ -383,10 +382,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				if(rollback) {
 					try {
 						if(!c.getAutoCommit()) c.rollback();
-					} catch(ThreadDeath td) {
-						throw td;
 					} catch(Throwable t) {
-						t1 = t;
+						t1 = Throwables.addSuppressed(t1, t);
 					} finally {
 						t1 = AutoCloseables.close(t1, c);
 					}
@@ -394,8 +391,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 			} finally {
 				try {
 					database.releaseConnection(c);
-				} catch(ThreadDeath td) {
-					throw td;
 				} catch(Throwable t) {
 					t1 = Throwables.addSuppressed(t1, t);
 				}
@@ -404,7 +399,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				if(t1 instanceof Error) throw (Error)t1;
 				if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
 				if(t1 instanceof SQLException) throw (SQLException)t1;
-				throw new WrappedException(t1);
+				throw new SQLException(t1);
 			}
 			return rollback;
 		} else {
@@ -430,8 +425,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	public Throwable rollbackAndClose(Throwable t1) {
 		try {
 			rollbackAndClose();
-		} catch(ThreadDeath td) {
-			throw td;
 		} catch(Throwable t) {
 			t1 = Throwables.addSuppressed(t1, t);
 		}
@@ -483,10 +476,10 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 											nextSet = true;
 										}
 										return nextSet;
-									} catch(RuntimeException e) {
+									} catch(Error | RuntimeException e) {
 										throw e;
-									} catch(Exception e) {
-										throw new WrappedException(e);
+									} catch(Throwable t) {
+										throw new WrappedException(t);
 									}
 								}
 
@@ -503,10 +496,10 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 										} else {
 											throw new NoSuchElementException();
 										}
-									} catch(RuntimeException e) {
+									} catch(Error | RuntimeException e) {
 										throw e;
-									} catch(Exception e) {
-										throw new WrappedException(e);
+									} catch(Throwable t) {
+										throw new WrappedException(t);
 									}
 								}
 							},
@@ -514,16 +507,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 						),
 						false
 					).onClose(new StreamCloser(pstmt, results));
-				} catch(ThreadDeath td) {
-					throw td;
 				} catch(Throwable t) {
 					throw AutoCloseables.close(t, results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
 			}
-		} catch(ThreadDeath td) {
-			throw td;
 		} catch(Throwable t) {
 			t = AutoCloseables.close(t, pstmt);
 			if(t instanceof Error) throw (Error)t;
@@ -559,10 +548,10 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 											nextSet = true;
 										}
 										return nextSet;
-									} catch(RuntimeException e) {
+									} catch(Error | RuntimeException e) {
 										throw e;
-									} catch(Exception e) {
-										throw new WrappedException(e);
+									} catch(Throwable t) {
+										throw new WrappedException(t);
 									}
 								}
 
@@ -579,10 +568,10 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 										} else {
 											throw new NoSuchElementException();
 										}
-									} catch(RuntimeException e) {
+									} catch(Error | RuntimeException e) {
 										throw e;
-									} catch(Exception e) {
-										throw new WrappedException(e);
+									} catch(Throwable t) {
+										throw new WrappedException(t);
 									}
 								}
 							},
@@ -590,16 +579,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 						),
 						false
 					).onClose(new StreamCloser(pstmt, results));
-				} catch(ThreadDeath td) {
-					throw td;
 				} catch(Throwable t) {
 					throw AutoCloseables.close(t, results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
 			}
-		} catch(ThreadDeath td) {
-			throw td;
 		} catch(Throwable t) {
 			t = AutoCloseables.close(t, pstmt);
 			if(t instanceof Error) throw (Error)t;
@@ -635,10 +620,10 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 											nextSet = true;
 										}
 										return nextSet;
-									} catch(RuntimeException e) {
+									} catch(Error | RuntimeException e) {
 										throw e;
-									} catch(Exception e) {
-										throw new WrappedException(e);
+									} catch(Throwable t) {
+										throw new WrappedException(t);
 									}
 								}
 
@@ -655,10 +640,10 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 										} else {
 											throw new NoSuchElementException();
 										}
-									} catch(RuntimeException e) {
+									} catch(Error | RuntimeException e) {
 										throw e;
-									} catch(Exception e) {
-										throw new WrappedException(e);
+									} catch(Throwable t) {
+										throw new WrappedException(t);
 									}
 								}
 							},
@@ -666,16 +651,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 						),
 						false
 					).onClose(new StreamCloser(pstmt, results));
-				} catch(ThreadDeath td) {
-					throw td;
 				} catch(Throwable t) {
 					throw AutoCloseables.close(t, results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
 			}
-		} catch(ThreadDeath td) {
-			throw td;
 		} catch(Throwable t) {
 			t = AutoCloseables.close(t, pstmt);
 			if(t instanceof Error) throw (Error)t;
@@ -714,10 +695,10 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 					nextSet = true;
 				}
 				return nextSet;
-			} catch(RuntimeException e) {
+			} catch(Error | RuntimeException e) {
 				throw e;
-			} catch(Exception e) {
-				throw new WrappedException(e);
+			} catch(Throwable t) {
+				throw new WrappedException(t);
 			}
 		}
 
@@ -734,10 +715,10 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				} else {
 					throw new NoSuchElementException();
 				}
-			} catch(RuntimeException e) {
+			} catch(Error | RuntimeException e) {
 				throw e;
-			} catch(Exception e) {
-				throw new WrappedException(e);
+			} catch(Throwable t) {
+				throw new WrappedException(t);
 			}
 		}
 	}
@@ -787,21 +768,18 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 						}
 					}
 					return StreamSupport.stream(spliterator, false).onClose(new StreamCloser(pstmt, results));
-				} catch(ThreadDeath td) {
-					throw td;
 				} catch(Throwable t) {
 					throw AutoCloseables.close(t, results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
 			}
-		} catch(ThreadDeath td) {
-			throw td;
 		} catch(Throwable t) {
 			t = AutoCloseables.close(t, pstmt);
 			if(t instanceof Error) throw (Error)t;
 			if(t instanceof RuntimeException) throw (RuntimeException)t;
 			if(t instanceof SQLException) throw (SQLException)t;
+			if(eClass.isInstance(t)) throw eClass.cast(t);
 			throw new SQLException(t);
 		}
 	}
