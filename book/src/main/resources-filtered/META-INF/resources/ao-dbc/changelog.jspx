@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-10T23:24:29-05:00"
+		dateModified="2020-09-12T17:40:47-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -176,6 +176,24 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						<code>NullDataException</code> and <code>ExtraRowException</code> now include a summary of the
 						row as the exception message.  This implementation adds
 						<c:link book="/ao-encoding" page="/index.jspx" /> as new dependency.
+					</li>
+					<li>
+						Deprecated <code>Database.releaseConnection(Connection)</code> and
+						<code>DatabaseConnection.releaseConnection()</code>
+						in favor of <code>Connection.close()</code>
+						for use in try-with-resources:
+						<ol>
+							<li>New protected method <code>Database.release(Connection)</code> that performs the release.</li>
+							<li>This implementation adds <c:link book="/ao-concurrent" page="/index.jspx" /> as new dependency.</li>
+						</ol>
+					</li>
+					<li>
+						Deprecated <code>DatabaseConnection.getConnection([…,] maxConnections)</code>.
+						<p>
+							<code>DatabaseConnection</code> should only be used within the scope of a single thread.  This
+							is a requirement of the automatic transaction mechanism.  Therefore, any value of
+							<code>maxConnections</code> greater than one is unnecessary.
+						</p>
 					</li>
 					<!-- TODO: Change exception upper-bounds to Throwable? -->
 				</ul>

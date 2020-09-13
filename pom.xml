@@ -68,6 +68,11 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 											<outputDirectory>${project.build.directory}/offlineLinks/com.aoindustries/ao-collections</outputDirectory>
 										</artifactItem>
 										<artifactItem>
+											<groupId>com.aoindustries</groupId><artifactId>ao-concurrent</artifactId>
+											<classifier>javadoc</classifier><includes>element-list, package-list</includes>
+											<outputDirectory>${project.build.directory}/offlineLinks/com.aoindustries/ao-concurrent</outputDirectory>
+										</artifactItem>
+										<artifactItem>
 											<groupId>com.aoindustries</groupId><artifactId>ao-encoding</artifactId>
 											<classifier>javadoc</classifier><includes>element-list, package-list</includes>
 											<outputDirectory>${project.build.directory}/offlineLinks/com.aoindustries/ao-encoding</outputDirectory>
@@ -95,6 +100,10 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 								<offlineLink>
 									<url>https://aoindustries.com/ao-collections/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoindustries/ao-collections</location>
+								</offlineLink>
+								<offlineLink>
+									<url>https://aoindustries.com/ao-concurrent/apidocs/</url>
+									<location>${project.build.directory}/offlineLinks/com.aoindustries/ao-concurrent</location>
 								</offlineLink>
 								<offlineLink>
 									<url>https://aoindustries.com/ao-encoding/apidocs/</url>
@@ -128,6 +137,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>com.aoindustries</groupId><artifactId>ao-collections</artifactId><version>1.1.0${POST-SNAPSHOT}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-concurrent</artifactId><version>2.0.1${POST-SNAPSHOT}</version>
+			</dependency>
+			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-encoding</artifactId><version>3.0.0${POST-SNAPSHOT}</version>
 			</dependency>
 			<dependency>
@@ -147,6 +159,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		<!-- Direct -->
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-collections</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.aoindustries</groupId><artifactId>ao-concurrent</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-encoding</artifactId>

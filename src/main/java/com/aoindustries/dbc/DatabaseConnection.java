@@ -26,6 +26,7 @@ import com.aoindustries.exception.WrappedException;
 import com.aoindustries.lang.AutoCloseables;
 import com.aoindustries.lang.Throwables;
 import com.aoindustries.sql.Connections;
+import com.aoindustries.sql.UncloseableConnectionWrapper;
 import com.aoindustries.sql.WrappedSQLException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -55,6 +56,7 @@ import java.util.NoSuchElementException;
 import java.util.PrimitiveIterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.Executor;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -77,7 +79,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
 	private final Database database;
 
-	private Connection _conn;
+	private UncloseableConnectionWrapper _conn;
 
 	protected DatabaseConnection(Database database) {
 	   this.database=database;
@@ -88,63 +90,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	/**
-	 * Gets a read/write connection to the database with a transaction level of
-	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION} (or higher) and a maximum connections of 1.
-	 *
-	 * @return The read/write connection to the database
-	 *
-	 * @see  #getConnection(int, boolean, int)
-	 * @see  Database#getConnection()
-	 */
-	// Note: Matches Database.getConnection()
-	// Note: Matches AOConnectionPool.getConnection()
-	public Connection getConnection() throws SQLException {
-		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, 1);
-	}
-
-	/**
-	 * Gets a connection to the database with a transaction level of
-	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION} (or higher) and a maximum connections of 1.
-	 *
-	 * @param  readOnly  The {@link Connection#setReadOnly(boolean) read-only flag}.  Please note: a read-write connection
-	 *                   will always be returned while already in the scope of an overall read-write transaction.
-	 *
-	 * @return The connection to the database
-	 *
-	 * @see  #getConnection(int, boolean, int)
-	 * @see  Database#getConnection(boolean)
-	 */
-	// Note: Matches Database.getConnection(boolean)
-	// Note: Matches AOConnectionPool.getConnection(boolean)
-	public Connection getConnection(boolean readOnly) throws SQLException {
-		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, readOnly, 1);
-	}
-
-	/**
-	 * Gets a connection to the database with a maximum connections of 1.
-	 *
-	 * @param  isolationLevel  The {@link Connection#setTransactionIsolation(int) transaction isolation level}.  Please
-	 *                         note: a connection of a higher transaction isolation level may be returned while already
-	 *                         in the scope of an overall transaction.
-	 *
-	 * @param  readOnly  The {@link Connection#setReadOnly(boolean) read-only flag}.  Please note: a read-write connection
-	 *                   will always be returned while already in the scope of an overall read-write transaction.
-	 *
-	 * @return The connection to the database
-	 *
-	 * @see  #getConnection(int, boolean, int)
-	 * @see  Database#getConnection(int, boolean)
-	 */
-	// Note: Matches Database.getConnection(int, boolean)
-	// Note: Matches AOConnectionPool.getConnection(int, boolean)
-	public Connection getConnection(int isolationLevel, boolean readOnly) throws SQLException {
-		return getConnection(isolationLevel, readOnly, 1);
-	}
-
-	/**
-	 * Gets the connection to the underlying database.
+	 * Gets the read/write connection to the database with a transaction level of
+	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION},
+	 * warning when a connection is already used by this thread.
 	 * <p>
-	 * Uses a deferred connection strategy.  If not previously connected, establishes the connection now.  This allows
+	 * Uses a deferred connection strategy.  If not previously connected, allocates the connection now.  This allows
 	 * applications to create {@link DatabaseConnection} at no cost, only connecting to the database when first needed.
 	 * This is helpful for when a transaction scope is established at a high level, where the actual use (or lack
 	 * thereof) of the database is unknown.
@@ -175,26 +125,308 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * the ability to change the isolation level within a transaction is driver dependent.  It is best to set the
 	 * highest isolation level that will be required at the beginning of the transaction.
 	 * </p>
+	 * <p>
+	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+	 * available.
+	 * </p>
+	 *
+	 * @return  The read/write connection to the database.
+	 *          This connection may be used in try-with-resources, but any calls to {@link Connection#close()} are
+	 *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
+	 *          {@linkplain #close() closed}.
+	 *
+	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
+	 *
+	 * @see  #getConnection(int, boolean, int)
+	 * @see  Database#getConnection()
+	 * @see  Connection#close()
+	 */
+	// Note: Matches AOPool.getConnection()
+	// Note: Matches AOConnectionPool.getConnection()
+	// Note: Matches Database.getConnection()
+	// Note:      Is DatabaseConnection.getConnection()
+	public Connection getConnection() throws SQLException {
+		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, 1);
+	}
+
+	/**
+	 * Gets the read/write connection to the database with a transaction level of
+	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION}.
+	 * <p>
+	 * Uses a deferred connection strategy.  If not previously connected, allocates the connection now.  This allows
+	 * applications to create {@link DatabaseConnection} at no cost, only connecting to the database when first needed.
+	 * This is helpful for when a transaction scope is established at a high level, where the actual use (or lack
+	 * thereof) of the database is unknown.
+	 * </p>
+	 * <p>
+	 * The default auto-commit state depends on the read-only and isolation levels.  Upon initial connection,
+	 * auto-commit is enabled.  It then remains unchanged while is read-only and at an isolation level of
+	 * {@link Connection#TRANSACTION_READ_COMMITTED} or below.  This means, conversely, that auto-commit is disabled
+	 * when is either read-write or at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ} or above.
+	 * </p>
+	 * <p>
+	 * When a connection already exists, its read-only mode may be changed, but may not be changed on a connection that
+	 * has auto-commit disabled (which typically means it was either already read-write or at an isolation level of
+	 * {@link Connection#TRANSACTION_REPEATABLE_READ} or above).
+	 * </p>
+	 * <p>
+	 * With the default auto-commit behavior (auto-commit not disabled by application), <strong>it is an error to try to
+	 * change from read-only to read-write while at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
+	 * or above,</strong> as the necessary actions to make the change would break the repeatable-read guarantee.
+	 * </p>
+	 * <p>
+	 * Read-write connections will not be set back to read-only mode when the connection has auto-commit disabled, thus
+	 * <strong>the read-only flag is an optimization and an extra level of protection, but cannot be relied upon due to
+	 * potentially being within the scope of a larger read-write transaction.</strong>
+	 * </p>
+	 * <p>
+	 * When a connection already exists, its isolation level may be increased, but will never be decreased.  However,
+	 * the ability to change the isolation level within a transaction is driver dependent.  It is best to set the
+	 * highest isolation level that will be required at the beginning of the transaction.
+	 * </p>
+	 * <p>
+	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+	 * available.
+	 * </p>
+	 *
+	 * @param  maxConnections  The maximum number of connections expected to be used by the current thread.
+	 *                         This should normally be one to avoid potential deadlock.
+	 *                         <p>
+	 *                         The connection will continue to be considered used by the allocating thread until
+	 *                         released (via {@link Connection#close()}, even if the connection is shared by another
+	 *                         thread.
+	 *                         </p>
+	 *
+	 * @return  The read/write connection to the database.
+	 *          This connection may be used in try-with-resources, but any calls to {@link Connection#close()} are
+	 *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
+	 *          {@linkplain #close() closed}.
+	 *
+	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
+	 *
+	 * @see  #getConnection(int, boolean, int)
+	 * @see  Database#getConnection(int)
+	 * @see  Connection#close()
+	 *
+	 * @deprecated  {@link DatabaseConnection} should only be used within the scope of a single thread.  This is a requirement of
+	 *              {@linkplain Database#transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE) the automatic transaction mechanism}.
+	 *              Therefore, any value of {@code maxConnections} greater than one is unnecessary.
+	 */
+	// Note: Matches AOPool.getConnection()
+	// Note: Matches AOConnectionPool.getConnection()
+	// Note: Matches Database.getConnection()
+	// Note:      Is DatabaseConnection.getConnection()
+	@Deprecated
+	public Connection getConnection(int maxConnections) throws SQLException {
+		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, maxConnections);
+	}
+
+	/**
+	 * Gets the connection to the database with a transaction level of
+	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION},
+	 * warning when a connection is already used by this thread.
+	 * <p>
+	 * Uses a deferred connection strategy.  If not previously connected, allocates the connection now.  This allows
+	 * applications to create {@link DatabaseConnection} at no cost, only connecting to the database when first needed.
+	 * This is helpful for when a transaction scope is established at a high level, where the actual use (or lack
+	 * thereof) of the database is unknown.
+	 * </p>
+	 * <p>
+	 * The default auto-commit state depends on the read-only and isolation levels.  Upon initial connection,
+	 * auto-commit is enabled.  It then remains unchanged while is read-only and at an isolation level of
+	 * {@link Connection#TRANSACTION_READ_COMMITTED} or below.  This means, conversely, that auto-commit is disabled
+	 * when is either read-write or at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ} or above.
+	 * </p>
+	 * <p>
+	 * When a connection already exists, its read-only mode may be changed, but may not be changed on a connection that
+	 * has auto-commit disabled (which typically means it was either already read-write or at an isolation level of
+	 * {@link Connection#TRANSACTION_REPEATABLE_READ} or above).
+	 * </p>
+	 * <p>
+	 * With the default auto-commit behavior (auto-commit not disabled by application), <strong>it is an error to try to
+	 * change from read-only to read-write while at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
+	 * or above,</strong> as the necessary actions to make the change would break the repeatable-read guarantee.
+	 * </p>
+	 * <p>
+	 * Read-write connections will not be set back to read-only mode when the connection has auto-commit disabled, thus
+	 * <strong>the read-only flag is an optimization and an extra level of protection, but cannot be relied upon due to
+	 * potentially being within the scope of a larger read-write transaction.</strong>
+	 * </p>
+	 * <p>
+	 * When a connection already exists, its isolation level may be increased, but will never be decreased.  However,
+	 * the ability to change the isolation level within a transaction is driver dependent.  It is best to set the
+	 * highest isolation level that will be required at the beginning of the transaction.
+	 * </p>
+	 * <p>
+	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+	 * available.
+	 * </p>
+	 *
+	 * @param  readOnly  The {@link Connection#setReadOnly(boolean) read-only flag}.  Please note: a read-write connection
+	 *                   will always be returned while already in the scope of an overall read-write transaction.
+	 *
+	 * @return  The connection to the database.
+	 *          This connection may be used in try-with-resources, but any calls to {@link Connection#close()} are
+	 *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
+	 *          {@linkplain #close() closed}.
+	 *
+	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
+	 *
+	 * @see  #getConnection(int, boolean, int)
+	 * @see  Database#getConnection(boolean)
+	 * @see  Connection#close()
+	 */
+	// Note: Matches AOConnectionPool.getConnection(boolean)
+	// Note: Matches Database.getConnection(boolean)
+	// Note:      Is DatabaseConnection.getConnection(boolean)
+	public Connection getConnection(boolean readOnly) throws SQLException {
+		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, readOnly, 1);
+	}
+
+	/**
+	 * Gets the connection to the database,
+	 * warning when a connection is already used by this thread.
+	 * <p>
+	 * Uses a deferred connection strategy.  If not previously connected, allocates the connection now.  This allows
+	 * applications to create {@link DatabaseConnection} at no cost, only connecting to the database when first needed.
+	 * This is helpful for when a transaction scope is established at a high level, where the actual use (or lack
+	 * thereof) of the database is unknown.
+	 * </p>
+	 * <p>
+	 * The default auto-commit state depends on the read-only and isolation levels.  Upon initial connection,
+	 * auto-commit is enabled.  It then remains unchanged while is read-only and at an isolation level of
+	 * {@link Connection#TRANSACTION_READ_COMMITTED} or below.  This means, conversely, that auto-commit is disabled
+	 * when is either read-write or at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ} or above.
+	 * </p>
+	 * <p>
+	 * When a connection already exists, its read-only mode may be changed, but may not be changed on a connection that
+	 * has auto-commit disabled (which typically means it was either already read-write or at an isolation level of
+	 * {@link Connection#TRANSACTION_REPEATABLE_READ} or above).
+	 * </p>
+	 * <p>
+	 * With the default auto-commit behavior (auto-commit not disabled by application), <strong>it is an error to try to
+	 * change from read-only to read-write while at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
+	 * or above,</strong> as the necessary actions to make the change would break the repeatable-read guarantee.
+	 * </p>
+	 * <p>
+	 * Read-write connections will not be set back to read-only mode when the connection has auto-commit disabled, thus
+	 * <strong>the read-only flag is an optimization and an extra level of protection, but cannot be relied upon due to
+	 * potentially being within the scope of a larger read-write transaction.</strong>
+	 * </p>
+	 * <p>
+	 * When a connection already exists, its isolation level may be increased, but will never be decreased.  However,
+	 * the ability to change the isolation level within a transaction is driver dependent.  It is best to set the
+	 * highest isolation level that will be required at the beginning of the transaction.
+	 * </p>
+	 * <p>
+	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+	 * available.
+	 * </p>
 	 *
 	 * @param  isolationLevel  The {@link Connection#setTransactionIsolation(int) transaction isolation level}.  Please
 	 *                         note: a connection of a higher transaction isolation level may be returned while already
 	 *                         in the scope of an overall transaction.
 	 *
-	 * @param  readOnly  The {@link Connection#setReadOnly(boolean) read-only flag}.  Please note: a read-write connection
-	 *                   will always be returned while already in the scope of an overall read-write transaction.
+	 * @param  readOnly        The {@link Connection#setReadOnly(boolean) read-only flag}.  Please note: a read-write
+	 *                         connection will always be returned while already in the scope of an overall read-write
+	 *                         transaction.
+	 *
+	 * @return  The connection to the database.
+	 *          This connection may be used in try-with-resources, but any calls to {@link Connection#close()} are
+	 *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
+	 *          {@linkplain #close() closed}.
+	 *
+	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
+	 *
+	 * @see  #getConnection(int, boolean, int)
+	 * @see  Database#getConnection(int, boolean)
+	 * @see  Connection#close()
+	 */
+	// Note: Matches AOConnectionPool.getConnection(int, boolean)
+	// Note: Matches Database.getConnection(int, boolean)
+	// Note:      Is DatabaseConnection.getConnection(int, boolean)
+	public Connection getConnection(int isolationLevel, boolean readOnly) throws SQLException {
+		return getConnection(isolationLevel, readOnly, 1);
+	}
+
+	/**
+	 * Gets the connection to the database.
+	 * <p>
+	 * Uses a deferred connection strategy.  If not previously connected, allocates the connection now.  This allows
+	 * applications to create {@link DatabaseConnection} at no cost, only connecting to the database when first needed.
+	 * This is helpful for when a transaction scope is established at a high level, where the actual use (or lack
+	 * thereof) of the database is unknown.
+	 * </p>
+	 * <p>
+	 * The default auto-commit state depends on the read-only and isolation levels.  Upon initial connection,
+	 * auto-commit is enabled.  It then remains unchanged while is read-only and at an isolation level of
+	 * {@link Connection#TRANSACTION_READ_COMMITTED} or below.  This means, conversely, that auto-commit is disabled
+	 * when is either read-write or at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ} or above.
+	 * </p>
+	 * <p>
+	 * When a connection already exists, its read-only mode may be changed, but may not be changed on a connection that
+	 * has auto-commit disabled (which typically means it was either already read-write or at an isolation level of
+	 * {@link Connection#TRANSACTION_REPEATABLE_READ} or above).
+	 * </p>
+	 * <p>
+	 * With the default auto-commit behavior (auto-commit not disabled by application), <strong>it is an error to try to
+	 * change from read-only to read-write while at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
+	 * or above,</strong> as the necessary actions to make the change would break the repeatable-read guarantee.
+	 * </p>
+	 * <p>
+	 * Read-write connections will not be set back to read-only mode when the connection has auto-commit disabled, thus
+	 * <strong>the read-only flag is an optimization and an extra level of protection, but cannot be relied upon due to
+	 * potentially being within the scope of a larger read-write transaction.</strong>
+	 * </p>
+	 * <p>
+	 * When a connection already exists, its isolation level may be increased, but will never be decreased.  However,
+	 * the ability to change the isolation level within a transaction is driver dependent.  It is best to set the
+	 * highest isolation level that will be required at the beginning of the transaction.
+	 * </p>
+	 * <p>
+	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+	 * available.
+	 * </p>
+	 *
+	 * @param  isolationLevel  The {@link Connection#setTransactionIsolation(int) transaction isolation level}.  Please
+	 *                         note: a connection of a higher transaction isolation level may be returned while already
+	 *                         in the scope of an overall transaction.
+	 *
+	 * @param  readOnly        The {@link Connection#setReadOnly(boolean) read-only flag}.  Please note: a read-write
+	 *                         connection will always be returned while already in the scope of an overall read-write
+	 *                         transaction.
+	 *
+	 * @param  maxConnections  The maximum number of connections expected to be used by the current thread.
+	 *                         This should normally be one to avoid potential deadlock.
+	 *                         <p>
+	 *                         The connection will continue to be considered used by the allocating thread until
+	 *                         released (via {@link Connection#close()}, even if the connection is shared by another
+	 *                         thread.
+	 *                         </p>
+	 *
+	 * @return  The connection to the database.
+	 *          This connection may be used in try-with-resources, but any calls to {@link Connection#close()} are
+	 *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
+	 *          {@linkplain #close() closed}.
+	 *
+	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
 	 *
 	 * @see  Database#getConnection(int, boolean, int)
-	 * @see  Connection#setReadOnly(boolean)
-	 * @see  Connection#setTransactionIsolation(int)
-	 * @see  Connection#setAutoCommit(boolean)
+	 * @see  Connection#close()
+	 *
+	 * @deprecated  {@link DatabaseConnection} should only be used within the scope of a single thread.  This is a requirement of
+	 *              {@linkplain Database#transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE) the automatic transaction mechanism}.
+	 *              Therefore, any value of {@code maxConnections} greater than one is unnecessary.
 	 */
-	// Note: Matches Database.getConnection(int, boolean, int)
 	// Note: Matches AOConnectionPool.getConnection(int, boolean, int)
+	// Note: Matches Database.getConnection(int, boolean, int)
+	// Note:      Is DatabaseConnection.getConnection(int, boolean)
+	@Deprecated
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
-		Connection c = _conn;
+		UncloseableConnectionWrapper c = _conn;
 		if(c == null) {
 			// New connection
-			c = database.getConnection(isolationLevel, readOnly, maxConnections);
+			c = new UncloseableConnectionWrapper(database.getConnection(isolationLevel, readOnly, maxConnections));
 			assert c.getAutoCommit();
 			assert c.isReadOnly() == readOnly;
 			assert c.getTransactionIsolation() == isolationLevel;
@@ -278,12 +510,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
 	// TODO: Restore default isolation levels and read-only state on commit and rollback?
 	public void commit() throws SQLException {
-		Connection c = _conn;
+		UncloseableConnectionWrapper c = _conn;
 		if(c != null && !c.getAutoCommit()) c.commit();
 	}
 
 	public boolean isClosed() throws SQLException {
-		Connection c = _conn;
+		UncloseableConnectionWrapper c = _conn;
 		return c == null || c.isClosed();
 	}
 
@@ -304,10 +536,10 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 */
 	@Override
 	public void close() throws SQLException {
-		Connection c = _conn;
+		UncloseableConnectionWrapper c = _conn;
 		if(c != null) {
 			_conn = null;
-			database.releaseConnection(c);
+			c.getWrappedConnection().close();
 		}
 	}
 
@@ -333,7 +565,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 */
 	// TODO: Change return value to be true only on actual rollback
 	public boolean rollback() throws SQLException {
-		Connection c = _conn;
+		UncloseableConnectionWrapper c = _conn;
 		if(c != null && !c.isClosed()) {
 			if(!c.getAutoCommit()) c.rollback();
 			return true;
@@ -364,15 +596,14 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
 	/**
 	 * Rolls back the current connection, if have connection and is not auto-commit, and forces the underlying
-	 * connection closed.  This close is distinct from {@link #close()}, which is intended for
-	 * releasing to the underlying pool.
+	 * connection closed via {@link Connection#abort(java.util.concurrent.Executor)}.  This close is distinct
+	 * from {@link #close()}, which is intended for releasing to the underlying pool via {@link Connection#close()}.
 	 *
 	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
 	 */
-	// TODO: Abort if coming from AOConnectionPool?  Some other way to force closed?  Rely in isValid instead of this manual approach?
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public boolean rollbackAndClose() throws SQLException {
-		Connection c = _conn;
+		UncloseableConnectionWrapper c = _conn;
 		if(c != null) {
 			_conn = null;
 			Throwable t1 = null;
@@ -384,16 +615,16 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 						if(!c.getAutoCommit()) c.rollback();
 					} catch(Throwable t) {
 						t1 = Throwables.addSuppressed(t1, t);
-					} finally {
+					}
+					try {
+						c.abort(database.getExecutors().getUnbounded());
+					} catch(Throwable t) {
+						t1 = Throwables.addSuppressed(t1, t);
 						t1 = AutoCloseables.close(t1, c);
 					}
 				}
 			} finally {
-				try {
-					database.releaseConnection(c);
-				} catch(Throwable t) {
-					t1 = Throwables.addSuppressed(t1, t);
-				}
+				t1 = AutoCloseables.close(t1, c.getWrappedConnection());
 			}
 			if(t1 != null) {
 				if(t1 instanceof Error) throw (Error)t1;
@@ -420,7 +651,6 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * @see  Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	// TODO: Only close if connection is invalid?
 	// TODO: Combine with rollback, and automatically close if connection is invalid?
 	public Throwable rollbackAndClose(Throwable t1) {
 		try {
@@ -688,6 +918,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		}
 
 		@Override
+		@SuppressWarnings("UseSpecificCatch")
 		public boolean hasNext() {
 			try {
 				if(!nextSet && results.next()) {
@@ -703,6 +934,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		}
 
 		@Override
+		@SuppressWarnings("UseSpecificCatch")
 		public T next() {
 			try {
 				if(nextSet) {

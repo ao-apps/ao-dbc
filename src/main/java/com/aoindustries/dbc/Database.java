@@ -22,11 +22,14 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.concurrent.Executors;
 import com.aoindustries.exception.WrappedException;
 import com.aoindustries.lang.AutoCloseables;
 import com.aoindustries.lang.Throwables;
 import com.aoindustries.sql.AOConnectionPool;
 import com.aoindustries.sql.Connections;
+import com.aoindustries.sql.IUncloseableConnectionWrapper;
+import com.aoindustries.sql.UncloseableConnectionWrapper;
 import java.sql.Connection;
 import java.sql.SQLData;
 import java.sql.SQLException;
@@ -35,6 +38,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 import java.util.logging.Logger;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -62,6 +66,8 @@ public class Database implements DatabaseAccess {
 	private final DataSource dataSource;
 	@SuppressWarnings("NonConstantLogger")
 	private final Logger logger;
+
+	private final Executors executors = new Executors();
 
 	public Database(String driver, String url, String user, String password, int numConnections, long maxConnectionAge, Logger logger) {
 		this(new AOConnectionPool(driver, url, user, password, numConnections, maxConnectionAge, logger));
@@ -139,13 +145,22 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
+	 * Gets the executors for this database.  Is {@linkplain Executors#dispose() disposed} on {@link #close()}.
+	 */
+	Executors getExecutors() {
+		return executors;
+	}
+
+	/**
 	 * Closes the database.
 	 *
 	 * @see  AOConnectionPool#close()
+	 * @see  Executors#dispose()
 	 * @see  CloseableDatabase#close()
 	 */
 	protected void close() {
 		if(pool != null) pool.close();
+		executors.dispose();
 	}
 
 	/**
@@ -235,7 +250,8 @@ public class Database implements DatabaseAccess {
 
 	/**
 	 * Gets a read/write connection to the database with a transaction level of
-	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION} and a maximum connections of 1.
+	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION},
+	 * warning when a connection is already used by this thread.
 	 * <p>
 	 * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
 	 * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
@@ -245,21 +261,30 @@ public class Database implements DatabaseAccess {
 	 * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
 	 * be rolled-back and set to auto-commit.
 	 * </p>
+	 * <p>
+	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+	 * available.
+	 * </p>
 	 *
-	 * @return The read/write connection to the database
+	 * @return  The read/write connection to the database
+	 *
+	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
 	 *
 	 * @see  #getConnection(int, boolean, int)
 	 * @see  DatabaseConnection#getConnection()
+	 * @see  Connection#close()
 	 */
-	// Note: Matches DatabaseConnection.getConnection()
+	// Note: Matches AOPool.getConnection()
 	// Note: Matches AOConnectionPool.getConnection()
+	// Note:      Is Database.getConnection()
+	// Note: Matches DatabaseConnection.getConnection()
 	public Connection getConnection() throws SQLException {
 		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, 1);
 	}
 
 	/**
-	 * Gets a connection to the database with a transaction level of
-	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION} and a maximum connections of 1.
+	 * Gets a read/write connection to the database with a transaction level of
+	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION}.
 	 * <p>
 	 * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
 	 * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
@@ -269,22 +294,73 @@ public class Database implements DatabaseAccess {
 	 * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
 	 * be rolled-back and set to auto-commit.
 	 * </p>
+	 * <p>
+	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+	 * available.
+	 * </p>
 	 *
-	 * @param readOnly The {@link Connection#setReadOnly(boolean) read-only flag}
+	 * @param  maxConnections  The maximum number of connections expected to be used by the current thread.
+	 *                         This should normally be one to avoid potential deadlock.
+	 *                         <p>
+	 *                         The connection will continue to be considered used by the allocating thread until
+	 *                         released (via {@link Connection#close()}, even if the connection is shared by another
+	 *                         thread.
+	 *                         </p>
 	 *
-	 * @return The connection to the database
+	 * @return  The read/write connection to the database
+	 *
+	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
+	 *
+	 * @see  #getConnection(int, boolean, int)
+	 * @see  DatabaseConnection#getConnection(int)
+	 * @see  Connection#close()
+	 */
+	// Note: Matches AOPool.getConnection(int)
+	// Note: Matches AOConnectionPool.getConnection(int)
+	// Note:      Is Database.getConnection(int)
+	// Note: Matches DatabaseConnection.getConnection(int)
+	public Connection getConnection(int maxConnections) throws SQLException {
+		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, maxConnections);
+	}
+
+	/**
+	 * Gets a connection to the database with a transaction level of
+	 * {@link Connections#DEFAULT_TRANSACTION_ISOLATION},
+	 * warning when a connection is already used by this thread.
+	 * <p>
+	 * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
+	 * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
+	 * </p>
+	 * <p>
+	 * When obtaining a connection from a {@link DataSource}, if the connection is not in
+	 * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
+	 * be rolled-back and set to auto-commit.
+	 * </p>
+	 * <p>
+	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+	 * available.
+	 * </p>
+	 *
+	 * @param  readOnly  The {@link Connection#setReadOnly(boolean) read-only flag}
+	 *
+	 * @return  The connection to the database
+	 *
+	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
 	 *
 	 * @see  #getConnection(int, boolean, int)
 	 * @see  DatabaseConnection#getConnection(boolean)
+	 * @see  Connection#close()
 	 */
-	// Note: Matches DatabaseConnection.getConnection(boolean)
 	// Note: Matches AOConnectionPool.getConnection(boolean)
+	// Note:      Is Database.getConnection(boolean)
+	// Note: Matches DatabaseConnection.getConnection(boolean)
 	public Connection getConnection(boolean readOnly) throws SQLException {
 		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, readOnly, 1);
 	}
 
 	/**
-	 * Gets a connection to the database with a maximum connections of 1.
+	 * Gets a connection to the database,
+	 * warning when a connection is already used by this thread.
 	 * <p>
 	 * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
 	 * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
@@ -294,25 +370,32 @@ public class Database implements DatabaseAccess {
 	 * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
 	 * be rolled-back and set to auto-commit.
 	 * </p>
+	 * <p>
+	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+	 * available.
+	 * </p>
 	 *
-	 * @param isolationLevel The {@link Connection#setTransactionIsolation(int) transaction isolation level}
-	 * @param readOnly The {@link Connection#setReadOnly(boolean) read-only flag}
+	 * @param  isolationLevel  The {@link Connection#setTransactionIsolation(int) transaction isolation level}
 	 *
-	 * @return The connection to the database
+	 * @param  readOnly        The {@link Connection#setReadOnly(boolean) read-only flag}
+	 *
+	 * @return  The connection to the database
+	 *
+	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
 	 *
 	 * @see  #getConnection(int, boolean, int)
 	 * @see  DatabaseConnection#getConnection(int, boolean)
+	 * @see  Connection#close()
 	 */
-	// Note: Matches DatabaseConnection.getConnection(int, boolean)
 	// Note: Matches AOConnectionPool.getConnection(int, boolean)
+	// Note:      Is Database.getConnection(int, boolean)
+	// Note: Matches DatabaseConnection.getConnection(int, boolean)
 	public Connection getConnection(int isolationLevel, boolean readOnly) throws SQLException {
 		return getConnection(isolationLevel, readOnly, 1);
 	}
 
 	/**
-	 * Gets a connection to the database with the given
-	 * {@linkplain Connection#getTransactionIsolation() isolation level} and
-	 * {@linkplain Connection#isReadOnly() read-only mode}.
+	 * Gets a connection to the database.
 	 * <p>
 	 * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
 	 * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
@@ -322,21 +405,40 @@ public class Database implements DatabaseAccess {
 	 * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
 	 * be rolled-back and set to auto-commit.
 	 * </p>
+	 * <p>
+	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+	 * available.
+	 * </p>
 	 *
-	 * @see  #releaseConnection(java.sql.Connection)
+	 * @param  isolationLevel  The {@link Connection#setTransactionIsolation(int) transaction isolation level}
+	 *
+	 * @param  readOnly        The {@link Connection#setReadOnly(boolean) read-only flag}
+	 *
+	 * @param  maxConnections  The maximum number of connections expected to be used by the current thread.
+	 *                         This should normally be one to avoid potential deadlock.
+	 *                         <p>
+	 *                         The connection will continue to be considered used by the allocating thread until
+	 *                         released (via {@link Connection#close()}, even if the connection is shared by another
+	 *                         thread.
+	 *                         </p>
+	 *
+	 * @return  The connection to the database
+	 *
+	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
+	 *
 	 * @see  DatabaseConnection#getConnection(int, boolean, int)
-	 * @see  #initSqlDataTypes(java.sql.Connection)
-	 * @see  #initConnection(java.sql.Connection)
+	 * @see  Connection#close()
 	 */
-	// Note: Matches DatabaseConnection.getConnection(int, boolean, int)
 	// Note: Matches AOConnectionPool.getConnection(int, boolean, int)
+	// Note:      Is Database.getConnection(int, boolean, int)
+	// Note: Matches DatabaseConnection.getConnection(int, boolean, int)
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
-		Connection conn;
+		DatabaseConnectionWrapper conn;
 		Throwable t1 = null;
 		if(pool != null) {
 			// From pool
-			conn = pool.getConnection(isolationLevel, readOnly, maxConnections);
+			conn = new DatabaseConnectionWrapper(this, pool.getConnection(isolationLevel, readOnly, maxConnections));
 			try {
 				assert conn.getAutoCommit();
 				assert conn.isReadOnly() == readOnly;
@@ -349,7 +451,7 @@ public class Database implements DatabaseAccess {
 			}
 		} else {
 			// From dataSource
-			conn = dataSource.getConnection();
+			conn = new DatabaseConnectionWrapper(this, dataSource.getConnection());
 			try {
 				if(!conn.getAutoCommit()) {
 					logger.warning("Rolling-back and setting auto-commit on Connection from DataSource that is not in auto-commit mode");
@@ -374,6 +476,77 @@ public class Database implements DatabaseAccess {
 		return conn;
 	}
 
+	private static interface IDatabaseConnectionWrapper extends IUncloseableConnectionWrapper {
+		Database getDatabase();
+	}
+
+	private static class DatabaseConnectionWrapper extends UncloseableConnectionWrapper
+		implements IDatabaseConnectionWrapper {
+
+		private final Database database;
+
+		private DatabaseConnectionWrapper(Database database, Connection wrapped) {
+			super(wrapped);
+			this.database = database;
+		}
+
+		@Override
+		public Database getDatabase() {
+			return database;
+		}
+
+		@Override
+		@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+		public void onAbort(Executor executor) throws SQLException {
+			Throwable t1 = null;
+			try {
+				super.onAbort(executor);
+			} catch(Throwable t) {
+				t1 = Throwables.addSuppressed(t1, t);
+			}
+			try {
+				database.release(this);
+			} catch(Throwable t) {
+				t1 = Throwables.addSuppressed(t1, t);
+			}
+			if(t1 != null) {
+				if(t1 instanceof Error) throw (Error)t1;
+				if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
+				if(t1 instanceof SQLException) throw (SQLException)t1;
+				throw new SQLException(t1);
+			}
+		}
+
+		@Override
+		public void onClose() throws SQLException {
+			database.release(this);
+		}
+	}
+
+	@SuppressWarnings("null")
+	private Connection unwrap(Connection conn) throws SQLException {
+		IDatabaseConnectionWrapper wrapper;
+		if(conn instanceof IDatabaseConnectionWrapper) {
+			wrapper = (IDatabaseConnectionWrapper)conn;
+		} else {
+			wrapper = conn.unwrap(IDatabaseConnectionWrapper.class);
+		}
+		if(wrapper.getDatabase() == this) {
+			return wrapper.getWrappedConnection();
+		} else {
+			throw new SQLException("Connection from a different database, cannot unwrap");
+		}
+	}
+
+	/**
+	 * @deprecated  Please release to the pool by {@linkplain Connection#close() closing the connection},
+	 *              preferably via try-with-resources.
+	 */
+	@Deprecated
+	final public void releaseConnection(Connection conn) throws SQLException {
+		release(conn);
+	}
+
 	/**
 	 * Closes and/or releases the given connection back to the pool.
 	 * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
@@ -383,9 +556,8 @@ public class Database implements DatabaseAccess {
 	 * @see  #deinitConnection(java.sql.Connection)
 	 * @see  #deinitSqlDataTypes(java.sql.Connection)
 	 */
-	// TODO: Don't use releaseConnection.  Instead, close the return Connection, which would release to the underlying pool
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	public void releaseConnection(Connection conn) throws SQLException {
+	protected void release(Connection conn) throws SQLException {
 		Throwable t1 = null;
 		// Perform custom de-initialization
 		try {
@@ -399,11 +571,14 @@ public class Database implements DatabaseAccess {
 		} catch(Throwable t) {
 			t1 = Throwables.addSuppressed(t1, t);
 		}
-		if(pool != null) {
-			// From pool
-			conn.close();
-		} else {
-			// From dataSource
+		// Unwrap
+		try {
+			conn = unwrap(conn);
+		} catch(Throwable t) {
+			t1 = Throwables.addSuppressed(t1, t);
+		}
+		if(pool == null) {
+			// From dataSource, perform some clean-up consistent with AOConnectionPool
 			try {
 				if(!conn.isClosed()) {
 					// Log warnings before release and/or close
@@ -420,11 +595,11 @@ public class Database implements DatabaseAccess {
 					}
 				}
 			} catch(Throwable t) {
+				// isClosed() failed, fall-through to continue close
 				t1 = Throwables.addSuppressed(t1, t);
-			} finally {
-				t1 = AutoCloseables.close(t1, conn);
 			}
 		}
+		t1 = AutoCloseables.close(t1, conn);
 		if(t1 != null) {
 			if(t1 instanceof Error) throw (Error)t1;
 			if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
@@ -460,7 +635,22 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * @see #transaction(com.aoindustries.dbc.DatabaseRunnable)
+	 * <p>
+	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+	 * </p>
+	 * <ol>
+	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
+	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
+	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
+	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+	 * </ol>
+	 * <p>
+	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+	 * another transaction is performed within this transaction.  Any nested transaction will automatically
+	 * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+	 * entire transaction on any exception.
+	 * </p>
 	 *
 	 * @see #isInTransaction()
 	 */
@@ -472,7 +662,22 @@ public class Database implements DatabaseAccess {
 	// TODO: transactionR and transactionC
 
 	/**
-	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
+	 * <p>
+	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+	 * </p>
+	 * <ol>
+	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
+	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
+	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
+	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+	 * </ol>
+	 * <p>
+	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+	 * another transaction is performed within this transaction.  Any nested transaction will automatically
+	 * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+	 * entire transaction on any exception.
+	 * </p>
 	 *
 	 * @see #isInTransaction()
 	 */
@@ -491,7 +696,22 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 * <p>
+	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+	 * </p>
+	 * <ol>
+	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
+	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
+	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
+	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+	 * </ol>
+	 * <p>
+	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+	 * another transaction is performed within this transaction.  Any nested transaction will automatically
+	 * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+	 * entire transaction on any exception.
+	 * </p>
 	 *
 	 * @see #isInTransaction()
 	 */
@@ -516,11 +736,26 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * @see #transaction(com.aoindustries.dbc.DatabaseCallable)
+	 * <p>
+	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+	 * </p>
+	 * <ol>
+	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
+	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
+	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
+	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+	 * </ol>
+	 * <p>
+	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+	 * another transaction is performed within this transaction.  Any nested transaction will automatically
+	 * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+	 * entire transaction on any exception.
+	 * </p>
 	 *
 	 * @see #isInTransaction()
 	 */
-	@SuppressWarnings("overloads")
+	@SuppressWarnings({"overloads", "UseSpecificCatch", "TooBroadCatch"})
 	public <V> V transaction(Callable<V> callable) throws SQLException {
 		return transaction((DatabaseConnection db) -> {
 			try {
@@ -534,7 +769,22 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 * <p>
+	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+	 * </p>
+	 * <ol>
+	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
+	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
+	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
+	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+	 * </ol>
+	 * <p>
+	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+	 * another transaction is performed within this transaction.  Any nested transaction will automatically
+	 * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+	 * entire transaction on any exception.
+	 * </p>
 	 *
 	 * @see #isInTransaction()
 	 */
@@ -557,12 +807,11 @@ public class Database implements DatabaseAccess {
 	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
 	 * </p>
 	 * <ol>
-	 * <li>Rolls-back the transaction on {@link Error} or {@link RuntimeException}.</li>
 	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
 	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
 	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
 	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
-	 * <li>Rolls-back the transaction on {@code E}.</li>
+	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
 	 * </ol>
 	 * <p>
 	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
