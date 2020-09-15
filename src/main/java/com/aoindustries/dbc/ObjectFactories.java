@@ -22,6 +22,7 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.lang.Throwables;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
@@ -94,17 +95,19 @@ final public class ObjectFactories {
 		@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 		public T createObject(ResultSet result) throws SQLException {
 			try {
-				return constructor.newInstance(result);
-			} catch(InvocationTargetException e) {
-				Throwable cause = e.getCause();
-				if(cause instanceof Error) throw (Error)cause;
-				if(cause instanceof RuntimeException) throw (RuntimeException)cause;
-				if(cause instanceof SQLException) throw (SQLException)cause;
-				throw new SQLException(clazz.getName() + "(java.sql.ResultSet)", cause == null ? e : cause);
-			} catch(Error | RuntimeException e) {
-				throw e;
+				try {
+					return constructor.newInstance(result);
+				} catch(InvocationTargetException e) {
+					// Unwrap cause for more direct stack traces
+					Throwable cause = e.getCause();
+					throw (cause == null) ? e : cause;
+				}
 			} catch(Throwable t) {
-				throw new SQLException(clazz.getName() + "(java.sql.ResultSet)", t);
+				throw Throwables.wrap(
+					t,
+					SQLException.class,
+					cause -> new SQLException(clazz.getName() + "(java.sql.ResultSet)", cause)
+				);
 			}
 		}
 

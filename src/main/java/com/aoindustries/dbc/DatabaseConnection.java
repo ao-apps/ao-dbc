@@ -56,7 +56,6 @@ import java.util.NoSuchElementException;
 import java.util.PrimitiveIterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.concurrent.Executor;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -547,15 +546,15 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * Closes and/or releases the current connection back to the pool.
 	 * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
 	 *
-	 * @param  t1  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
+	 * @param  t0  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
 	 *
 	 * @return  The given exception, or new exception, or {@code null} when none given and none new
 	 *
 	 * @see  #close()
-	 * @see  AutoCloseables#close(java.lang.Throwable, java.lang.AutoCloseable)
+	 * @see  AutoCloseables#closeAndCatch(java.lang.Throwable, java.lang.AutoCloseable)
 	 */
-	public Throwable close(Throwable t1) {
-		return AutoCloseables.close(t1, this);
+	public Throwable close(Throwable t0) {
+		return AutoCloseables.closeAndCatch(t0, this);
 	}
 
 	/**
@@ -577,7 +576,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	/**
 	 * Rolls back the current connection, if have connection and is not auto-commit.
 	 *
-	 * @param  t1  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
+	 * @param  t0  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
 	 *
 	 * @return  The given exception, or new exception, or {@code null} when none given and none new
 	 *
@@ -585,13 +584,13 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * @see  Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	public Throwable rollback(Throwable t1) {
+	public Throwable rollback(Throwable t0) {
 		try {
 			rollback();
 		} catch(Throwable t) {
-			t1 = Throwables.addSuppressed(t1, t);
+			t0 = Throwables.addSuppressed(t0, t);
 		}
-		return t1;
+		return t0;
 	}
 
 	/**
@@ -606,7 +605,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		UncloseableConnectionWrapper c = _conn;
 		if(c != null) {
 			_conn = null;
-			Throwable t1 = null;
+			Throwable t0 = null;
 			boolean rollback = false;
 			try {
 				rollback = !c.isClosed();
@@ -614,25 +613,23 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 					try {
 						if(!c.getAutoCommit()) c.rollback();
 					} catch(Throwable t) {
-						t1 = Throwables.addSuppressed(t1, t);
+						t0 = Throwables.addSuppressed(t0, t);
 					}
 					try {
 						c.abort(database.getExecutors().getUnbounded());
 					} catch(Throwable t) {
-						t1 = Throwables.addSuppressed(t1, t);
-						t1 = AutoCloseables.close(t1, c);
+						t0 = Throwables.addSuppressed(t0, t);
+						t0 = AutoCloseables.closeAndCatch(t0, c);
 					}
 				}
 			} finally {
-				t1 = AutoCloseables.close(t1, c.getWrappedConnection());
+				t0 = AutoCloseables.closeAndCatch(t0, c.getWrappedConnection());
 			}
-			if(t1 != null) {
-				if(t1 instanceof Error) throw (Error)t1;
-				if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
-				if(t1 instanceof SQLException) throw (SQLException)t1;
-				throw new SQLException(t1);
+			if(t0 != null) {
+				throw Throwables.wrap(t0, SQLException.class, SQLException::new);
+			} else {
+				return rollback;
 			}
-			return rollback;
 		} else {
 			return false;
 		}
@@ -643,7 +640,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * connection closed.  This close is distinct from {@link #close(java.lang.Throwable)}, which is intended for
 	 * releasing to the underlying pool.
 	 *
-	 * @param  t1  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
+	 * @param  t0  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
 	 *
 	 * @return  The given exception, or new exception, or {@code null} when none given and none new
 	 *
@@ -652,13 +649,13 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	// TODO: Combine with rollback, and automatically close if connection is invalid?
-	public Throwable rollbackAndClose(Throwable t1) {
+	public Throwable rollbackAndClose(Throwable t0) {
 		try {
 			rollbackAndClose();
 		} catch(Throwable t) {
-			t1 = Throwables.addSuppressed(t1, t);
+			t0 = Throwables.addSuppressed(t0, t);
 		}
-		return t1;
+		return t0;
 	}
 
 	private static class StreamCloser implements Runnable {
@@ -673,10 +670,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
 		@Override
 		public void run() {
-			Throwable t1 = AutoCloseables.close(results, stmt);
-			if(t1 instanceof Error) throw (Error)t1;
-			if(t1 instanceof RuntimeException) throw (RuntimeException)t1;
-			throw new WrappedException(t1);
+			AutoCloseables.closeAndThrow(WrappedException.class, WrappedException::new, results, stmt);
 		}
 	}
 
@@ -706,10 +700,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 											nextSet = true;
 										}
 										return nextSet;
-									} catch(Error | RuntimeException e) {
-										throw e;
 									} catch(Throwable t) {
-										throw new WrappedException(t);
+										throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
 									}
 								}
 
@@ -726,10 +718,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 										} else {
 											throw new NoSuchElementException();
 										}
-									} catch(Error | RuntimeException e) {
-										throw e;
 									} catch(Throwable t) {
-										throw new WrappedException(t);
+										throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
 									}
 								}
 							},
@@ -738,17 +728,13 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 						false
 					).onClose(new StreamCloser(pstmt, results));
 				} catch(Throwable t) {
-					throw AutoCloseables.close(t, results);
+					throw AutoCloseables.closeAndCatch(t, results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
 			}
 		} catch(Throwable t) {
-			t = AutoCloseables.close(t, pstmt);
-			if(t instanceof Error) throw (Error)t;
-			if(t instanceof RuntimeException) throw (RuntimeException)t;
-			if(t instanceof SQLException) throw (SQLException)t;
-			throw new SQLException(t);
+			throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, pstmt);
 		}
 	}
 
@@ -778,10 +764,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 											nextSet = true;
 										}
 										return nextSet;
-									} catch(Error | RuntimeException e) {
-										throw e;
 									} catch(Throwable t) {
-										throw new WrappedException(t);
+										throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
 									}
 								}
 
@@ -798,10 +782,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 										} else {
 											throw new NoSuchElementException();
 										}
-									} catch(Error | RuntimeException e) {
-										throw e;
 									} catch(Throwable t) {
-										throw new WrappedException(t);
+										throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
 									}
 								}
 							},
@@ -810,17 +792,13 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 						false
 					).onClose(new StreamCloser(pstmt, results));
 				} catch(Throwable t) {
-					throw AutoCloseables.close(t, results);
+					throw AutoCloseables.closeAndCatch(t, results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
 			}
 		} catch(Throwable t) {
-			t = AutoCloseables.close(t, pstmt);
-			if(t instanceof Error) throw (Error)t;
-			if(t instanceof RuntimeException) throw (RuntimeException)t;
-			if(t instanceof SQLException) throw (SQLException)t;
-			throw new SQLException(t);
+			throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, pstmt);
 		}
 	}
 
@@ -850,10 +828,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 											nextSet = true;
 										}
 										return nextSet;
-									} catch(Error | RuntimeException e) {
-										throw e;
 									} catch(Throwable t) {
-										throw new WrappedException(t);
+										throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
 									}
 								}
 
@@ -870,10 +846,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 										} else {
 											throw new NoSuchElementException();
 										}
-									} catch(Error | RuntimeException e) {
-										throw e;
 									} catch(Throwable t) {
-										throw new WrappedException(t);
+										throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
 									}
 								}
 							},
@@ -882,17 +856,13 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 						false
 					).onClose(new StreamCloser(pstmt, results));
 				} catch(Throwable t) {
-					throw AutoCloseables.close(t, results);
+					throw AutoCloseables.closeAndCatch(t, results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
 			}
 		} catch(Throwable t) {
-			t = AutoCloseables.close(t, pstmt);
-			if(t instanceof Error) throw (Error)t;
-			if(t instanceof RuntimeException) throw (RuntimeException)t;
-			if(t instanceof SQLException) throw (SQLException)t;
-			throw new SQLException(t);
+			throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, pstmt);
 		}
 	}
 
@@ -926,10 +896,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 					nextSet = true;
 				}
 				return nextSet;
-			} catch(Error | RuntimeException e) {
-				throw e;
 			} catch(Throwable t) {
-				throw new WrappedException(t);
+				throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
 			}
 		}
 
@@ -947,10 +915,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				} else {
 					throw new NoSuchElementException();
 				}
-			} catch(Error | RuntimeException e) {
-				throw e;
 			} catch(Throwable t) {
-				throw new WrappedException(t);
+				throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
 			}
 		}
 	}
@@ -1001,18 +967,15 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 					}
 					return StreamSupport.stream(spliterator, false).onClose(new StreamCloser(pstmt, results));
 				} catch(Throwable t) {
-					throw AutoCloseables.close(t, results);
+					throw AutoCloseables.closeAndCatch(t, results);
 				}
 			} catch(SQLException err) {
 				throw new WrappedSQLException(err, pstmt);
 			}
 		} catch(Throwable t) {
-			t = AutoCloseables.close(t, pstmt);
-			if(t instanceof Error) throw (Error)t;
-			if(t instanceof RuntimeException) throw (RuntimeException)t;
-			if(t instanceof SQLException) throw (SQLException)t;
+			t = AutoCloseables.closeAndCatch(t, pstmt);
 			if(eClass.isInstance(t)) throw eClass.cast(t);
-			throw new SQLException(t);
+			throw Throwables.wrap(t, SQLException.class, SQLException::new);
 		}
 	}
 

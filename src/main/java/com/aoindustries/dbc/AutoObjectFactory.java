@@ -22,6 +22,7 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.lang.Throwables;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -124,118 +125,116 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public T createObject(ResultSet result) throws SQLException {
 		try {
-			ResultSetMetaData metaData = result.getMetaData();
-			int numColumns = metaData.getColumnCount();
-			int numParams = prefixParams.length + numColumns;
-			Object[] params = new Object[numParams];
+			try {
+				ResultSetMetaData metaData = result.getMetaData();
+				int numColumns = metaData.getColumnCount();
+				int numParams = prefixParams.length + numColumns;
+				Object[] params = new Object[numParams];
 
-			// Find the candidate constructor
-			List<String> warnings = null;
-			Constructor<?>[] constructors = clazz.getConstructors();
-		CONSTRUCTORS :
-			for(Constructor<?> constructor : constructors) {
-				Class<?>[] paramTypes = constructor.getParameterTypes();
-				if(paramTypes.length==numParams) {
-					for(int i=0;i<prefixParams.length;i++) {
-						Class<?> paramType = paramTypes[i];
-						if(!paramType.isAssignableFrom(prefixParams[i].getClass())) continue CONSTRUCTORS;
-						params[i] = prefixParams[i];
-						//System.err.println(paramType.getName()+" ? "+(params[i]==null ? "null" : params[i].getClass()));
-					}
-					// All remaining columns must be assignable from JDBC
-					for(int c=1; c<=numColumns; c++) {
-						int i = prefixParams.length + c-1;
-						Class<?> paramType = paramTypes[i];
-						// String first because it is commonly used
-						if(paramType==String.class) {
-							params[i] = result.getString(c);
+				// Find the candidate constructor
+				List<String> warnings = null;
+				Constructor<?>[] constructors = clazz.getConstructors();
+			CONSTRUCTORS :
+				for(Constructor<?> constructor : constructors) {
+					Class<?>[] paramTypes = constructor.getParameterTypes();
+					if(paramTypes.length==numParams) {
+						for(int i=0;i<prefixParams.length;i++) {
+							Class<?> paramType = paramTypes[i];
+							if(!paramType.isAssignableFrom(prefixParams[i].getClass())) continue CONSTRUCTORS;
+							params[i] = prefixParams[i];
+							//System.err.println(paramType.getName()+" ? "+(params[i]==null ? "null" : params[i].getClass()));
+						}
+						// All remaining columns must be assignable from JDBC
+						for(int c=1; c<=numColumns; c++) {
+							int i = prefixParams.length + c-1;
+							Class<?> paramType = paramTypes[i];
+							// String first because it is commonly used
+							if(paramType==String.class) {
+								params[i] = result.getString(c);
 
-						// Primitives
-						} else if(paramType==Integer.TYPE) {
-							int value = result.getInt(c);
-							if(result.wasNull()) throw new SQLException(c+": "+metaData.getColumnName(c)+": null int");
-							params[i] = value;
-						} else if(paramType==Short.TYPE) {
-							short value = result.getShort(c);
-							if(result.wasNull()) throw new SQLException(c+": "+metaData.getColumnName(c)+": null short");
-							params[i] = value;
-						} else if(paramType==Boolean.TYPE) {
-							boolean b = result.getBoolean(c);
-							if(result.wasNull()) throw new SQLException(c+": "+metaData.getColumnName(c)+": null boolean");
-							params[i] = b;
-						} else if(paramType==Float.TYPE) {
-							float value = result.getFloat(c);
-							if(result.wasNull()) throw new SQLException(c+": "+metaData.getColumnName(c)+": null float");
-							params[i] = value;
-						} else if(paramType==Long.TYPE) {
-							long value = result.getLong(c);
-							if(result.wasNull()) throw new SQLException(c+": "+metaData.getColumnName(c)+": null long");
-							params[i] = value;
-
-						// Other types
-						} else if(paramType==Date.class) {
-							params[i] = result.getDate(c);
-						} else if(paramType==Boolean.class) {
-							boolean b = result.getBoolean(c);
-							params[i] = result.wasNull() ? null : b;
-						} else if(paramType==Timestamp.class) {
-							params[i] = result.getTimestamp(c);
-						} else if(paramType==Integer.class) {
-							int value = result.getInt(c);
-							params[i] = result.wasNull() ? null : value;
-						} else if(paramType==Float.class) {
-							float value = result.getFloat(c);
-							params[i] = result.wasNull() ? null : value;
-						} else if(paramType==Short.class) {
-							short value = result.getShort(c);
-							params[i] = result.wasNull() ? null : value;
-						} else if(paramType==Long.class) {
-							long value = result.getLong(c);
-							params[i] = result.wasNull() ? null : value;
-						} else {
-							// Try to find valueOf(int) for unknown types
-							Method valueOfIntMethod = getValueOfIntMethod(paramType);
-							if(valueOfIntMethod!=null) {
+							// Primitives
+							} else if(paramType==Integer.TYPE) {
 								int value = result.getInt(c);
-								if(result.wasNull()) params[i] = null;
-								params[i] = valueOfIntMethod.invoke(null, value);
+								if(result.wasNull()) throw new SQLException(c+": "+metaData.getColumnName(c)+": null int");
+								params[i] = value;
+							} else if(paramType==Short.TYPE) {
+								short value = result.getShort(c);
+								if(result.wasNull()) throw new SQLException(c+": "+metaData.getColumnName(c)+": null short");
+								params[i] = value;
+							} else if(paramType==Boolean.TYPE) {
+								boolean b = result.getBoolean(c);
+								if(result.wasNull()) throw new SQLException(c+": "+metaData.getColumnName(c)+": null boolean");
+								params[i] = b;
+							} else if(paramType==Float.TYPE) {
+								float value = result.getFloat(c);
+								if(result.wasNull()) throw new SQLException(c+": "+metaData.getColumnName(c)+": null float");
+								params[i] = value;
+							} else if(paramType==Long.TYPE) {
+								long value = result.getLong(c);
+								if(result.wasNull()) throw new SQLException(c+": "+metaData.getColumnName(c)+": null long");
+								params[i] = value;
+
+							// Other types
+							} else if(paramType==Date.class) {
+								params[i] = result.getDate(c);
+							} else if(paramType==Boolean.class) {
+								boolean b = result.getBoolean(c);
+								params[i] = result.wasNull() ? null : b;
+							} else if(paramType==Timestamp.class) {
+								params[i] = result.getTimestamp(c);
+							} else if(paramType==Integer.class) {
+								int value = result.getInt(c);
+								params[i] = result.wasNull() ? null : value;
+							} else if(paramType==Float.class) {
+								float value = result.getFloat(c);
+								params[i] = result.wasNull() ? null : value;
+							} else if(paramType==Short.class) {
+								short value = result.getShort(c);
+								params[i] = result.wasNull() ? null : value;
+							} else if(paramType==Long.class) {
+								long value = result.getLong(c);
+								params[i] = result.wasNull() ? null : value;
 							} else {
-								// Try to find valueOf(String) for unknown types
-								Method valueOfStringMethod = getValueOfStringMethod(paramType);
-								if(valueOfStringMethod!=null) {
-									String value = result.getString(c);
-									params[i] = result.wasNull() ? null : valueOfStringMethod.invoke(null, value);
+								// Try to find valueOf(int) for unknown types
+								Method valueOfIntMethod = getValueOfIntMethod(paramType);
+								if(valueOfIntMethod!=null) {
+									int value = result.getInt(c);
+									if(result.wasNull()) params[i] = null;
+									params[i] = valueOfIntMethod.invoke(null, value);
 								} else {
-									if(warnings==null) warnings = new ArrayList<>();
-									warnings.add("Unexpected parameter class: "+paramType.getName());
-									continue CONSTRUCTORS;
+									// Try to find valueOf(String) for unknown types
+									Method valueOfStringMethod = getValueOfStringMethod(paramType);
+									if(valueOfStringMethod!=null) {
+										String value = result.getString(c);
+										params[i] = result.wasNull() ? null : valueOfStringMethod.invoke(null, value);
+									} else {
+										if(warnings==null) warnings = new ArrayList<>();
+										warnings.add("Unexpected parameter class: "+paramType.getName());
+										continue CONSTRUCTORS;
+									}
 								}
 							}
+							//System.err.println(paramType.getName()+" ? "+(params[i]==null ? "null" : params[i].getClass()));
 						}
-						//System.err.println(paramType.getName()+" ? "+(params[i]==null ? "null" : params[i].getClass()));
+						Object newInstance = constructor.newInstance(params);
+						//System.err.println(newInstance.getClass().getName()+": "+newInstance);
+						return clazz.cast(newInstance);
 					}
-					Object newInstance = constructor.newInstance(params);
-					//System.err.println(newInstance.getClass().getName()+": "+newInstance);
-					return clazz.cast(newInstance);
 				}
-			}
-			StringBuilder message = new StringBuilder("Unable to find matching constructor");
-			if(warnings != null) {
-				for(String warning : warnings) {
-					message.append(EOL).append(warning);
+				StringBuilder message = new StringBuilder("Unable to find matching constructor");
+				if(warnings != null) {
+					for(String warning : warnings) {
+						message.append(EOL).append(warning);
+					}
 				}
+				throw new SQLException(message.toString());
+			} catch(InvocationTargetException e) {
+				// Unwrap cause for more direct stack traces
+				Throwable cause = e.getCause();
+				throw (cause == null) ? e : cause;
 			}
-			throw new SQLException(message.toString());
-		} catch(InvocationTargetException e) {
-			Throwable cause = e.getCause();
-			if(cause instanceof Error) throw (Error)cause;
-			if(cause instanceof RuntimeException) throw (RuntimeException)cause;
-			if(cause instanceof SQLException) throw (SQLException)cause;
-			throw new SQLException(cause == null ? e : cause);
-		} catch(Error | RuntimeException | SQLException e) {
-			throw e;
 		} catch(Throwable t) {
-			throw new SQLException(t);
+			throw Throwables.wrap(t, SQLException.class, SQLException::new);
 		}
 	}
 
