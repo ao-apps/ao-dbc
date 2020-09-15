@@ -699,7 +699,7 @@ public class Database implements DatabaseAccess {
 	 * @see #isInTransaction()
 	 */
 	@SuppressWarnings("overloads")
-	public <E extends Exception> void transaction(Class<E> eClass, DatabaseRunnableE<E> runnable) throws SQLException, E {
+	public <E extends Exception> void transaction(Class<? extends E> eClass, DatabaseRunnableE<? extends E> runnable) throws SQLException, E {
 		transaction(
 			eClass,
 			(DatabaseConnection db) -> {
@@ -739,7 +739,7 @@ public class Database implements DatabaseAccess {
 	 * @see #isInTransaction()
 	 */
 	@SuppressWarnings({"overloads", "UseSpecificCatch", "TooBroadCatch"})
-	public <V> V transaction(Callable<V> callable) throws SQLException {
+	public <V> V transaction(Callable<? extends V> callable) throws SQLException {
 		return transaction((DatabaseConnection db) -> {
 			try {
 				return callable.call();
@@ -772,7 +772,7 @@ public class Database implements DatabaseAccess {
 	 * @see #isInTransaction()
 	 */
 	@SuppressWarnings("overloads")
-	public <V> V transaction(DatabaseCallable<V> callable) throws SQLException {
+	public <V> V transaction(DatabaseCallable<? extends V> callable) throws SQLException {
 		return transaction(RuntimeException.class, callable::call);
 	}
 
@@ -806,7 +806,7 @@ public class Database implements DatabaseAccess {
 	 * @see #isInTransaction()
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "overloads"})
-	public <V,E extends Exception> V transaction(Class<E> eClass, DatabaseCallableE<V,E> callable) throws SQLException, E {
+	public <V,E extends Exception> V transaction(Class<? extends E> eClass, DatabaseCallableE<? extends V,? extends E> callable) throws SQLException, E {
 		Throwable t0 = null;
 		DatabaseConnection conn = transactionConnection.get();
 		if(conn != null) {
@@ -887,14 +887,14 @@ public class Database implements DatabaseAccess {
 	}
 
 	@Override
-	public <T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<E> eClass, ObjectFactoryE<? extends T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	public <T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return transaction(eClass, (DatabaseConnection conn) ->
 			conn.stream(isolationLevel, readOnly, eClass, objectFactory, sql, params)
 		);
 	}
 
 	@Override
-	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetCallableE<? extends T,E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
 		return transaction(eClass, (DatabaseConnection conn) ->
 			conn.query(isolationLevel, readOnly, eClass, resultSetCallable, sql, params)
 		);

@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-12T17:40:47-05:00"
+		dateModified="2020-09-14T22:20:31-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -195,6 +195,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 							<code>maxConnections</code> greater than one is unnecessary.
 						</p>
 					</li>
+					<li>Changed generic bounds from specific to bounded, where appropriate.</li>
 					<!-- TODO: Change exception upper-bounds to Throwable? -->
 				</ul>
 			</changelog:release>
