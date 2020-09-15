@@ -132,7 +132,7 @@ final public class ObjectFactories {
 	/**
 	 * Wraps an object factory, throwing {@link NullDataException} on any {@code null} result.
 	 */
-	private static class NotNullE<T,E extends Exception> implements ObjectFactoryE<T,E> {
+	private static class NotNullE<T,E extends Throwable> implements ObjectFactoryE<T,E> {
 
 		private final ObjectFactoryE<? extends T,E> objectFactory;
 
@@ -173,7 +173,7 @@ final public class ObjectFactories {
 	 *          {@code null}, otherwise wraps.  Also wraps when assertions are enabled.
 	 */
 	@SuppressWarnings({"AssertWithSideEffects", "overloads"})
-	public static <T,E extends Exception> ObjectFactoryE<T,E> notNull(ObjectFactoryE<T,E> objectFactory) {
+	public static <T,E extends Throwable> ObjectFactoryE<T,E> notNull(ObjectFactoryE<T,E> objectFactory) {
 		boolean wrap;
 		if(objectFactory.isNullable()) {
 			// Needs wrapping

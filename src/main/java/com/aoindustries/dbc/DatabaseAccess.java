@@ -973,7 +973,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #updateObject(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,E extends Exception> T queryObject(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, E {
+	default <T,E extends Throwable> T queryObject(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, E {
 		return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, eClass, objectFactory, sql, params);
 	}
 
@@ -997,7 +997,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #queryObject(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,E extends Exception> T updateObject(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, E {
+	default <T,E extends Throwable> T updateObject(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, E {
 		return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, eClass, objectFactory, sql, params);
 	}
 
@@ -1014,7 +1014,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
-	default <T,E extends Exception> T queryObject(int isolationLevel, boolean readOnly, boolean rowRequired, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, E {
+	default <T,E extends Throwable> T queryObject(int isolationLevel, boolean readOnly, boolean rowRequired, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, E {
 		return query(
 			isolationLevel,
 			readOnly,
@@ -1166,7 +1166,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #updateList(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,E extends Exception> List<T> queryList(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	default <T,E extends Throwable> List<T> queryList(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, objectFactory, sql, params);
 	}
 
@@ -1189,7 +1189,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #queryList(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,E extends Exception> List<T> updateList(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	default <T,E extends Throwable> List<T> updateList(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, objectFactory, sql, params);
 	}
 
@@ -1206,7 +1206,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  An unmodifiable list
 	 */
-	default <T,E extends Exception> List<T> queryList(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	default <T,E extends Throwable> List<T> queryList(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return AoCollections.optimalUnmodifiableList(
 			queryCollection(isolationLevel, readOnly, new ArrayList<>(), eClass, objectFactory, sql, params)
 		);
@@ -1278,7 +1278,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #streamUpdate(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,E extends Exception> Stream<T> stream(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	default <T,E extends Throwable> Stream<T> stream(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, objectFactory, sql, params);
 	}
 
@@ -1295,7 +1295,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #stream(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,E extends Exception> Stream<T> streamUpdate(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	default <T,E extends Throwable> Stream<T> streamUpdate(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, objectFactory, sql, params);
 	}
 
@@ -1306,7 +1306,7 @@ public interface DatabaseAccess {
 	 * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
 	 * </p>
 	 */
-	<T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E;
+	<T,E extends Throwable> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E;
 
 	/**
 	 * Read-only query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
@@ -1362,7 +1362,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #streamOptionalUpdate(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,E extends Exception> Stream<Optional<T>> streamOptional(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	default <T,E extends Throwable> Stream<Optional<T>> streamOptional(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, objectFactory, sql, params);
 	}
 
@@ -1378,7 +1378,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #streamOptional(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,E extends Exception> Stream<Optional<T>> streamOptionalUpdate(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	default <T,E extends Throwable> Stream<Optional<T>> streamOptionalUpdate(Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, objectFactory, sql, params);
 	}
 
@@ -1388,7 +1388,7 @@ public interface DatabaseAccess {
 	 * Always has the characteristic {@link Spliterator#NONNULL}.
 	 * </p>
 	 */
-	default <T,E extends Exception> Stream<Optional<T>> streamOptional(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	default <T,E extends Throwable> Stream<Optional<T>> streamOptional(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		boolean isNullable = objectFactory.isNullable();
 		return stream(
 			isolationLevel,
@@ -1526,7 +1526,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #updateCollection(java.util.Collection, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,C extends Collection<? super T>,E extends Exception> C queryCollection(C collection, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	default <T,C extends Collection<? super T>,E extends Throwable> C queryCollection(C collection, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, collection, eClass, objectFactory, sql, params);
 	}
 
@@ -1547,7 +1547,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #queryCollection(java.util.Collection, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
-	default <T,C extends Collection<? super T>,E extends Exception> C updateCollection(C collection, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	default <T,C extends Collection<? super T>,E extends Throwable> C updateCollection(C collection, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, collection, eClass, objectFactory, sql, params);
 	}
 
@@ -1562,7 +1562,7 @@ public interface DatabaseAccess {
 	/**
 	 * Query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
 	 */
-	default <T,C extends Collection<? super T>,E extends Exception> C queryCollection(int isolationLevel, boolean readOnly, C collection, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	default <T,C extends Collection<? super T>,E extends Throwable> C queryCollection(int isolationLevel, boolean readOnly, C collection, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return query(
 			isolationLevel,
 			readOnly,
@@ -1659,7 +1659,7 @@ public interface DatabaseAccess {
 	 * @see  #update(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)
 	 */
 	@SuppressWarnings("overloads")
-	default <T,E extends Exception> T query(Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+	default <T,E extends Throwable> T query(Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
 		return query(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, resultSetCallable, sql, params);
 	}
 
@@ -1681,7 +1681,7 @@ public interface DatabaseAccess {
 	 * @see  #query(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)
 	 */
 	@SuppressWarnings("overloads")
-	default <T,E extends Exception> T update(Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+	default <T,E extends Throwable> T update(Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
 		return query(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, resultSetCallable, sql, params);
 	}
 
@@ -1697,7 +1697,7 @@ public interface DatabaseAccess {
 	 * Query the database, calling the {@link ResultSetCallableE} once.
 	 */
 	@SuppressWarnings("overloads")
-	<T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E;
+	<T,E extends Throwable> T query(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E;
 
 	/**
 	 * @deprecated  Please use {@link #query(int, boolean, java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
@@ -1753,7 +1753,7 @@ public interface DatabaseAccess {
 	 * @see  #update(java.lang.Class, com.aoindustries.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object...)
 	 */
 	@SuppressWarnings("overloads")
-	default <E extends Exception> void query(Class<? extends E> eClass, ResultSetRunnableE<? extends E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
+	default <E extends Throwable> void query(Class<? extends E> eClass, ResultSetRunnableE<? extends E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
 		query(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, resultSetRunnable, sql, params);
 	}
 
@@ -1767,7 +1767,7 @@ public interface DatabaseAccess {
 	 * @see  #query(java.lang.Class, com.aoindustries.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object...)
 	 */
 	@SuppressWarnings("overloads")
-	default <E extends Exception> void update(Class<? extends E> eClass, ResultSetRunnableE<? extends E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
+	default <E extends Throwable> void update(Class<? extends E> eClass, ResultSetRunnableE<? extends E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
 		query(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, resultSetRunnable, sql, params);
 	}
 
@@ -1775,7 +1775,7 @@ public interface DatabaseAccess {
 	 * Query the database, calling the {@link ResultSetRunnableE} once.
 	 */
 	@SuppressWarnings("overloads")
-	default <E extends Exception> void query(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetRunnableE<? extends E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
+	default <E extends Throwable> void query(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetRunnableE<? extends E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
 		query(
 			isolationLevel,
 			readOnly,

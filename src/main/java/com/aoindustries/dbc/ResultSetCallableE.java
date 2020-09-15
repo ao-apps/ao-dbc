@@ -32,7 +32,7 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface ResultSetCallableE<T,E extends Exception> {
+public interface ResultSetCallableE<T,E extends Throwable> {
 
 	/**
 	 * Process one set of results.

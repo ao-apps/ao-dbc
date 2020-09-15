@@ -196,7 +196,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						</p>
 					</li>
 					<li>Changed generic bounds from specific to bounded, where appropriate.</li>
-					<!-- TODO: Change exception upper-bounds to Throwable? -->
+					<li>Generic exception upper bounds changed from <code>Exception</code> to <code>Throwable</code>.</li>
 				</ul>
 			</changelog:release>
 		</c:if>

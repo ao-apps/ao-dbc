@@ -648,7 +648,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * @see  Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	// TODO: Combine with rollback, and automatically close if connection is invalid?
+	// TODO: Combine with rollback, and automatically close if connection is invalid?  Or rename to rollbackAndAbort, or remove and just use abort directly
 	public Throwable rollbackAndClose(Throwable t0) {
 		try {
 			rollbackAndClose();
@@ -866,7 +866,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		}
 	}
 
-	private static class ResultSetIterator<T,E extends Exception> implements Iterator<T> {
+	private static class ResultSetIterator<T,E extends Throwable> implements Iterator<T> {
 
 		private final ObjectFactoryE<? extends T,? extends E> objectFactory;
 		private final ResultSet results;
@@ -924,7 +924,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	@Override
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter", "fallthrough"})
 	// TODO: Take an optional int for additional characteristics?  Might be useful for DISTINCT and SORTED, in particular.
-	public <T,E extends Exception> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	public <T,E extends Throwable> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		try {
@@ -980,7 +980,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	@Override
-	public <T,E extends Exception> T query(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+	public <T,E extends Throwable> T query(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		// TODO: Use regular Statement when there are no params?  Interaction with PostgreSQL prepared statement caching?
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {

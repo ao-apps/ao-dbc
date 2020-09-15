@@ -32,7 +32,7 @@ import java.util.Spliterator;
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface ObjectFactoryE<T,E extends Exception> {
+public interface ObjectFactoryE<T,E extends Throwable> {
 
 	/**
 	 * Creates one object from the current values in the ResultSet.
