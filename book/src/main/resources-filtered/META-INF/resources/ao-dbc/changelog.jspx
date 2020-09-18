@@ -198,6 +198,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					<li>Changed generic bounds from specific to bounded, where appropriate.</li>
 					<li>Generic exception upper bounds changed from <code>Exception</code> to <code>Throwable</code>.</li>
 					<!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
+					<!-- TODO: pre-size collections on queries when number of rows known (scrollable/results.last(), ...) -->
 				</ul>
 			</changelog:release>
 		</c:if>
