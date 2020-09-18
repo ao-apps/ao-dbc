@@ -615,7 +615,7 @@ public interface DatabaseAccess {
 	 * Query the database with an {@link IntList} return type.
 	 */
 	default IntList queryIntList(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return query(
+		return queryCall(
 			isolationLevel,
 			readOnly,
 			results -> {
@@ -787,7 +787,7 @@ public interface DatabaseAccess {
 	 * Query the database with a {@link LongList} return type.
 	 */
 	default LongList queryLongList(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return query(
+		return queryCall(
 			isolationLevel,
 			readOnly,
 			results -> {
@@ -1015,7 +1015,7 @@ public interface DatabaseAccess {
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 */
 	default <T,E extends Throwable> T queryObject(int isolationLevel, boolean readOnly, boolean rowRequired, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, E {
-		return query(
+		return queryCall(
 			isolationLevel,
 			readOnly,
 			eClass,
@@ -1563,7 +1563,7 @@ public interface DatabaseAccess {
 	 * Query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
 	 */
 	default <T,C extends Collection<? super T>,E extends Throwable> C queryCollection(int isolationLevel, boolean readOnly, C collection, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		return query(
+		return queryCall(
 			isolationLevel,
 			readOnly,
 			eClass,
@@ -1596,19 +1596,18 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
-	 * @see  #update(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)
+	 * @see  #updateCall(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object[])
 	 */
-	@SuppressWarnings("overloads")
-	default <T> T query(ResultSetCallable<? extends T> resultSetCallable, String sql, Object ... params) throws SQLException {
-		return query(Connections.DEFAULT_TRANSACTION_ISOLATION, true, resultSetCallable, sql, params);
+	default <T> T queryCall(ResultSetCallable<? extends T> resultSetCallable, String sql, Object ... params) throws SQLException {
+		return queryCall(Connections.DEFAULT_TRANSACTION_ISOLATION, true, resultSetCallable, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #query(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCall(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> T executeQuery(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
-		return query(resultSetHandler, sql, params);
+		return queryCall(resultSetHandler, sql, params);
 	}
 
 	/**
@@ -1618,35 +1617,33 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
-	 * @see  #query(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)
+	 * @see  #queryCall(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object[])
 	 */
-	@SuppressWarnings("overloads")
-	default <T> T update(ResultSetCallable<? extends T> resultSetCallable, String sql, Object ... params) throws SQLException {
-		return query(Connections.DEFAULT_TRANSACTION_ISOLATION, false, resultSetCallable, sql, params);
+	default <T> T updateCall(ResultSetCallable<? extends T> resultSetCallable, String sql, Object ... params) throws SQLException {
+		return queryCall(Connections.DEFAULT_TRANSACTION_ISOLATION, false, resultSetCallable, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #update(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateCall(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> T executeUpdate(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
-		return update(resultSetHandler, sql, params);
+		return updateCall(resultSetHandler, sql, params);
 	}
 
 	/**
 	 * Query the database, calling the {@link ResultSetCallable} once.
 	 */
-	@SuppressWarnings("overloads")
-	default <T> T query(int isolationLevel, boolean readOnly, ResultSetCallable<? extends T> resultSetCallable, String sql, Object ... params) throws SQLException {
-		return query(isolationLevel, readOnly, RuntimeException.class, resultSetCallable, sql, params);
+	default <T> T queryCall(int isolationLevel, boolean readOnly, ResultSetCallable<? extends T> resultSetCallable, String sql, Object ... params) throws SQLException {
+		return queryCall(isolationLevel, readOnly, RuntimeException.class, resultSetCallable, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #query(int, boolean, com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCall(int, boolean, com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> T executeQuery(int isolationLevel, boolean readOnly, ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
-		return query(isolationLevel, readOnly, resultSetHandler, sql, params);
+		return queryCall(isolationLevel, readOnly, resultSetHandler, sql, params);
 	}
 
 	/**
@@ -1656,19 +1653,18 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
-	 * @see  #update(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)
+	 * @see  #updateCall(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object[])
 	 */
-	@SuppressWarnings("overloads")
-	default <T,E extends Throwable> T query(Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
-		return query(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, resultSetCallable, sql, params);
+	default <T,E extends Throwable> T queryCall(Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+		return queryCall(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, resultSetCallable, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #query(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCall(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T,E extends Exception> T executeQuery(Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
-		return query(eClass, resultSetHandler, sql, params);
+		return queryCall(eClass, resultSetHandler, sql, params);
 	}
 
 	/**
@@ -1678,33 +1674,31 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
-	 * @see  #query(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)
+	 * @see  #queryCall(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object[])
 	 */
-	@SuppressWarnings("overloads")
-	default <T,E extends Throwable> T update(Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
-		return query(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, resultSetCallable, sql, params);
+	default <T,E extends Throwable> T updateCall(Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+		return queryCall(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, resultSetCallable, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #update(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateCall(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T,E extends Exception> T executeUpdate(Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
-		return update(eClass, resultSetHandler, sql, params);
+		return updateCall(eClass, resultSetHandler, sql, params);
 	}
 
 	/**
 	 * Query the database, calling the {@link ResultSetCallableE} once.
 	 */
-	@SuppressWarnings("overloads")
-	<T,E extends Throwable> T query(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E;
+	<T,E extends Throwable> T queryCall(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E;
 
 	/**
-	 * @deprecated  Please use {@link #query(int, boolean, java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCall(int, boolean, java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T,E extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<E> eClass, ResultSetHandlerE<T,E> resultSetHandler, String sql, Object ... params) throws SQLException, E {
-		return query(isolationLevel, readOnly, eClass, resultSetHandler, sql, params);
+		return queryCall(isolationLevel, readOnly, eClass, resultSetHandler, sql, params);
 	}
 
 	/**
@@ -1714,11 +1708,10 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
-	 * @see  #update(com.aoindustries.dbc.ResultSetRunnable, java.lang.String, java.lang.Object...)
+	 * @see  #updateRun(com.aoindustries.dbc.ResultSetRunnable, java.lang.String, java.lang.Object[])
 	 */
-	@SuppressWarnings("overloads")
-	default void query(ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
-		query(Connections.DEFAULT_TRANSACTION_ISOLATION, true, resultSetRunnable, sql, params);
+	default void queryRun(ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
+		queryRun(Connections.DEFAULT_TRANSACTION_ISOLATION, true, resultSetRunnable, sql, params);
 	}
 
 	/**
@@ -1728,19 +1721,17 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
-	 * @see  #query(com.aoindustries.dbc.ResultSetRunnable, java.lang.String, java.lang.Object...)
+	 * @see  #queryRun(com.aoindustries.dbc.ResultSetRunnable, java.lang.String, java.lang.Object[])
 	 */
-	@SuppressWarnings("overloads")
-	default void update(ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
-		query(Connections.DEFAULT_TRANSACTION_ISOLATION, false, resultSetRunnable, sql, params);
+	default void updateRun(ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
+		queryRun(Connections.DEFAULT_TRANSACTION_ISOLATION, false, resultSetRunnable, sql, params);
 	}
 
 	/**
 	 * Query the database, calling the {@link ResultSetRunnable} once.
 	 */
-	@SuppressWarnings("overloads")
-	default void query(int isolationLevel, boolean readOnly, ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
-		query(isolationLevel, readOnly, RuntimeException.class, resultSetRunnable, sql, params);
+	default void queryRun(int isolationLevel, boolean readOnly, ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
+		queryRun(isolationLevel, readOnly, RuntimeException.class, resultSetRunnable, sql, params);
 	}
 
 	/**
@@ -1750,11 +1741,10 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
-	 * @see  #update(java.lang.Class, com.aoindustries.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object...)
+	 * @see  #updateRun(java.lang.Class, com.aoindustries.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object[])
 	 */
-	@SuppressWarnings("overloads")
-	default <E extends Throwable> void query(Class<? extends E> eClass, ResultSetRunnableE<? extends E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
-		query(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, resultSetRunnable, sql, params);
+	default <E extends Throwable> void queryRun(Class<? extends E> eClass, ResultSetRunnableE<? extends E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
+		queryRun(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, resultSetRunnable, sql, params);
 	}
 
 	/**
@@ -1764,19 +1754,17 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
-	 * @see  #query(java.lang.Class, com.aoindustries.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object...)
+	 * @see  #queryRun(java.lang.Class, com.aoindustries.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object[])
 	 */
-	@SuppressWarnings("overloads")
-	default <E extends Throwable> void update(Class<? extends E> eClass, ResultSetRunnableE<? extends E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
-		query(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, resultSetRunnable, sql, params);
+	default <E extends Throwable> void updateRun(Class<? extends E> eClass, ResultSetRunnableE<? extends E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
+		queryRun(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, resultSetRunnable, sql, params);
 	}
 
 	/**
 	 * Query the database, calling the {@link ResultSetRunnableE} once.
 	 */
-	@SuppressWarnings("overloads")
-	default <E extends Throwable> void query(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetRunnableE<? extends E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
-		query(
+	default <E extends Throwable> void queryRun(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetRunnableE<? extends E> resultSetRunnable, String sql, Object ... params) throws SQLException, E {
+		queryCall(
 			isolationLevel,
 			readOnly,
 			eClass,

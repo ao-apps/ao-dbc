@@ -24,11 +24,13 @@ package com.aoindustries.dbc;
 
 import com.aoindustries.concurrent.Executors;
 import com.aoindustries.lang.AutoCloseables;
+import com.aoindustries.lang.RunnableE;
 import com.aoindustries.lang.Throwables;
 import com.aoindustries.sql.AOConnectionPool;
 import com.aoindustries.sql.Connections;
 import com.aoindustries.sql.IUncloseableConnectionWrapper;
 import com.aoindustries.sql.UncloseableConnectionWrapper;
+import com.aoindustries.util.concurrent.CallableE;
 import java.sql.Connection;
 import java.sql.SQLData;
 import java.sql.SQLException;
@@ -96,15 +98,17 @@ public class Database implements DatabaseAccess {
 	 * </p>
 	 *
 	 * @deprecated  Direct use of this method is discouraged, as this is intended for instantiation and initialization
-	 *              of {@link DatabaseConnection} only.  Please use one of the various transaction methods, which
-	 *              enforce the transaction semantics.
+	 *              of {@link DatabaseConnection} only.  Please use one of the various call/run methods, which enforce
+	 *              the transaction semantics.
 	 *
-	 * @see #transaction(java.lang.Runnable)
-	 * @see #transaction(com.aoindustries.dbc.DatabaseRunnable)
-	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
-	 * @see #transaction(java.util.concurrent.Callable)
-	 * @see #transaction(com.aoindustries.dbc.DatabaseCallable)
-	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 * @see #call(java.util.concurrent.Callable)
+	 * @see #call(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
+	 * @see #call(com.aoindustries.dbc.DatabaseCallable)
+	 * @see #call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 * @see #run(java.lang.Runnable)
+	 * @see #run(java.lang.Class, com.aoindustries.lang.RunnableE)
+	 * @see #run(com.aoindustries.dbc.DatabaseRunnable)
+	 * @see #run(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
 	 *
 	 * @see #newDatabaseConnection()
 	 */
@@ -604,12 +608,14 @@ public class Database implements DatabaseAccess {
 	/**
 	 * Checks if the current thread is in a transaction.
 	 *
-	 * @see #transaction(java.lang.Runnable)
-	 * @see #transaction(com.aoindustries.dbc.DatabaseRunnable)
-	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
-	 * @see #transaction(java.util.concurrent.Callable)
-	 * @see #transaction(com.aoindustries.dbc.DatabaseCallable)
-	 * @see #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 * @see #call(java.util.concurrent.Callable)
+	 * @see #call(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
+	 * @see #call(com.aoindustries.dbc.DatabaseCallable)
+	 * @see #call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 * @see #run(java.lang.Runnable)
+	 * @see #run(java.lang.Class, com.aoindustries.lang.RunnableE)
+	 * @see #run(com.aoindustries.dbc.DatabaseRunnable)
+	 * @see #run(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
 	 */
 	public boolean isInTransaction() {
 		return transactionConnection.get()!=null;
@@ -635,47 +641,9 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	@SuppressWarnings("overloads")
-	public void transaction(Runnable runnable) throws SQLException {
-		transaction((DatabaseConnection db) -> runnable.run());
-	}
-
-	// TODO: RunnableE
-
-	// TODO: transactionR and transactionC or run/runE/call/callE/supply like ThreadLocale
-
-	/**
-	 * <p>
-	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
-	 * </p>
-	 * <ol>
-	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
-	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
-	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
-	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
-	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
-	 * </ol>
-	 * <p>
-	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
-	 * another transaction is performed within this transaction.  Any nested transaction will automatically
-	 * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
-	 * entire transaction on any exception.
-	 * </p>
-	 *
-	 * @see #isInTransaction()
-	 */
-	@SuppressWarnings("overloads")
-	public void transaction(DatabaseRunnable runnable) throws SQLException {
-		transaction(RuntimeException.class, runnable::run);
-	}
-
-	/**
-	 * @deprecated  Please use {@link #transaction(com.aoindustries.dbc.DatabaseRunnable)}
-	 */
-	@Deprecated
-	@SuppressWarnings("overloads")
-	final public void executeTransaction(DatabaseRunnable runnable) throws SQLException {
-		transaction(runnable);
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	public <V> V call(Callable<? extends V> callable) throws SQLException, Exception {
+		return call(Exception.class, (DatabaseConnection db) -> callable.call());
 	}
 
 	/**
@@ -698,24 +666,9 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	@SuppressWarnings("overloads")
-	public <E extends Throwable> void transaction(Class<? extends E> eClass, DatabaseRunnableE<? extends E> runnable) throws SQLException, E {
-		transaction(
-			eClass,
-			(DatabaseConnection db) -> {
-				runnable.run(db);
-				return null;
-			}
-		);
-	}
-
-	/**
-	 * @deprecated  Please use {@link #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)}
-	 */
-	@Deprecated
-	@SuppressWarnings("overloads")
-	final public <E extends Exception> void executeTransaction(Class<E> eClass, DatabaseRunnableE<E> runnable) throws SQLException, E {
-		transaction(eClass, runnable);
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	public <V,E extends Throwable> V call(Class<? extends E> eClass, CallableE<? extends V,? extends E> callable) throws SQLException, E {
+		return call(eClass, (DatabaseConnection db) -> callable.call());
 	}
 
 	/**
@@ -738,51 +691,17 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	@SuppressWarnings({"overloads", "UseSpecificCatch", "TooBroadCatch"})
-	public <V> V transaction(Callable<? extends V> callable) throws SQLException {
-		return transaction((DatabaseConnection db) -> {
-			try {
-				return callable.call();
-			} catch(Throwable t) {
-				throw Throwables.wrap(t, SQLException.class, SQLException::new);
-			}
-		});
-	}
-
-	// TODO: CallableE
-
-	/**
-	 * <p>
-	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
-	 * </p>
-	 * <ol>
-	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
-	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
-	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
-	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
-	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
-	 * </ol>
-	 * <p>
-	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
-	 * another transaction is performed within this transaction.  Any nested transaction will automatically
-	 * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
-	 * entire transaction on any exception.
-	 * </p>
-	 *
-	 * @see #isInTransaction()
-	 */
-	@SuppressWarnings("overloads")
-	public <V> V transaction(DatabaseCallable<? extends V> callable) throws SQLException {
-		return transaction(RuntimeException.class, callable::call);
+	public <V> V call(DatabaseCallable<? extends V> callable) throws SQLException {
+		return call(RuntimeException.class, callable::call);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #transaction(com.aoindustries.dbc.DatabaseCallable)}
+	 * @deprecated  Please use {@link #call(com.aoindustries.dbc.DatabaseCallable)}
 	 */
 	@Deprecated
 	@SuppressWarnings("overloads")
 	final public <V> V executeTransaction(DatabaseCallable<V> callable) throws SQLException {
-		return transaction(callable);
+		return call(callable);
 	}
 
 	/**
@@ -805,8 +724,8 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	@SuppressWarnings({"UseSpecificCatch", "overloads"})
-	public <V,E extends Throwable> V transaction(Class<? extends E> eClass, DatabaseCallableE<? extends V,? extends E> callable) throws SQLException, E {
+	@SuppressWarnings("UseSpecificCatch")
+	public <V,E extends Throwable> V call(Class<? extends E> eClass, DatabaseCallableE<? extends V,? extends E> callable) throws SQLException, E {
 		Throwable t0 = null;
 		DatabaseConnection conn = transactionConnection.get();
 		if(conn != null) {
@@ -852,12 +771,130 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * @deprecated  Please use {@link #transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)}
+	 * @deprecated  Please use {@link #call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)}
+	 */
+	@Deprecated
+	final public <V,E extends Exception> V executeTransaction(Class<E> eClass, DatabaseCallableE<V,E> callable) throws SQLException, E {
+		return call(eClass, callable);
+	}
+
+	/**
+	 * <p>
+	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+	 * </p>
+	 * <ol>
+	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
+	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
+	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
+	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+	 * </ol>
+	 * <p>
+	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+	 * another transaction is performed within this transaction.  Any nested transaction will automatically
+	 * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+	 * entire transaction on any exception.
+	 * </p>
+	 *
+	 * @see #isInTransaction()
+	 */
+	public void run(Runnable runnable) throws SQLException {
+		run((DatabaseConnection db) -> runnable.run());
+	}
+
+	/**
+	 * <p>
+	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+	 * </p>
+	 * <ol>
+	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
+	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
+	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
+	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+	 * </ol>
+	 * <p>
+	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+	 * another transaction is performed within this transaction.  Any nested transaction will automatically
+	 * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+	 * entire transaction on any exception.
+	 * </p>
+	 *
+	 * @see #isInTransaction()
+	 */
+	public <E extends Throwable> void run(Class<? extends E> eClass, RunnableE<? extends E> runnable) throws SQLException, E {
+		run(eClass, (DatabaseConnection db) -> runnable.run());
+	}
+
+	/**
+	 * <p>
+	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+	 * </p>
+	 * <ol>
+	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
+	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
+	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
+	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+	 * </ol>
+	 * <p>
+	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+	 * another transaction is performed within this transaction.  Any nested transaction will automatically
+	 * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+	 * entire transaction on any exception.
+	 * </p>
+	 *
+	 * @see #isInTransaction()
+	 */
+	public void run(DatabaseRunnable runnable) throws SQLException {
+		run(RuntimeException.class, runnable::run);
+	}
+
+	/**
+	 * @deprecated  Please use {@link #run(com.aoindustries.dbc.DatabaseRunnable)}
 	 */
 	@Deprecated
 	@SuppressWarnings("overloads")
-	final public <V,E extends Exception> V executeTransaction(Class<E> eClass, DatabaseCallableE<V,E> callable) throws SQLException, E {
-		return transaction(eClass, callable);
+	final public void executeTransaction(DatabaseRunnable runnable) throws SQLException {
+		run(runnable);
+	}
+
+	/**
+	 * <p>
+	 * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+	 * </p>
+	 * <ol>
+	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
+	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
+	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
+	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+	 * </ol>
+	 * <p>
+	 * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+	 * another transaction is performed within this transaction.  Any nested transaction will automatically
+	 * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+	 * entire transaction on any exception.
+	 * </p>
+	 *
+	 * @see #isInTransaction()
+	 */
+	public <E extends Throwable> void run(Class<? extends E> eClass, DatabaseRunnableE<? extends E> runnable) throws SQLException, E {
+		call(
+			eClass,
+			(DatabaseConnection db) -> {
+				runnable.run(db);
+				return null;
+			}
+		);
+	}
+
+	/**
+	 * @deprecated  Please use {@link #run(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)}
+	 */
+	@Deprecated
+	final public <E extends Exception> void executeTransaction(Class<E> eClass, DatabaseRunnableE<E> runnable) throws SQLException, E {
+		run(eClass, runnable);
 	}
 
 	@Override
@@ -867,42 +904,42 @@ public class Database implements DatabaseAccess {
 
 	@Override
 	public DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return transaction((DatabaseConnection conn) ->
+		return call((DatabaseConnection conn) ->
 			conn.doubleStream(isolationLevel, readOnly, sql, params)
 		);
 	}
 
 	@Override
 	public IntStream intStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return transaction((DatabaseConnection conn) ->
+		return call((DatabaseConnection conn) ->
 			conn.intStream(isolationLevel, readOnly, sql, params)
 		);
 	}
 
 	@Override
 	public LongStream longStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return transaction((DatabaseConnection conn) ->
+		return call((DatabaseConnection conn) ->
 			conn.longStream(isolationLevel, readOnly, sql, params)
 		);
 	}
 
 	@Override
 	public <T,E extends Throwable> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		return transaction(eClass, (DatabaseConnection conn) ->
+		return call(eClass, (DatabaseConnection conn) ->
 			conn.stream(isolationLevel, readOnly, eClass, objectFactory, sql, params)
 		);
 	}
 
 	@Override
-	public <T,E extends Throwable> T query(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
-		return transaction(eClass, (DatabaseConnection conn) ->
-			conn.query(isolationLevel, readOnly, eClass, resultSetCallable, sql, params)
+	public <T,E extends Throwable> T queryCall(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+		return call(eClass, (DatabaseConnection conn) ->
+			conn.queryCall(isolationLevel, readOnly, eClass, resultSetCallable, sql, params)
 		);
 	}
 
 	@Override
 	public int update(String sql, Object ... params) throws SQLException {
-		return transaction((DatabaseConnection conn) ->
+		return call((DatabaseConnection conn) ->
 			conn.update(sql, params)
 		);
 	}

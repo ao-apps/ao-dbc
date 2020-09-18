@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-14T22:20:31-05:00"
+		dateModified="2020-09-18T13:29:36-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -155,17 +155,20 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						implementations to not return anything.  Previously, to satisfy the interface, something always
 						had to be returned, even if just a <code>(Void)null</code>.
 					</li>
-					<li>Renamed <code>Database.executeTransaction(…)</code> to <code>Database.transaction(…)</code>.</li>
 					<li>
-						Added new methods <code>Database.transaction(Runnable)</code> and
-						<code>Database.transaction(Callable)</code>, which are useful when a transaction scope is
-						needed, but the <code>DatabaseConnection</code> itself is not required.
+						Renamed <code>Database.executeTransaction(…)</code> to <code>Database.call(…)</code> and
+						<code>Database.run(…)</code>.
+					</li>
+					<li>
+						Added new methods <code>Database.run(Runnable)</code> and <code>Database.call(Callable)</code>,
+						which are useful when a transaction scope is needed, but the <code>DatabaseConnection</code>
+						itself is not required.
 					</li>
 					<li>
 						Deprecated <code>Database.createDatabaseConnection()</code>, since it puts the burden of
-						transaction management on the caller.  Please use the various <code>transaction(…)</code> methods.
-						New <code>DatabaseConnection</code> instances are now created by the protected method
-						<code>newDatabaseConnection()</code>.
+						transaction management on the caller.  Please use the various <code>call(…)</code> or
+						<code>run(…)</code> methods.  New <code>DatabaseConnection</code> instances are now created by
+						the protected method <code>newDatabaseConnection()</code>.
 					</li>
 					<li>
 						Added overloads of <code>Database.getConnection(…)</code> and

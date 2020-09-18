@@ -208,7 +208,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * @see  Connection#close()
 	 *
 	 * @deprecated  {@link DatabaseConnection} should only be used within the scope of a single thread.  This is a requirement of
-	 *              {@linkplain Database#transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE) the automatic transaction mechanism}.
+	 *              {@linkplain Database#call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE) the automatic transaction mechanism}.
 	 *              Therefore, any value of {@code maxConnections} greater than one is unnecessary.
 	 */
 	// Note: Matches AOPool.getConnection()
@@ -414,7 +414,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * @see  Connection#close()
 	 *
 	 * @deprecated  {@link DatabaseConnection} should only be used within the scope of a single thread.  This is a requirement of
-	 *              {@linkplain Database#transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE) the automatic transaction mechanism}.
+	 *              {@linkplain Database#call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE) the automatic transaction mechanism}.
 	 *              Therefore, any value of {@code maxConnections} greater than one is unnecessary.
 	 */
 	// Note: Matches AOConnectionPool.getConnection(int, boolean, int)
@@ -980,7 +980,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	}
 
 	@Override
-	public <T,E extends Throwable> T query(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+	public <T,E extends Throwable> T queryCall(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		// TODO: Use regular Statement when there are no params?  Interaction with PostgreSQL prepared statement caching?
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {

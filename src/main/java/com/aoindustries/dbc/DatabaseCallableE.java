@@ -25,10 +25,10 @@ package com.aoindustries.dbc;
 import java.sql.SQLException;
 
 /**
- * Target that may be used by {@link Database#transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)}
+ * Target that may be used by {@link Database#call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)}
  * and allows any arbitrary exception type in addition to the usual SQLException.
  *
- * @see  Database#transaction(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+ * @see  Database#call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
  *
  * @author  AO Industries, Inc.
  */
