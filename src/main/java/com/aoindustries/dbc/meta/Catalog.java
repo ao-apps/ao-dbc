@@ -145,7 +145,7 @@ public class Catalog {
 			@Override
 			public Set<Edge<Table>> getEdgesFrom(Table from) throws SQLException {
 				Set<? extends Table> tos = from.getImportedTables();
-				Set<Edge<Table>> edges = new LinkedHashSet<>(tos.size()*4/3+1);
+				Set<Edge<Table>> edges = AoCollections.newLinkedHashSet(tos.size());
 				for(Table to : tos) {
 					if(
 						tableTypes==null
@@ -159,7 +159,7 @@ public class Catalog {
 			@Override
 			public Set<Edge<Table>> getEdgesTo(Table to) throws SQLException {
 				Set<? extends Table> froms = to.getExportedTables();
-				Set<Edge<Table>> edges = new LinkedHashSet<>(froms.size()*4/3+1);
+				Set<Edge<Table>> edges = AoCollections.newLinkedHashSet(froms.size());
 				for(Table from : froms) {
 					if(
 						tableTypes==null

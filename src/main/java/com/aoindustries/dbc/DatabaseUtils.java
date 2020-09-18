@@ -33,11 +33,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Package-private implementation utilities.
+ * Implementation utilities.
  *
  * @author  AO Industries, Inc.
  */
-final class DatabaseUtils {
+final public class DatabaseUtils {
 
 	private static final Logger logger = Logger.getLogger(DatabaseUtils.class.getName());
 
@@ -49,7 +49,7 @@ final class DatabaseUtils {
 	 * This must not be used generate SQL statements - it is just to provide user display.
 	 */
 	@SuppressWarnings("fallthrough")
-	static String getRow(ResultSet result) throws SQLException {
+	public static String getRow(ResultSet result) throws SQLException {
 		StringBuilder sb = new StringBuilder();
 		sb.append('(');
 		ResultSetMetaData metaData = result.getMetaData();
@@ -124,6 +124,27 @@ final class DatabaseUtils {
 		}
 		sb.append(')');
 		return sb.toString();
+	}
+
+	/**
+	 * Gets the number of rows or {@code null} when unknown.
+	 */
+	public static Integer getRowCount(ResultSet results) throws SQLException {
+		int resultType = results.getType();
+		switch(resultType) {
+			case ResultSet.TYPE_FORWARD_ONLY :
+				return null;
+			case ResultSet.TYPE_SCROLL_INSENSITIVE :
+			case ResultSet.TYPE_SCROLL_SENSITIVE :
+				int rowCount = 0;
+				if(results.last()) {
+					rowCount = results.getRow();
+					results.beforeFirst();
+				}
+				return rowCount;
+			default :
+				throw new AssertionError(resultType);
+		}
 	}
 
 	private DatabaseUtils() {}

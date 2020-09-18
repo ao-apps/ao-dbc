@@ -23,9 +23,7 @@
 package com.aoindustries.dbc;
 
 import com.aoindustries.collections.AoCollections;
-import com.aoindustries.collections.IntArrayList;
 import com.aoindustries.collections.IntList;
-import com.aoindustries.collections.LongArrayList;
 import com.aoindustries.collections.LongList;
 import com.aoindustries.sql.Connections;
 import java.math.BigDecimal;
@@ -35,11 +33,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
+import java.util.function.Function;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -619,7 +617,7 @@ public interface DatabaseAccess {
 			isolationLevel,
 			readOnly,
 			results -> {
-				IntList list = new IntArrayList();
+				IntList list = AoCollections.newIntArrayList(DatabaseUtils.getRowCount(results));
 				while(results.next()) {
 					int i = results.getInt(1);
 					if(results.wasNull()) throw new NullDataException(results);
@@ -791,7 +789,7 @@ public interface DatabaseAccess {
 			isolationLevel,
 			readOnly,
 			results -> {
-				LongList list = new LongArrayList();
+				LongList list = AoCollections.newLongArrayList(DatabaseUtils.getRowCount(results));
 				while(results.next()) {
 					long l = results.getLong(1);
 					if(results.wasNull()) throw new NullDataException(results);
@@ -1207,9 +1205,8 @@ public interface DatabaseAccess {
 	 * @return  An unmodifiable list
 	 */
 	default <T,E extends Throwable> List<T> queryList(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		return AoCollections.optimalUnmodifiableList(
-			queryCollection(isolationLevel, readOnly, new ArrayList<>(), eClass, objectFactory, sql, params)
-		);
+		List<T> list = queryNewCollection(isolationLevel, readOnly, (Function<Integer,List<T>>)AoCollections::newArrayList, eClass, objectFactory, sql, params);
+		return AoCollections.optimalUnmodifiableList(list);
 	}
 
 	/**
@@ -1587,6 +1584,127 @@ public interface DatabaseAccess {
 	@Deprecated
 	default <T,C extends Collection<? super T>,E extends Exception> C executeObjectCollectionQuery(int isolationLevel, boolean readOnly, C collection, Class<E> eClass, ObjectFactoryE<T,E> objectFactory, String sql, Object ... params) throws SQLException, E {
 		return queryCollection(isolationLevel, readOnly, collection, eClass, objectFactory, sql, params);
+	}
+
+	/**
+	 * Read-only query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
+	 * <ul>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 * </ul>
+	 *
+	 * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
+	 *
+	 * @see  #updateNewCollection(java.util.function.Function, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 */
+	@SuppressWarnings("overloads")
+	default <T,C extends Collection<? super T>> C queryNewCollection(
+		Function<? super Integer,? extends C> newCollection,
+		ObjectFactory<? extends T> objectFactory, String sql, Object ... params
+	) throws SQLException {
+		return queryNewCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, newCollection, objectFactory, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
+	 * <ul>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 * </ul>
+	 *
+	 * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
+	 *
+	 * @see  #queryNewCollection(java.util.function.Function, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object[])
+	 */
+	@SuppressWarnings("overloads")
+	default <T,C extends Collection<? super T>> C updateNewCollection(
+		Function<? super Integer,? extends C> newCollection,
+		ObjectFactory<? extends T> objectFactory, String sql, Object ... params
+	) throws SQLException {
+		return queryNewCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, newCollection, objectFactory, sql, params);
+	}
+
+	/**
+	 * Query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
+	 *
+	 * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
+	 */
+	@SuppressWarnings("overloads")
+	default <T,C extends Collection<? super T>> C queryNewCollection(
+		int isolationLevel, boolean readOnly,
+		Function<? super Integer,? extends C> newCollection,
+		ObjectFactory<? extends T> objectFactory, String sql, Object ... params
+	) throws SQLException {
+		return queryNewCollection(isolationLevel, readOnly, newCollection, RuntimeException.class, objectFactory, sql, params);
+	}
+
+	/**
+	 * Read-only query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
+	 * <ul>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+	 *   <li>readOnly = {@code true}</li>
+	 * </ul>
+	 *
+	 * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
+	 *
+	 * @see  #updateNewCollection(java.util.function.Function, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 */
+	@SuppressWarnings("overloads")
+	default <T,C extends Collection<? super T>,E extends Throwable> C queryNewCollection(
+		Function<? super Integer,? extends C> newCollection,
+		Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params
+	) throws SQLException, E {
+		return queryNewCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, newCollection, eClass, objectFactory, sql, params);
+	}
+
+	/**
+	 * Read-write query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
+	 * <ul>
+	 *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+	 *   <li>readOnly = {@code false}</li>
+	 * </ul>
+	 *
+	 * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
+	 *
+	 * @see  #queryNewCollection(java.util.function.Function, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object[])
+	 */
+	@SuppressWarnings("overloads")
+	default <T,C extends Collection<? super T>,E extends Throwable> C updateNewCollection(
+		Function<? super Integer,? extends C> newCollection,
+		Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params
+	) throws SQLException, E {
+		return queryNewCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, newCollection, eClass, objectFactory, sql, params);
+	}
+
+	/**
+	 * Query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
+	 *
+	 * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
+	 */
+	@SuppressWarnings("overloads")
+	default <T,C extends Collection<? super T>,E extends Throwable> C queryNewCollection(
+		int isolationLevel, boolean readOnly,
+		Function<? super Integer,? extends C> newCollection,
+		Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params
+	) throws SQLException, E {
+		return queryCall(
+			isolationLevel,
+			readOnly,
+			eClass,
+			results -> {
+				int rowCount = DatabaseUtils.getRowCount(results);
+				C collection = newCollection.apply(rowCount == -1 ? null : rowCount);
+				while(results.next()) {
+					T newObj = objectFactory.createObject(results);
+					if(!collection.add(newObj)) {
+						throw new SQLException("Duplicate row in results: " + DatabaseUtils.getRow(results));
+					}
+				}
+				return collection;
+			},
+			sql,
+			params
+		);
 	}
 
 	/**

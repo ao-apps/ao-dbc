@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-18T13:29:36-05:00"
+		dateModified="2020-09-18T14:04:57-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -200,8 +200,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					</li>
 					<li>Changed generic bounds from specific to bounded, where appropriate.</li>
 					<li>Generic exception upper bounds changed from <code>Exception</code> to <code>Throwable</code>.</li>
+					<li>Now pre-sizing collections when number of rows in result set is known.</li>
+					<!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
 					<!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
-					<!-- TODO: pre-size collections on queries when number of rows known (scrollable/results.last(), ...) -->
 				</ul>
 			</changelog:release>
 		</c:if>

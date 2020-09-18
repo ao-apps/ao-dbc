@@ -22,6 +22,7 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.collections.AoCollections;
 import com.aoindustries.concurrent.Executors;
 import com.aoindustries.lang.AutoCloseables;
 import com.aoindustries.lang.RunnableE;
@@ -203,7 +204,7 @@ public class Database implements DatabaseAccess {
 		if(size != 0) {
 			Map<String,Class<?>> typeMap = conn.getTypeMap();
 			// Note: We get "null" back from PostgreSQL driver, despite documentation of returning empty
-			if(typeMap == null) typeMap = new LinkedHashMap<>(size*4/3+1);
+			if(typeMap == null) typeMap = AoCollections.newLinkedHashMap(size);
 			oldTypeMaps.put(conn, new LinkedHashMap<>(typeMap));
 			typeMap.putAll(newTypes);
 			conn.setTypeMap(typeMap);

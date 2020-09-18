@@ -24,12 +24,12 @@ package com.aoindustries.dbc.meta;
 
 import com.aoindustries.collections.AoCollections;
 import com.aoindustries.collections.AutoGrowArrayList;
+import com.aoindustries.dbc.DatabaseUtils;
 import com.aoindustries.dbc.NoRowException;
 import com.aoindustries.table.IndexType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
@@ -246,10 +246,11 @@ public class Table {
 	public Set<? extends Table> getImportedTables() throws SQLException {
 		synchronized(getImportedTablesLock) {
 			if(getImportedTablesCache==null) {
-				Set<Table> newImportedTables = new LinkedHashSet<>();
+				Set<Table> newImportedTables;
 				Catalog catalog = schema.getCatalog();
 				DatabaseMetaData metaData = catalog.getMetaData();
 				try (ResultSet results = schema.getCatalog().getMetaData().getMetaData().getImportedKeys(schema.getCatalog().getName(), schema.getName(), name)) {
+					newImportedTables = AoCollections.newLinkedHashSet(DatabaseUtils.getRowCount(results));
 					while(results.next()) {
 						String pkCat = results.getString("PKTABLE_CAT");
 						Catalog pkCatalog = pkCat==null ? catalog : metaData.getCatalog(pkCat);
@@ -279,10 +280,11 @@ public class Table {
 	public Set<? extends Table> getExportedTables() throws SQLException {
 		synchronized(getExportedTablesLock) {
 			if(getExportedTablesCache==null) {
-				Set<Table> newExportedTables = new LinkedHashSet<>();
+				Set<Table> newExportedTables;
 				Catalog catalog = schema.getCatalog();
 				DatabaseMetaData metaData = catalog.getMetaData();
 				try (ResultSet results = schema.getCatalog().getMetaData().getMetaData().getExportedKeys(schema.getCatalog().getName(), schema.getName(), name)) {
+					newExportedTables = AoCollections.newLinkedHashSet(DatabaseUtils.getRowCount(results));
 					while(results.next()) {
 						String fkCat = results.getString("FKTABLE_CAT");
 						Catalog fkCatalog = fkCat==null ? catalog : metaData.getCatalog(fkCat);
