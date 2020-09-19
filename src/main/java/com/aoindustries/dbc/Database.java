@@ -39,7 +39,6 @@ import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.logging.Logger;
 import java.util.stream.DoubleStream;
@@ -102,7 +101,7 @@ public class Database implements DatabaseAccess {
 	 *              of {@link DatabaseConnection} only.  Please use one of the various call/run methods, which enforce
 	 *              the transaction semantics.
 	 *
-	 * @see #call(java.util.concurrent.Callable)
+	 * @see #call(com.aoindustries.util.concurrent.CallableE)
 	 * @see #call(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
 	 * @see #call(com.aoindustries.dbc.DatabaseCallable)
 	 * @see #call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
@@ -609,7 +608,7 @@ public class Database implements DatabaseAccess {
 	/**
 	 * Checks if the current thread is in a transaction.
 	 *
-	 * @see #call(java.util.concurrent.Callable)
+	 * @see #call(com.aoindustries.util.concurrent.CallableE)
 	 * @see #call(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
 	 * @see #call(com.aoindustries.dbc.DatabaseCallable)
 	 * @see #call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
@@ -643,8 +642,8 @@ public class Database implements DatabaseAccess {
 	 * @see #isInTransaction()
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	public <V> V call(Callable<? extends V> callable) throws SQLException, Exception {
-		return call(Exception.class, (DatabaseConnection db) -> callable.call());
+	public <V> V call(CallableE<? extends V,? extends RuntimeException> callable) throws SQLException {
+		return call(RuntimeException.class, callable);
 	}
 
 	/**
