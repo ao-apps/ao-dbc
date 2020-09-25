@@ -943,4 +943,11 @@ public class Database implements DatabaseAccess {
 			conn.update(sql, params)
 		);
 	}
+
+	@Override
+	public long largeUpdate(String sql, Object ... params) throws SQLException {
+		return call((DatabaseConnection conn) ->
+			conn.largeUpdate(sql, params)
+		);
+	}
 }

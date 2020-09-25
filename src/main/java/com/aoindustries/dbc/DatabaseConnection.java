@@ -1009,6 +1009,19 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		}
 	}
 
+	@Override
+	public long largeUpdate(String sql, Object ... params) throws SQLException {
+		Connection conn = getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false);
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			try {
+				setParams(conn, pstmt, params);
+				return pstmt.executeLargeUpdate();
+			} catch(SQLException err) {
+				throw new WrappedSQLException(err, pstmt);
+			}
+		}
+	}
+
 	// TODO: variants of update method that passes Iterable<Object[]> params (or Iterable<Iterable<?>>, or Object[][])
 	//       that would perform a batch update.  Do not even prepare statement when iterable is empty.
 	//

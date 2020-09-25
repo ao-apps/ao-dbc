@@ -56,6 +56,7 @@ public interface DatabaseAccess {
 	 * @see  Types
 	 * @see  PreparedStatement#setNull(int, int)
 	 */
+	// TODO: Wrap JDBCType also/instead?
 	public enum Null {
 		BIT(Types.BIT),
 		TINYINT(Types.TINYINT),
@@ -2242,6 +2243,11 @@ public interface DatabaseAccess {
 	//       Call it update1?  updateSingle?  updateRow?
 	//       Implement as a functional interface "UpdateValidator" (int) -> SQLException?
 	int update(String sql, Object ... params) throws SQLException;
+
+	/**
+	 * Performs an update on the database and returns the number of rows affected.
+	 */
+	long largeUpdate(String sql, Object ... params) throws SQLException;
 
 	/**
 	 * @deprecated  Please use {@link #update(java.lang.String, java.lang.Object...)}
