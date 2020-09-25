@@ -57,6 +57,7 @@ import javax.sql.DataSource;
  *
  * @author  AO Industries, Inc.
  */
+// TODO: Could we leverage savepoints for nested transactions?
 public class Database implements DatabaseAccess {
 
 	/**
