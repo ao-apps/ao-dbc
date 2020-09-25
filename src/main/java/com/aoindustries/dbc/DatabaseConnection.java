@@ -538,7 +538,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		UncloseableConnectionWrapper c = _conn;
 		if(c != null) {
 			_conn = null;
-			c.getWrappedConnection().close();
+			c.getWrapped().close();
 		}
 	}
 
@@ -623,7 +623,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 					}
 				}
 			} finally {
-				t0 = AutoCloseables.closeAndCatch(t0, c.getWrappedConnection());
+				t0 = AutoCloseables.closeAndCatch(t0, c.getWrapped());
 			}
 			if(t0 != null) {
 				throw Throwables.wrap(t0, SQLException.class, SQLException::new);

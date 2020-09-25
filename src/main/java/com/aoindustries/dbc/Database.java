@@ -523,7 +523,7 @@ public class Database implements DatabaseAccess {
 			wrapper = conn.unwrap(IDatabaseConnectionWrapper.class);
 		}
 		if(wrapper.getDatabase() == this) {
-			return wrapper.getWrappedConnection();
+			return wrapper.getWrapped();
 		} else {
 			throw new SQLException("Connection from a different database, cannot unwrap");
 		}
