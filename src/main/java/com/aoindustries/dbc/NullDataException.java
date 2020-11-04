@@ -28,6 +28,7 @@ import java.sql.SQLException;
 /**
  * Thrown when database contains a null value and a non-null value is required.
  */
+// TODO: Provide SQLState: https://en.wikipedia.org/wiki/SQLSTATE
 public class NullDataException extends SQLException {
 
 	private static final long serialVersionUID = 1L;

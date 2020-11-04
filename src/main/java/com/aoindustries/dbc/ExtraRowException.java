@@ -28,6 +28,7 @@ import java.sql.SQLException;
 /**
  * Thrown when more rows are retrieved than expected.
  */
+// TODO: Provide SQLState: https://en.wikipedia.org/wiki/SQLSTATE
 public class ExtraRowException extends SQLException {
 
 	private static final long serialVersionUID = 1L;

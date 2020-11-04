@@ -27,6 +27,7 @@ import java.sql.SQLException;
 /**
  * Thrown when no row available and a row is required.
  */
+// TODO: Provide SQLState: https://en.wikipedia.org/wiki/SQLSTATE
 public class NoRowException extends SQLException {
 
 	private static final long serialVersionUID = 5397878995581459678L;
