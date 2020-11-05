@@ -22,7 +22,9 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.lang.AutoCloseableE;
 import com.aoindustries.sql.AOConnectionPool;
+import java.sql.SQLException;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 
@@ -34,7 +36,7 @@ import javax.sql.DataSource;
  * rest of the application should not close the database, only the {@link Database} base type should be provided.
  * </p>
  */
-public class CloseableDatabase extends Database implements AutoCloseable {
+public class CloseableDatabase extends Database implements AutoCloseableE<SQLException> {
 
 	public CloseableDatabase(String driver, String url, String user, String password, int numConnections, long maxConnectionAge, Logger logger) {
 		super(driver, url, user, password, numConnections, maxConnectionAge, logger);
