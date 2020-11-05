@@ -106,7 +106,7 @@ public class Database implements DatabaseAccess {
 	 * @see #call(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
 	 * @see #call(com.aoindustries.dbc.DatabaseCallable)
 	 * @see #call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
-	 * @see #run(java.lang.Runnable)
+	 * @see #run(com.aoindustries.lang.RunnableE)
 	 * @see #run(java.lang.Class, com.aoindustries.lang.RunnableE)
 	 * @see #run(com.aoindustries.dbc.DatabaseRunnable)
 	 * @see #run(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
@@ -613,7 +613,7 @@ public class Database implements DatabaseAccess {
 	 * @see #call(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
 	 * @see #call(com.aoindustries.dbc.DatabaseCallable)
 	 * @see #call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
-	 * @see #run(java.lang.Runnable)
+	 * @see #run(com.aoindustries.lang.RunnableE)
 	 * @see #run(java.lang.Class, com.aoindustries.lang.RunnableE)
 	 * @see #run(com.aoindustries.dbc.DatabaseRunnable)
 	 * @see #run(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
@@ -643,8 +643,8 @@ public class Database implements DatabaseAccess {
 	 * @see #isInTransaction()
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	public <V> V call(CallableE<? extends V,? extends RuntimeException> callable) throws SQLException {
-		return call(RuntimeException.class, callable);
+	public <V> V call(CallableE<? extends V,? extends SQLException> callable) throws SQLException {
+		return call(SQLException.class, callable);
 	}
 
 	/**
@@ -799,7 +799,7 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	public void run(Runnable runnable) throws SQLException {
+	public void run(RunnableE<? extends SQLException> runnable) throws SQLException {
 		run((DatabaseConnection db) -> runnable.run());
 	}
 

@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-24T19:24:16-05:00"
+		dateModified="2020-09-29T19:41:05-05:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -160,7 +160,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						<code>Database.run(…)</code>.
 					</li>
 					<li>
-						Added new methods <code>Database.run(Runnable)</code> and <code>Database.call(Callable)</code>,
+						Added new methods <code>Database.run(RunnableE)</code> and <code>Database.call(CallableE)</code>,
 						which are useful when a transaction scope is needed, but the <code>DatabaseConnection</code>
 						itself is not required.
 					</li>
