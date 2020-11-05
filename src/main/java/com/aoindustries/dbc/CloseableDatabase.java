@@ -23,7 +23,7 @@
 package com.aoindustries.dbc;
 
 import com.aoindustries.lang.AutoCloseableE;
-import com.aoindustries.sql.AOConnectionPool;
+import com.aoindustries.sql.pool.AOConnectionPool;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
