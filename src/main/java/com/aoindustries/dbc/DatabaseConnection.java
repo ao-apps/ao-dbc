@@ -23,6 +23,7 @@
 package com.aoindustries.dbc;
 
 import com.aoindustries.exception.WrappedException;
+import com.aoindustries.lang.AutoCloseableE;
 import com.aoindustries.lang.AutoCloseables;
 import com.aoindustries.lang.Throwables;
 import com.aoindustries.sql.Connections;
@@ -70,7 +71,7 @@ import java.util.stream.StreamSupport;
  *
  * @author  AO Industries, Inc.
  */
-public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
+public class DatabaseConnection implements DatabaseAccess, AutoCloseableE<SQLException> {
 
 	// TODO: Larger value now, since systems have more RAM generally?
 	// TODO: Share value with aoserv-master?
