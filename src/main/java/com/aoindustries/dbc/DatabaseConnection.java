@@ -82,7 +82,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseableE<SQLExc
 	private UncloseableConnectionWrapper _conn;
 
 	protected DatabaseConnection(Database database) {
-	   this.database=database;
+	   this.database = database;
 	}
 
 	public Database getDatabase() {
