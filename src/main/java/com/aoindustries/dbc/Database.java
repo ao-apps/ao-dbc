@@ -618,8 +618,6 @@ public class Database implements DatabaseAccess {
 	 * <ol>
 	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
 	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
-	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
-	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
 	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
 	 * </ol>
 	 * <p>
@@ -642,8 +640,6 @@ public class Database implements DatabaseAccess {
 	 * <ol>
 	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
 	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
-	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
-	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
 	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
 	 * </ol>
 	 * <p>
@@ -666,8 +662,6 @@ public class Database implements DatabaseAccess {
 	 * <ol>
 	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
 	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
-	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
-	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
 	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
 	 * </ol>
 	 * <p>
@@ -699,8 +693,6 @@ public class Database implements DatabaseAccess {
 	 * <ol>
 	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
 	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
-	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
-	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
 	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
 	 * </ol>
 	 * <p>
@@ -722,9 +714,6 @@ public class Database implements DatabaseAccess {
 				return callable.call(conn);
 			} catch(NoRowException | NullDataException | ExtraRowException e) {
 				throw e;
-			} catch(SQLException e) {
-				t0 = Throwables.addSuppressed(t0, e);
-				t0 = conn.rollbackAndClose(t0);
 			} catch(Throwable t) {
 				t0 = Throwables.addSuppressed(t0, t);
 				t0 = conn.rollback(t0);
@@ -741,12 +730,6 @@ public class Database implements DatabaseAccess {
 					} finally {
 						transactionConnection.remove();
 					}
-				} catch(NoRowException | NullDataException | ExtraRowException e) {
-					t0 = Throwables.addSuppressed(t0, e);
-					t0 = newConn.rollback(t0);
-				} catch(SQLException e) {
-					t0 = Throwables.addSuppressed(t0, e);
-					t0 = newConn.rollbackAndClose(t0);
 				} catch(Throwable t) {
 					t0 = Throwables.addSuppressed(t0, t);
 					t0 = newConn.rollback(t0);
@@ -773,8 +756,6 @@ public class Database implements DatabaseAccess {
 	 * <ol>
 	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
 	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
-	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
-	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
 	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
 	 * </ol>
 	 * <p>
@@ -797,8 +778,6 @@ public class Database implements DatabaseAccess {
 	 * <ol>
 	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
 	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
-	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
-	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
 	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
 	 * </ol>
 	 * <p>
@@ -821,8 +800,6 @@ public class Database implements DatabaseAccess {
 	 * <ol>
 	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
 	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
-	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
-	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
 	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
 	 * </ol>
 	 * <p>
@@ -854,8 +831,6 @@ public class Database implements DatabaseAccess {
 	 * <ol>
 	 * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
 	 *     {@link ExtraRowException} on the outer-most transaction only.</li>
-	 * <li>Rolls-back and closes the connection on all {@link SQLException} except {@link NoRowException},
-	 *     {@link NullDataException}, or {@link ExtraRowException}.</li>
 	 * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
 	 * </ol>
 	 * <p>

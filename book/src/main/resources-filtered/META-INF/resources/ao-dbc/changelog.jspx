@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-11-06T13:00:14-06:00"
+		dateModified="2020-11-06T13:50:21-06:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -66,12 +66,20 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 								during rollback to the given throwable via <code>Throwable.addSuppressed(Throwable)</code>.
 							</li>
 							<li>
-								<code>DatabaseConnection.rollbackAndClose()</code> now throws <code>SQLException</code>, instead of
-								logging and returning.
+								Deprecated <code>DatabaseConnection.rollbackAndClose()</code> in favor of either explicit
+								<code>DatabaseConnection.rollback()</code> or relying on the automatic rollback
+								of transactions in-progress during <code>DatabaseConnection.close()</code>.  Furthermore,
+								any connection with an unresolved fail-fast state will be validated and closed as-needed
+								before being returned to the underlying connection pool.
 							</li>
 							<li>
-								New <code>DatabaseConnection.rollbackAndClose(Throwable)</code> that adds any exceptions occurring
-								during rollback to the given throwable via <code>Throwable.addSuppressed(Throwable)</code>.
+								<code>DatabaseConnection.rollbackAndClose()</code> (now deprecated) now throws <code>SQLException</code>,
+								instead of logging and returning.
+							</li>
+							<li>
+								New <code>DatabaseConnection.rollbackAndClose(Throwable)</code> (also deprecated) that adds
+								any exceptions occurring during rollback to the given throwable via
+								<code>Throwable.addSuppressed(Throwable)</code>.
 							</li>
 							<li>
 								<code>Database.getConnection(…)</code> now adds any exceptions occurring

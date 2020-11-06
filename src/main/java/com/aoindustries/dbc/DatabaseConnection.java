@@ -600,7 +600,14 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseableE<SQLExc
 	 * from {@link #close()}, which is intended for releasing to the underlying pool via {@link Connection#close()}.
 	 *
 	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
+	 *
+	 * @see  #rollback()
+	 * @see  #rollbackAndClose(java.lang.Throwable)
+	 *
+	 * @deprecated  Please use {@link #rollback()}.  The connection will be {@linkplain Connection#isValid(int) validated}
+	 *              during {@link #close()} when there is any unresolved {@linkplain FailFastConnection#getFailFastState() fail-fast state}.
 	 */
+	@Deprecated
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public boolean rollbackAndClose() throws SQLException {
 		UncloseableConnectionWrapper c = _conn;
@@ -638,18 +645,22 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseableE<SQLExc
 
 	/**
 	 * Rolls back the current connection, if have connection and is not auto-commit, and forces the underlying
-	 * connection closed.  This close is distinct from {@link #close(java.lang.Throwable)}, which is intended for
-	 * releasing to the underlying pool.
+	 * connection closed via {@link Connection#abort(java.util.concurrent.Executor)}.  This close is distinct
+	 * from {@link #close()}, which is intended for releasing to the underlying pool via {@link Connection#close()}.
 	 *
 	 * @param  t0  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
 	 *
 	 * @return  The given exception, or new exception, or {@code null} when none given and none new
 	 *
+	 * @see  #rollback(java.lang.Throwable)
 	 * @see  #rollbackAndClose()
 	 * @see  Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)
+	 *
+	 * @deprecated  Please use {@link #rollback(java.lang.Throwable)}.  The connection will be {@linkplain Connection#isValid(int) validated}
+	 *              during {@link #close(java.lang.Throwable)} when there is any unresolved {@linkplain FailFastConnection#getFailFastState() fail-fast state}.
 	 */
+	@Deprecated
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	// TODO: Combine with rollback, and automatically close if connection is invalid?  Or rename to rollbackAndAbort, or remove and just use abort directly
 	public Throwable rollbackAndClose(Throwable t0) {
 		try {
 			rollbackAndClose();
