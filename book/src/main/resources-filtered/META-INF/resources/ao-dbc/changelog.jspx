@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-09-29T19:41:05-05:00"
+		dateModified="2020-11-06T13:00:14-06:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -165,10 +165,9 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						itself is not required.
 					</li>
 					<li>
-						Deprecated <code>Database.createDatabaseConnection()</code>, since it puts the burden of
-						transaction management on the caller.  Please use the various <code>call(…)</code> or
-						<code>run(…)</code> methods.  New <code>DatabaseConnection</code> instances are now created by
-						the protected method <code>newDatabaseConnection()</code>.
+						Renamed <code>Database.createDatabaseConnection()</code> to <code>connect()</code>.  Since this
+						method puts the burden of transaction management on the caller, please consider using the various
+						<code>call(…)</code> or <code>run(…)</code> methods.
 					</li>
 					<li>
 						Added overloads of <code>Database.getConnection(…)</code> and

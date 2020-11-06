@@ -91,31 +91,12 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * Creates a new {@link DatabaseConnection} instance.  The instance must be closed
-	 * via {@link DatabaseConnection#close()} or {@link DatabaseConnection#close(java.lang.Throwable)}.
-	 * <p>
-	 * Note that the close methods will rollback any transaction in progress, so it is up to the caller to
-	 * perform any necessary {@link DatabaseConnection#commit()}.
-	 * </p>
-	 *
-	 * @deprecated  Direct use of this method is discouraged, as this is intended for instantiation and initialization
-	 *              of {@link DatabaseConnection} only.  Please use one of the various call/run methods, which enforce
+	 * @deprecated  Please use either {@link #connect()} or one of the various call/run methods, which enforce
 	 *              the transaction semantics.
-	 *
-	 * @see #call(com.aoindustries.util.concurrent.CallableE)
-	 * @see #call(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
-	 * @see #call(com.aoindustries.dbc.DatabaseCallable)
-	 * @see #call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
-	 * @see #run(com.aoindustries.lang.RunnableE)
-	 * @see #run(java.lang.Class, com.aoindustries.lang.RunnableE)
-	 * @see #run(com.aoindustries.dbc.DatabaseRunnable)
-	 * @see #run(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
-	 *
-	 * @see #newDatabaseConnection()
 	 */
 	@Deprecated
 	final public DatabaseConnection createDatabaseConnection() {
-		return newDatabaseConnection();
+		return connect();
 	}
 
 	/**
@@ -125,8 +106,17 @@ public class Database implements DatabaseAccess {
 	 * Note that the close methods will rollback any transaction in progress, so it is up to the caller to
 	 * perform any necessary {@link DatabaseConnection#commit()}.
 	 * </p>
+	 *
+	 * @see #call(com.aoindustries.util.concurrent.CallableE)
+	 * @see #call(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
+	 * @see #call(com.aoindustries.dbc.DatabaseCallable)
+	 * @see #call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 * @see #run(com.aoindustries.lang.RunnableE)
+	 * @see #run(java.lang.Class, com.aoindustries.lang.RunnableE)
+	 * @see #run(com.aoindustries.dbc.DatabaseRunnable)
+	 * @see #run(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
 	 */
-	protected DatabaseConnection newDatabaseConnection() {
+	public DatabaseConnection connect() {
 		return new DatabaseConnection(this);
 	}
 
@@ -744,7 +734,7 @@ public class Database implements DatabaseAccess {
 			}
 		} else {
 			// Create new connection
-			try (DatabaseConnection newConn = newDatabaseConnection()) {
+			try (DatabaseConnection newConn = connect()) {
 				try {
 					transactionConnection.set(newConn);
 					try {
