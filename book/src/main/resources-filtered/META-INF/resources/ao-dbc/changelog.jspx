@@ -62,7 +62,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 								logging and returning.
 							</li>
 							<li>
-								New <code>DatabaseConnection.rollback(Throwable)</code> that adds any exceptions occuring
+								New <code>DatabaseConnection.rollback(Throwable)</code> that adds any exceptions occurring
 								during rollback to the given throwable via <code>Throwable.addSuppressed(Throwable)</code>.
 							</li>
 							<li>
@@ -70,11 +70,11 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 								logging and returning.
 							</li>
 							<li>
-								New <code>DatabaseConnection.rollbackAndClose(Throwable)</code> that adds any exceptions occuring
+								New <code>DatabaseConnection.rollbackAndClose(Throwable)</code> that adds any exceptions occurring
 								during rollback to the given throwable via <code>Throwable.addSuppressed(Throwable)</code>.
 							</li>
 							<li>
-								<code>Database.getConnection(…)</code> now adds any exceptions occuring
+								<code>Database.getConnection(…)</code> now adds any exceptions occurring
 								during clean-up (close and/or release connection) to the first throwable via
 								<code>Throwable.addSuppressed(Throwable)</code>.
 							</li>
