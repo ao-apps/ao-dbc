@@ -426,7 +426,6 @@ public class Database implements DatabaseAccess {
 	// Note: Matches AOConnectionPool.getConnection(int, boolean, int)
 	// Note:      Is Database.getConnection(int, boolean, int)
 	// Note: Matches DatabaseConnection.getConnection(int, boolean, int)
-	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
 		DatabaseConnectionWrapper conn;
 		if(pool != null) {
@@ -632,7 +631,6 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public <V> V call(CallableE<? extends V,? extends SQLException> callable) throws SQLException {
 		return call(SQLException.class, callable);
 	}
@@ -657,7 +655,6 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public <V,E extends Throwable> V call(Class<? extends E> eClass, CallableE<? extends V,? extends E> callable) throws SQLException, E {
 		return call(eClass, (DatabaseConnection db) -> callable.call());
 	}
