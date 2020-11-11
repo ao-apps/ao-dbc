@@ -213,16 +213,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseableE<SQLExc
 	 * @see  #getConnection(int, boolean, int)
 	 * @see  Database#getConnection(int)
 	 * @see  Connection#close()
-	 *
-	 * @deprecated  {@link DatabaseConnection} should only be used within the scope of a single thread.  This is a requirement of
-	 *              {@linkplain Database#call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE) the automatic transaction mechanism}.
-	 *              Therefore, any value of {@code maxConnections} greater than one is unnecessary.
 	 */
 	// Note: Matches AOPool.getConnection()
 	// Note: Matches AOConnectionPool.getConnection()
 	// Note: Matches Database.getConnection()
 	// Note:      Is DatabaseConnection.getConnection()
-	@Deprecated
 	public Connection getConnection(int maxConnections) throws SQLException {
 		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, maxConnections);
 	}
@@ -419,15 +414,10 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseableE<SQLExc
 	 *
 	 * @see  Database#getConnection(int, boolean, int)
 	 * @see  Connection#close()
-	 *
-	 * @deprecated  {@link DatabaseConnection} should only be used within the scope of a single thread.  This is a requirement of
-	 *              {@linkplain Database#call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE) the automatic transaction mechanism}.
-	 *              Therefore, any value of {@code maxConnections} greater than one is unnecessary.
 	 */
 	// Note: Matches AOConnectionPool.getConnection(int, boolean, int)
 	// Note: Matches Database.getConnection(int, boolean, int)
 	// Note:      Is DatabaseConnection.getConnection(int, boolean)
-	@Deprecated
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
 		UncloseableConnectionWrapper c = _conn;
 		if(c == null) {
