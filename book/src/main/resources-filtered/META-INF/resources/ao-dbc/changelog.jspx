@@ -185,7 +185,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						<code>NullDataException</code> and <code>ExtraRowException</code> now include a summary of the
 						row as the exception message.  This implementation adds
-						<c:link book="/ao-encoding" page="/index.jspx" /> as new dependency.
+						<core:link book="/ao-encoding" page="/index.jspx" /> as new dependency.
 					</li>
 					<li>
 						Deprecated <code>Database.releaseConnection(Connection)</code> and
@@ -194,7 +194,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						for use in try-with-resources:
 						<ol>
 							<li>New protected method <code>Database.release(Connection)</code> that performs the release.</li>
-							<li>This implementation adds <c:link book="/ao-concurrent" page="/index.jspx" /> as new dependency.</li>
+							<li>This implementation adds <core:link book="/ao-concurrent" page="/index.jspx" /> as new dependency.</li>
 						</ol>
 					</li>
 					<li>Changed generic bounds from specific to bounded, where appropriate.</li>
