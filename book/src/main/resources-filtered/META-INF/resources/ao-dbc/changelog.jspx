@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-11-11T12:19:39-06:00"
+		dateModified="2020-11-11T12:41:04-06:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -73,8 +73,8 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 								before being returned to the underlying connection pool.
 							</li>
 							<li>
-								<code>DatabaseConnection.rollbackAndClose()</code> (now deprecated) now throws <code>SQLException</code>,
-								instead of logging and returning.
+								<code>DatabaseConnection.rollbackAndClose()</code> (now deprecated) now throws
+								<code>SQLException</code>, instead of logging and returning.
 							</li>
 							<li>
 								New <code>DatabaseConnection.rollbackAndClose(Throwable)</code> (also deprecated) that adds
@@ -164,18 +164,18 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						had to be returned, even if just a <code>(Void)null</code>.
 					</li>
 					<li>
-						Renamed <code>Database.executeTransaction(…)</code> to <code>Database.call(…)</code> and
-						<code>Database.run(…)</code>.
+						Renamed <code>Database.executeTransaction(…)</code> to <code>Database.transactionCall(…)</code> and
+						<code>Database.transactionRun(…)</code>.
 					</li>
 					<li>
-						Added new methods <code>Database.run(RunnableE)</code> and <code>Database.call(CallableE)</code>,
-						which are useful when a transaction scope is needed, but the <code>DatabaseConnection</code>
-						itself is not required.
+						Added new methods <code>Database.transactionRun(RunnableE)</code> and
+						<code>Database.transactionCall(CallableE)</code>, which are useful when a transaction scope is
+						needed, but the <code>DatabaseConnection</code> itself is not required.
 					</li>
 					<li>
 						Renamed <code>Database.createDatabaseConnection()</code> to <code>connect()</code>.  Since this
 						method puts the burden of transaction management on the caller, please consider using the various
-						<code>call(…)</code> or <code>run(…)</code> methods.
+						<code>transactionCall(…)</code> or <code>transactionRun(…)</code> methods.
 					</li>
 					<li>
 						Added overloads of <code>Database.getConnection(…)</code> and

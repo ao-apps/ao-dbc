@@ -116,14 +116,14 @@ public class Database implements DatabaseAccess {
 	 * perform any necessary {@link DatabaseConnection#commit()}.
 	 * </p>
 	 *
-	 * @see #call(com.aoindustries.util.concurrent.CallableE)
-	 * @see #call(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
-	 * @see #call(com.aoindustries.dbc.DatabaseCallable)
-	 * @see #call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
-	 * @see #run(com.aoindustries.lang.RunnableE)
-	 * @see #run(java.lang.Class, com.aoindustries.lang.RunnableE)
-	 * @see #run(com.aoindustries.dbc.DatabaseRunnable)
-	 * @see #run(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
+	 * @see #transactionCall(com.aoindustries.util.concurrent.CallableE)
+	 * @see #transactionCall(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
+	 * @see #transactionCall(com.aoindustries.dbc.DatabaseCallable)
+	 * @see #transactionCall(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 * @see #transactionRun(com.aoindustries.lang.RunnableE)
+	 * @see #transactionRun(java.lang.Class, com.aoindustries.lang.RunnableE)
+	 * @see #transactionRun(com.aoindustries.dbc.DatabaseRunnable)
+	 * @see #transactionRun(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
 	 */
 	public DatabaseConnection connect() {
 		return new DatabaseConnection(this);
@@ -733,14 +733,14 @@ public class Database implements DatabaseAccess {
 	/**
 	 * Checks if the current thread is in a transaction.
 	 *
-	 * @see #call(com.aoindustries.util.concurrent.CallableE)
-	 * @see #call(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
-	 * @see #call(com.aoindustries.dbc.DatabaseCallable)
-	 * @see #call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
-	 * @see #run(com.aoindustries.lang.RunnableE)
-	 * @see #run(java.lang.Class, com.aoindustries.lang.RunnableE)
-	 * @see #run(com.aoindustries.dbc.DatabaseRunnable)
-	 * @see #run(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
+	 * @see #transactionCall(com.aoindustries.util.concurrent.CallableE)
+	 * @see #transactionCall(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
+	 * @see #transactionCall(com.aoindustries.dbc.DatabaseCallable)
+	 * @see #transactionCall(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
+	 * @see #transactionRun(com.aoindustries.lang.RunnableE)
+	 * @see #transactionRun(java.lang.Class, com.aoindustries.lang.RunnableE)
+	 * @see #transactionRun(com.aoindustries.dbc.DatabaseRunnable)
+	 * @see #transactionRun(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
 	 */
 	public boolean isInTransaction() {
 		return transactionConnection.get()!=null;
@@ -764,8 +764,8 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	public <V> V call(CallableE<? extends V,? extends SQLException> callable) throws SQLException {
-		return call(SQLException.class, callable);
+	public <V> V transactionCall(CallableE<? extends V,? extends SQLException> callable) throws SQLException {
+		return transactionCall(SQLException.class, callable);
 	}
 
 	/**
@@ -786,8 +786,8 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	public <V,E extends Throwable> V call(Class<? extends E> eClass, CallableE<? extends V,? extends E> callable) throws SQLException, E {
-		return call(eClass, (DatabaseConnection db) -> callable.call());
+	public <V,E extends Throwable> V transactionCall(Class<? extends E> eClass, CallableE<? extends V,? extends E> callable) throws SQLException, E {
+		return transactionCall(eClass, (DatabaseConnection db) -> callable.call());
 	}
 
 	/**
@@ -808,17 +808,17 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	public <V> V call(DatabaseCallable<? extends V> callable) throws SQLException {
-		return call(RuntimeException.class, callable::call);
+	public <V> V transactionCall(DatabaseCallable<? extends V> callable) throws SQLException {
+		return transactionCall(RuntimeException.class, callable::call);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #call(com.aoindustries.dbc.DatabaseCallable)}
+	 * @deprecated  Please use {@link #transactionCall(com.aoindustries.dbc.DatabaseCallable)}
 	 */
 	@Deprecated
 	@SuppressWarnings("overloads")
 	final public <V> V executeTransaction(DatabaseCallable<V> callable) throws SQLException {
-		return call(callable);
+		return transactionCall(callable);
 	}
 
 	/**
@@ -840,7 +840,7 @@ public class Database implements DatabaseAccess {
 	 * @see #isInTransaction()
 	 */
 	@SuppressWarnings("UseSpecificCatch")
-	public <V,E extends Throwable> V call(Class<? extends E> eClass, DatabaseCallableE<? extends V,? extends E> callable) throws SQLException, E {
+	public <V,E extends Throwable> V transactionCall(Class<? extends E> eClass, DatabaseCallableE<? extends V,? extends E> callable) throws SQLException, E {
 		Throwable t0 = null;
 		DatabaseConnection conn = transactionConnection.get();
 		if(conn != null) {
@@ -877,11 +877,11 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * @deprecated  Please use {@link #call(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)}
+	 * @deprecated  Please use {@link #transactionCall(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)}
 	 */
 	@Deprecated
 	final public <V,E extends Exception> V executeTransaction(Class<E> eClass, DatabaseCallableE<V,E> callable) throws SQLException, E {
-		return call(eClass, callable);
+		return transactionCall(eClass, callable);
 	}
 
 	/**
@@ -902,8 +902,8 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	public void run(RunnableE<? extends SQLException> runnable) throws SQLException {
-		run((DatabaseConnection db) -> runnable.run());
+	public void transactionRun(RunnableE<? extends SQLException> runnable) throws SQLException {
+		transactionRun(SQLException.class, runnable);
 	}
 
 	/**
@@ -924,8 +924,8 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	public <E extends Throwable> void run(Class<? extends E> eClass, RunnableE<? extends E> runnable) throws SQLException, E {
-		run(eClass, (DatabaseConnection db) -> runnable.run());
+	public <E extends Throwable> void transactionRun(Class<? extends E> eClass, RunnableE<? extends E> runnable) throws SQLException, E {
+		transactionRun(eClass, (DatabaseConnection db) -> runnable.run());
 	}
 
 	/**
@@ -946,17 +946,17 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	public void run(DatabaseRunnable runnable) throws SQLException {
-		run(RuntimeException.class, runnable::run);
+	public void transactionRun(DatabaseRunnable runnable) throws SQLException {
+		transactionRun(RuntimeException.class, runnable::run);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #run(com.aoindustries.dbc.DatabaseRunnable)}
+	 * @deprecated  Please use {@link #transactionRun(com.aoindustries.dbc.DatabaseRunnable)}
 	 */
 	@Deprecated
 	@SuppressWarnings("overloads")
 	final public void executeTransaction(DatabaseRunnable runnable) throws SQLException {
-		run(runnable);
+		transactionRun(runnable);
 	}
 
 	/**
@@ -977,8 +977,8 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	public <E extends Throwable> void run(Class<? extends E> eClass, DatabaseRunnableE<? extends E> runnable) throws SQLException, E {
-		call(
+	public <E extends Throwable> void transactionRun(Class<? extends E> eClass, DatabaseRunnableE<? extends E> runnable) throws SQLException, E {
+		transactionCall(
 			eClass,
 			(DatabaseConnection db) -> {
 				runnable.run(db);
@@ -988,11 +988,11 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * @deprecated  Please use {@link #run(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)}
+	 * @deprecated  Please use {@link #transactionRun(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)}
 	 */
 	@Deprecated
 	final public <E extends Exception> void executeTransaction(Class<E> eClass, DatabaseRunnableE<E> runnable) throws SQLException, E {
-		run(eClass, runnable);
+		transactionRun(eClass, runnable);
 	}
 
 	@Override
@@ -1002,49 +1002,49 @@ public class Database implements DatabaseAccess {
 
 	@Override
 	public DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return call((DatabaseConnection conn) ->
+		return transactionCall((DatabaseConnection conn) ->
 			conn.doubleStream(isolationLevel, readOnly, sql, params)
 		);
 	}
 
 	@Override
 	public IntStream intStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return call((DatabaseConnection conn) ->
+		return transactionCall((DatabaseConnection conn) ->
 			conn.intStream(isolationLevel, readOnly, sql, params)
 		);
 	}
 
 	@Override
 	public LongStream longStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return call((DatabaseConnection conn) ->
+		return transactionCall((DatabaseConnection conn) ->
 			conn.longStream(isolationLevel, readOnly, sql, params)
 		);
 	}
 
 	@Override
 	public <T,E extends Throwable> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
-		return call(eClass, (DatabaseConnection conn) ->
+		return transactionCall(eClass, (DatabaseConnection conn) ->
 			conn.stream(isolationLevel, readOnly, eClass, objectFactory, sql, params)
 		);
 	}
 
 	@Override
 	public <T,E extends Throwable> T queryCall(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
-		return call(eClass, (DatabaseConnection conn) ->
+		return transactionCall(eClass, (DatabaseConnection conn) ->
 			conn.queryCall(isolationLevel, readOnly, eClass, resultSetCallable, sql, params)
 		);
 	}
 
 	@Override
 	public int update(String sql, Object ... params) throws SQLException {
-		return call((DatabaseConnection conn) ->
+		return transactionCall((DatabaseConnection conn) ->
 			conn.update(sql, params)
 		);
 	}
 
 	@Override
 	public long largeUpdate(String sql, Object ... params) throws SQLException {
-		return call((DatabaseConnection conn) ->
+		return transactionCall((DatabaseConnection conn) ->
 			conn.largeUpdate(sql, params)
 		);
 	}
