@@ -48,6 +48,8 @@ import java.util.stream.Stream;
  *
  * @author  AO Industries, Inc.
  */
+// TODO: A set of getConnection methods, as found common between Database and DatabaseConnection?
+//       Impact on commit() or rollback on close()?
 public interface DatabaseAccess {
 
 	/**
