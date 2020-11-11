@@ -71,6 +71,12 @@ import java.util.stream.StreamSupport;
  *
  * @author  AO Industries, Inc.
  */
+// TODO: We need abstract (or interface) parent, with two implementations:
+//       TransactionDatabaseConnection, that is the outer-most transaction,
+//       and SavepointDatabaseConnection, that uses a Savepoint to establish
+//       a sub-transaction.  Also Tracker associate all things possible with Savepoint,
+//       so that rollback/(and release?) of that Savepoint performs a thorough close of all
+//       associated objects, much like overall rollback and/or close?
 public class DatabaseConnection implements DatabaseAccess, AutoCloseableE<SQLException> {
 
 	// TODO: Larger value now, since systems have more RAM generally?
@@ -563,7 +569,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseableE<SQLExc
 	 *
 	 * @return  {@code true} when connected and rolled-back (or is auto-commit)
 	 */
-	// TODO: Change return value to be true only on actual rollback
+	// TODO: Rollback to the savepoint of the current sub-transaction?
 	public boolean rollback() throws SQLException {
 		UncloseableConnectionWrapper c = _conn;
 		if(c != null && !c.isClosed()) {
@@ -584,6 +590,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseableE<SQLExc
 	 * @see  #rollback()
 	 * @see  Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)
 	 */
+	// TODO: Rollback to the savepoint of the current sub-transaction?
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public Throwable rollback(Throwable t0) {
 		try {
