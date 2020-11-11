@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-11-06T13:50:21-06:00"
+		dateModified="2020-11-11T12:19:39-06:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -201,6 +201,10 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					<li>Generic exception upper bounds changed from <code>Exception</code> to <code>Throwable</code>.</li>
 					<li>Now pre-sizing collections when number of rows in result set is known.</li>
 					<li>Added support for <code>executeLargeUpdate</code>.</li>
+					<li>
+						Now uses the fail-fast state of the new <code>FailFastConnection</code> to know when to close or
+						abort the underlying database connection.
+					</li>
 					<!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
 					<!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
 				</ul>

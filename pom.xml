@@ -88,9 +88,19 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 											<outputDirectory>${project.build.directory}/offlineLinks/com.aoindustries/ao-sql</outputDirectory>
 										</artifactItem>
 										<artifactItem>
+											<groupId>com.aoindustries</groupId><artifactId>ao-sql-failfast</artifactId>
+											<classifier>javadoc</classifier><includes>element-list, package-list</includes>
+											<outputDirectory>${project.build.directory}/offlineLinks/com.aoindustries/ao-sql-failfast</outputDirectory>
+										</artifactItem>
+										<artifactItem>
 											<groupId>com.aoindustries</groupId><artifactId>ao-sql-pool</artifactId>
 											<classifier>javadoc</classifier><includes>element-list, package-list</includes>
 											<outputDirectory>${project.build.directory}/offlineLinks/com.aoindustries/ao-sql-pool</outputDirectory>
+										</artifactItem>
+										<artifactItem>
+											<groupId>com.aoindustries</groupId><artifactId>ao-sql-tracker</artifactId>
+											<classifier>javadoc</classifier><includes>element-list, package-list</includes>
+											<outputDirectory>${project.build.directory}/offlineLinks/com.aoindustries/ao-sql-tracker</outputDirectory>
 										</artifactItem>
 										<artifactItem>
 											<groupId>com.aoindustries</groupId><artifactId>aocode-public</artifactId>
@@ -128,8 +138,16 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 									<location>${project.build.directory}/offlineLinks/com.aoindustries/ao-sql</location>
 								</offlineLink>
 								<offlineLink>
+									<url>https://aoindustries.com/ao-sql/failfast/apidocs/</url>
+									<location>${project.build.directory}/offlineLinks/com.aoindustries/ao-sql-failfast</location>
+								</offlineLink>
+								<offlineLink>
 									<url>https://aoindustries.com/ao-sql/pool/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoindustries/ao-sql-pool</location>
+								</offlineLink>
+								<offlineLink>
+									<url>https://aoindustries.com/ao-sql/tracker/apidocs/</url>
+									<location>${project.build.directory}/offlineLinks/com.aoindustries/ao-sql-tracker</location>
 								</offlineLink>
 								<offlineLink>
 									<url>https://aoindustries.com/aocode-public/apidocs/</url>
@@ -167,15 +185,18 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>com.aoindustries</groupId><artifactId>ao-sql</artifactId><version>0.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 			</dependency>
 			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-sql-failfast</artifactId><version>0.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+			</dependency>
+			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-sql-pool</artifactId><version>0.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+			</dependency>
+			<dependency>
+				<groupId>com.aoindustries</groupId><artifactId>ao-sql-tracker</artifactId><version>0.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 			</dependency>
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>aocode-public</artifactId><version>4.3.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 			</dependency>
 			<!-- Transitive -->
-			<dependency>
-				<groupId>com.aoindustries</groupId><artifactId>ao-sql-tracker</artifactId><version>0.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
-			</dependency>
 			<dependency>
 				<groupId>com.aoindustries</groupId><artifactId>ao-sql-wrapper</artifactId><version>0.1.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
 			</dependency>
@@ -206,7 +227,13 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			<groupId>com.aoindustries</groupId><artifactId>ao-sql</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.aoindustries</groupId><artifactId>ao-sql-failfast</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>ao-sql-pool</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.aoindustries</groupId><artifactId>ao-sql-tracker</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.aoindustries</groupId><artifactId>aocode-public</artifactId>

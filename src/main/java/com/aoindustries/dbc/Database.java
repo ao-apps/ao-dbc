@@ -28,9 +28,11 @@ import com.aoindustries.lang.AutoCloseables;
 import com.aoindustries.lang.RunnableE;
 import com.aoindustries.lang.Throwables;
 import com.aoindustries.sql.Connections;
-import com.aoindustries.sql.IUncloseableConnectionWrapper;
-import com.aoindustries.sql.UncloseableConnectionWrapper;
+import com.aoindustries.sql.failfast.FailFastConnection;
+import com.aoindustries.sql.failfast.FailFastConnectionImpl;
 import com.aoindustries.sql.pool.AOConnectionPool;
+import com.aoindustries.sql.tracker.ConnectionTracker;
+import com.aoindustries.sql.tracker.ConnectionTrackerImpl;
 import com.aoindustries.util.concurrent.CallableE;
 import java.sql.Connection;
 import java.sql.SQLData;
@@ -40,6 +42,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.Executor;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -59,6 +62,11 @@ import javax.sql.DataSource;
  */
 // TODO: Could we leverage savepoints for nested transactions?
 public class Database implements DatabaseAccess {
+
+	/**
+	 * The number of seconds to wait while validating a connection that was closed with a non-terminal fail-fast state.
+	 */
+	private static final int VALIDATION_TIMEOUT_SECONDS = 10;
 
 	/**
 	 * Only one connection pool is made to the database.
@@ -101,7 +109,8 @@ public class Database implements DatabaseAccess {
 
 	/**
 	 * Creates a new {@link DatabaseConnection} instance.  The instance must be closed
-	 * via {@link DatabaseConnection#close()} or {@link DatabaseConnection#close(java.lang.Throwable)}.
+	 * via {@link DatabaseConnection#close()} or {@link DatabaseConnection#close(java.lang.Throwable)}, typically in a
+	 * try/catch or try-with-resources block.
 	 * <p>
 	 * Note that the close methods will rollback any transaction in progress, so it is up to the caller to
 	 * perform any necessary {@link DatabaseConnection#commit()}.
@@ -185,7 +194,7 @@ public class Database implements DatabaseAccess {
 	 * it is passed here for initialization of {@link #getSqlDataTypes()}.
 	 *
 	 * @see  #deinitSqlDataTypes(java.sql.Connection)
-	 * @see  #getConnection(int, boolean, int)
+	 * @see  #getConnection(int, boolean, int, boolean)
 	 */
 	protected void initSqlDataTypes(Connection conn) throws SQLException {
 		// Load custom types from ServiceLoader
@@ -206,7 +215,7 @@ public class Database implements DatabaseAccess {
 	 * it is passed here for de-initialization of {@link #getSqlDataTypes()}.
 	 *
 	 * @see  #initSqlDataTypes(java.sql.Connection)
-	 * @see  #releaseConnection(java.sql.Connection)
+	 * @see  #release(com.aoindustries.sql.failfast.FailFastConnection)
 	 */
 	protected void deinitSqlDataTypes(Connection conn) throws SQLException {
 		// TODO: Do not remove on release and avoid re-adding for performance?
@@ -222,7 +231,7 @@ public class Database implements DatabaseAccess {
 	 * </p>
 	 *
 	 * @see  #deinitConnection(java.sql.Connection)
-	 * @see  #getConnection(int, boolean, int)
+	 * @see  #getConnection(int, boolean, int, boolean)
 	 */
 	protected void initConnection(Connection conn) throws SQLException {
 		// Do nothing
@@ -236,7 +245,7 @@ public class Database implements DatabaseAccess {
 	 * </p>
 	 *
 	 * @see  #initConnection(java.sql.Connection)
-	 * @see  #releaseConnection(java.sql.Connection)
+	 * @see  #release(com.aoindustries.sql.failfast.FailFastConnection)
 	 */
 	protected void deinitConnection(Connection conn) throws SQLException {
 		// Do nothing
@@ -259,12 +268,21 @@ public class Database implements DatabaseAccess {
 	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
 	 * available.
 	 * </p>
+	 * <p>
+	 * The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+	 * The fail-fast connection is used to determine whether to {@linkplain Connection#rollback() roll-back} or
+	 * {@linkplain Connection#commit() commit} during automatic transaction management.
+	 * </p>
+	 * <p>
+	 * The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+	 * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.
+	 * </p>
 	 *
 	 * @return  The read/write connection to the database
 	 *
 	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
 	 *
-	 * @see  #getConnection(int, boolean, int)
+	 * @see  #getConnection(int, boolean, int, boolean)
 	 * @see  DatabaseConnection#getConnection()
 	 * @see  Connection#close()
 	 */
@@ -273,7 +291,7 @@ public class Database implements DatabaseAccess {
 	// Note:      Is Database.getConnection()
 	// Note: Matches DatabaseConnection.getConnection()
 	public Connection getConnection() throws SQLException {
-		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, 1);
+		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, 1, true);
 	}
 
 	/**
@@ -292,6 +310,15 @@ public class Database implements DatabaseAccess {
 	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
 	 * available.
 	 * </p>
+	 * <p>
+	 * The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+	 * The fail-fast connection is used to determine whether to {@linkplain Connection#rollback() roll-back} or
+	 * {@linkplain Connection#commit() commit} during automatic transaction management.
+	 * </p>
+	 * <p>
+	 * The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+	 * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.
+	 * </p>
 	 *
 	 * @param  maxConnections  The maximum number of connections expected to be used by the current thread.
 	 *                         This should normally be one to avoid potential deadlock.
@@ -305,7 +332,7 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
 	 *
-	 * @see  #getConnection(int, boolean, int)
+	 * @see  #getConnection(int, boolean, int, boolean)
 	 * @see  DatabaseConnection#getConnection(int)
 	 * @see  Connection#close()
 	 */
@@ -314,7 +341,7 @@ public class Database implements DatabaseAccess {
 	// Note:      Is Database.getConnection(int)
 	// Note: Matches DatabaseConnection.getConnection(int)
 	public Connection getConnection(int maxConnections) throws SQLException {
-		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, maxConnections);
+		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, maxConnections, true);
 	}
 
 	/**
@@ -334,6 +361,15 @@ public class Database implements DatabaseAccess {
 	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
 	 * available.
 	 * </p>
+	 * <p>
+	 * The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+	 * The fail-fast connection is used to determine whether to {@linkplain Connection#rollback() roll-back} or
+	 * {@linkplain Connection#commit() commit} during automatic transaction management.
+	 * </p>
+	 * <p>
+	 * The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+	 * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.
+	 * </p>
 	 *
 	 * @param  readOnly  The {@link Connection#setReadOnly(boolean) read-only flag}
 	 *
@@ -341,7 +377,7 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
 	 *
-	 * @see  #getConnection(int, boolean, int)
+	 * @see  #getConnection(int, boolean, int, boolean)
 	 * @see  DatabaseConnection#getConnection(boolean)
 	 * @see  Connection#close()
 	 */
@@ -349,7 +385,7 @@ public class Database implements DatabaseAccess {
 	// Note:      Is Database.getConnection(boolean)
 	// Note: Matches DatabaseConnection.getConnection(boolean)
 	public Connection getConnection(boolean readOnly) throws SQLException {
-		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, readOnly, 1);
+		return getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, readOnly, 1, true);
 	}
 
 	/**
@@ -368,6 +404,15 @@ public class Database implements DatabaseAccess {
 	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
 	 * available.
 	 * </p>
+	 * <p>
+	 * The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+	 * The fail-fast connection is used to determine whether to {@linkplain Connection#rollback() roll-back} or
+	 * {@linkplain Connection#commit() commit} during automatic transaction management.
+	 * </p>
+	 * <p>
+	 * The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+	 * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.
+	 * </p>
 	 *
 	 * @param  isolationLevel  The {@link Connection#setTransactionIsolation(int) transaction isolation level}
 	 *
@@ -377,7 +422,7 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
 	 *
-	 * @see  #getConnection(int, boolean, int)
+	 * @see  #getConnection(int, boolean, int, boolean)
 	 * @see  DatabaseConnection#getConnection(int, boolean)
 	 * @see  Connection#close()
 	 */
@@ -385,7 +430,7 @@ public class Database implements DatabaseAccess {
 	// Note:      Is Database.getConnection(int, boolean)
 	// Note: Matches DatabaseConnection.getConnection(int, boolean)
 	public Connection getConnection(int isolationLevel, boolean readOnly) throws SQLException {
-		return getConnection(isolationLevel, readOnly, 1);
+		return getConnection(isolationLevel, readOnly, 1, true);
 	}
 
 	/**
@@ -402,6 +447,15 @@ public class Database implements DatabaseAccess {
 	 * <p>
 	 * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
 	 * available.
+	 * </p>
+	 * <p>
+	 * The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+	 * The fail-fast connection is used to determine whether to {@linkplain Connection#rollback() roll-back} or
+	 * {@linkplain Connection#commit() commit} during automatic transaction management.
+	 * </p>
+	 * <p>
+	 * The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+	 * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.
 	 * </p>
 	 *
 	 * @param  isolationLevel  The {@link Connection#setTransactionIsolation(int) transaction isolation level}
@@ -427,10 +481,15 @@ public class Database implements DatabaseAccess {
 	// Note:      Is Database.getConnection(int, boolean, int)
 	// Note: Matches DatabaseConnection.getConnection(int, boolean, int)
 	public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
-		DatabaseConnectionWrapper conn;
+		return getConnection(isolationLevel, readOnly, maxConnections, true);
+	}
+
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	protected FailFastConnection getConnection(int isolationLevel, boolean readOnly, int maxConnections, boolean allowClose) throws SQLException {
+		Connection conn;
 		if(pool != null) {
-			// From pool
-			conn = new DatabaseConnectionWrapper(this, pool.getConnection(isolationLevel, readOnly, maxConnections));
+			// From pool, which already internally uses tracker
+			conn = pool.getConnection(isolationLevel, readOnly, maxConnections);
 			try {
 				assert conn.getAutoCommit();
 				assert conn.isReadOnly() == readOnly;
@@ -441,8 +500,8 @@ public class Database implements DatabaseAccess {
 				throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, conn);
 			}
 		} else {
-			// From dataSource
-			conn = new DatabaseConnectionWrapper(this, dataSource.getConnection());
+			// From dataSource, adding tracker   TODO: Does DBCP do the full equivalent of ConnectionTracker already?
+			conn = new ConnectionTrackerImpl(dataSource.getConnection());
 			try {
 				if(!conn.getAutoCommit()) {
 					logger.warning("Rolling-back and setting auto-commit on Connection from DataSource that is not in auto-commit mode");
@@ -457,21 +516,23 @@ public class Database implements DatabaseAccess {
 				throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, conn);
 			}
 		}
-		return conn;
+		return new PooledConnection(this, conn, allowClose);
 	}
 
-	private static interface IDatabaseConnectionWrapper extends IUncloseableConnectionWrapper {
+	private static interface IPooledConnection extends FailFastConnection {
 		Database getDatabase();
 	}
 
-	private static class DatabaseConnectionWrapper extends UncloseableConnectionWrapper
-		implements IDatabaseConnectionWrapper {
+	private static class PooledConnection extends FailFastConnectionImpl
+		implements IPooledConnection {
 
 		private final Database database;
+		private final boolean allowClose;
 
-		private DatabaseConnectionWrapper(Database database, Connection wrapped) {
+		private PooledConnection(Database database, Connection wrapped, boolean allowClose) {
 			super(wrapped);
 			this.database = database;
+			this.allowClose = allowClose;
 		}
 
 		@Override
@@ -479,12 +540,25 @@ public class Database implements DatabaseAccess {
 			return database;
 		}
 
+		/**
+		 * Conditionally ignores close for use in try-with-resources from {@link DatabaseConnection}.
+		 */
+		@Override
+		public void close() throws SQLException {
+			if(allowClose) database.release(this);
+		}
+
+		@Override
+		protected void doClose(Throwable failFastCause) {
+			throw new AssertionError("Should not be called since close() intercepted");
+		}
+
 		@Override
 		@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-		public void onAbort(Executor executor) throws SQLException {
+		public void abort(Executor executor) throws SQLException {
 			Throwable t0 = null;
 			try {
-				super.onAbort(executor);
+				getWrapped().abort(executor);
 			} catch(Throwable t) {
 				t0 = Throwables.addSuppressed(t0, t);
 			}
@@ -499,18 +573,18 @@ public class Database implements DatabaseAccess {
 		}
 
 		@Override
-		public void onClose() throws SQLException {
-			database.release(this);
+		protected void doAbort(Throwable failFastCause, Executor executor) {
+			throw new AssertionError("Should not be called since abort(Executor) intercepted");
 		}
 	}
 
 	@SuppressWarnings("null")
-	private Connection unwrap(Connection conn) throws SQLException {
-		IDatabaseConnectionWrapper wrapper;
-		if(conn instanceof IDatabaseConnectionWrapper) {
-			wrapper = (IDatabaseConnectionWrapper)conn;
+	private Connection unwrap(FailFastConnection conn) throws SQLException {
+		IPooledConnection wrapper;
+		if(conn instanceof IPooledConnection) {
+			wrapper = (IPooledConnection)conn;
 		} else {
-			wrapper = conn.unwrap(IDatabaseConnectionWrapper.class);
+			wrapper = conn.unwrap(IPooledConnection.class);
 		}
 		if(wrapper.getDatabase() == this) {
 			return wrapper.getWrapped();
@@ -524,53 +598,113 @@ public class Database implements DatabaseAccess {
 	 *              preferably via try-with-resources.
 	 */
 	@Deprecated
+	@SuppressWarnings("null")
 	final public void releaseConnection(Connection conn) throws SQLException {
-		release(conn);
+		FailFastConnection failFastConnection;
+		if(conn instanceof FailFastConnection) {
+			failFastConnection = (FailFastConnection)conn;
+		} else {
+			failFastConnection = conn.unwrap(FailFastConnection.class);
+		}
+		release(failFastConnection);
 	}
 
 	/**
 	 * Closes and/or releases the given connection back to the pool.
 	 * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
+	 * <p>
+	 * When there is no {@linkplain FailFastConnection#getFailFastCause() fail-fast cause}, the connection is immediately
+	 * deinit'ed then {@linkplain Connection#close() closed} (which returns the connection to the underlying pool).
+	 * </p>
+	 * <p>
+	 * Otherwise, when there remains an unresolved {@linkplain FailFastConnection#getFailFastCause() fail-fast cause}, the
+	 * connection is {@linkplain Connection#isValid(int) validated} in the background before being either
+	 * {@linkplain Connection#abort(java.util.concurrent.Executor) aborted} or deinit'ed then {@linkplain Connection#close() closed}
+	 * (both of which return the connection to the underlying pool).
+	 * </p>
 	 *
-	 * @see  #getConnection(int, boolean, int)
+	 * @see  #getConnection(int, boolean, int, boolean)
 	 * @see  DatabaseConnection#close()
 	 * @see  #deinitConnection(java.sql.Connection)
 	 * @see  #deinitSqlDataTypes(java.sql.Connection)
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
-	protected void release(Connection conn) throws SQLException {
+	protected void release(FailFastConnection conn) throws SQLException {
+		// Unwrap first, to thrown exception when can't unwrap
+		Connection wrapped = unwrap(conn);
+		// All exceptions will be combined via addSuppressed
 		Throwable t0 = null;
+		// Rollback any transaction in-progress first for fail-fast state to have a chance to clear itself
+		try {
+			if(!conn.isClosed() && !conn.getAutoCommit()) {
+				conn.rollback();
+				conn.setAutoCommit(true);
+			}
+		} catch(Throwable t) {
+			t0 = Throwables.addSuppressed(t0, t);
+		}
+		// Perform appropriate release by fail-fast state
+		if(conn.getFailFastCause() != null) {
+			// Validate connection in the background, then abort or close based on if connection still valid
+			Executor unbounded = executors.getUnbounded();
+			unbounded.execute(() -> {
+				Throwable t1 = null;
+				boolean valid;
+				try {
+					valid = wrapped.isValid(VALIDATION_TIMEOUT_SECONDS);
+				} catch(Throwable t) {
+					t1 = Throwables.addSuppressed(t1, t);
+					valid = false;
+				}
+				if(valid) {
+					t1 = closeWrappedConnection(t1, wrapped);
+				} else {
+					try {
+						wrapped.abort(unbounded);
+					} catch(Throwable t) {
+						t1 = Throwables.addSuppressed(t1, t);
+					}
+				}
+				if(t1 != null) logger.log(Level.WARNING, "Background connection validation failed", t1);
+			});
+		} else {
+			t0 = closeWrappedConnection(t0, wrapped);
+		}
+		if(t0 != null) throw Throwables.wrap(t0, SQLException.class, SQLException::new);
+	}
+
+	/**
+	 * Performs the deinit and close of the wrapped connection.
+	 *
+	 * @see  #release(com.aoindustries.sql.failfast.FailFastConnection)
+	 */
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+	private Throwable closeWrappedConnection(Throwable t0, Connection wrapped) {
 		// Perform custom de-initialization
 		try {
-			deinitConnection(conn);
+			deinitConnection(wrapped);
 		} catch(Throwable t) {
 			t0 = Throwables.addSuppressed(t0, t);
 		}
 		// Restore custom types
 		try {
-			deinitSqlDataTypes(conn);
-		} catch(Throwable t) {
-			t0 = Throwables.addSuppressed(t0, t);
-		}
-		// Unwrap
-		try {
-			conn = unwrap(conn);
+			deinitSqlDataTypes(wrapped);
 		} catch(Throwable t) {
 			t0 = Throwables.addSuppressed(t0, t);
 		}
 		if(pool == null) {
 			// From dataSource, perform some clean-up consistent with AOConnectionPool
 			try {
-				if(!conn.isClosed()) {
+				if(!wrapped.isClosed()) {
 					// Log warnings before release and/or close
 					try {
-						AOConnectionPool.defaultLogConnection(conn, logger);
+						AOConnectionPool.defaultLogConnection(wrapped, logger);
 					} catch(Throwable t) {
 						t0 = Throwables.addSuppressed(t0, t);
 					}
 					// Reset connections as they are released
 					try {
-						AOConnectionPool.defaultResetConnection(conn);
+						AOConnectionPool.defaultResetConnection(wrapped);
 					} catch(Throwable t) {
 						t0 = Throwables.addSuppressed(t0, t);
 					}
@@ -580,7 +714,8 @@ public class Database implements DatabaseAccess {
 				t0 = Throwables.addSuppressed(t0, t);
 			}
 		}
-		AutoCloseables.closeAndThrow(t0, SQLException.class, SQLException::new, conn);
+		t0 = AutoCloseables.closeAndCatch(t0, wrapped);
+		return t0;
 	}
 
 	public Logger getLogger() {
