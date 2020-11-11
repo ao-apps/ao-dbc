@@ -748,7 +748,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseableE<SQLExc
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
 	public DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
 		Connection conn = getConnection(isolationLevel, readOnly);
-		PreparedStatement pstmt = conn.prepareStatement(sql);
+		PreparedStatement pstmt = conn.prepareStatement(sql); // TODO: Use regular statements when there are no parameters?  Here and entire api?
 		try {
 			try {
 				pstmt.setFetchSize(FETCH_SIZE);
