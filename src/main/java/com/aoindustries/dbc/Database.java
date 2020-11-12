@@ -148,7 +148,7 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * Gets the executors for this database.  Is {@linkplain Executors#dispose() disposed} on {@link #close()}.
+	 * Gets the executors for this database.  Is {@linkplain Executors#close() closed} on {@link #close()}.
 	 */
 	Executors getExecutors() {
 		return executors;
@@ -158,12 +158,12 @@ public class Database implements DatabaseAccess {
 	 * Closes the database.
 	 *
 	 * @see  AOConnectionPool#close()
-	 * @see  Executors#dispose()
+	 * @see  Executors#close()
 	 * @see  CloseableDatabase#close()
 	 */
 	protected void close() {
 		if(pool != null) pool.close();
-		executors.dispose();
+		executors.close();
 	}
 
 	/**
