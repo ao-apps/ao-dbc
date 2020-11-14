@@ -127,13 +127,13 @@ final public class DatabaseUtils {
 	}
 
 	/**
-	 * Gets the number of rows or {@code null} when unknown.
+	 * Gets the number of rows or {@code -1} when unknown.
 	 */
-	public static Integer getRowCount(ResultSet results) throws SQLException {
+	public static int getRowCount(ResultSet results) throws SQLException {
 		int resultType = results.getType();
 		switch(resultType) {
 			case ResultSet.TYPE_FORWARD_ONLY :
-				return null;
+				return -1;
 			case ResultSet.TYPE_SCROLL_INSENSITIVE :
 			case ResultSet.TYPE_SCROLL_SENSITIVE :
 				int rowCount = 0;
