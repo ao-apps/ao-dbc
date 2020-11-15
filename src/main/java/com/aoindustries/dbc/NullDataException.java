@@ -22,6 +22,7 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.lang.Throwables;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -55,5 +56,11 @@ public class NullDataException extends SQLException {
 
 	public NullDataException(ResultSet result, Throwable cause) throws SQLException {
 		super(DatabaseUtils.getRow(result), cause);
+	}
+
+	static {
+		Throwables.registerSurrogateFactory(NullDataException.class, (template, cause) ->
+			new NullDataException(template.getMessage(), cause)
+		);
 	}
 }

@@ -22,6 +22,7 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.lang.Throwables;
 import java.sql.SQLException;
 
 /**
@@ -46,5 +47,11 @@ public class NoRowException extends SQLException {
 
 	public NoRowException(String reason, Throwable cause) {
 		super(reason, cause);
+	}
+
+	static {
+		Throwables.registerSurrogateFactory(NoRowException.class, (template, cause) ->
+			new NoRowException(template.getMessage(), cause)
+		);
 	}
 }

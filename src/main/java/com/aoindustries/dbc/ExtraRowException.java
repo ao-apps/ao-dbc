@@ -22,6 +22,7 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.lang.Throwables;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -55,5 +56,11 @@ public class ExtraRowException extends SQLException {
 
 	public ExtraRowException(ResultSet result, Throwable cause) throws SQLException {
 		super(DatabaseUtils.getRow(result), cause);
+	}
+
+	static {
+		Throwables.registerSurrogateFactory(ExtraRowException.class, (template, cause) ->
+			new ExtraRowException(template.getMessage(), cause)
+		);
 	}
 }

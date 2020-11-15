@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-11-11T12:41:04-06:00"
+		dateModified="2020-11-16T19:28:31-06:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -204,6 +204,18 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					<li>
 						Now uses the fail-fast state of the new <code>FailFastConnection</code> to know when to close or
 						abort the underlying database connection.
+					</li>
+					<li>
+						<p>
+							Now registering exception types for use with <code>Throwables.newSurrogate(…)</code> that supports creating new instances
+							of throwables in order to have caller stack trace.  When wrapped, the original throwable is the
+							cause of the new throwable.  When not wrapped, the original throwable is used directly and
+							caller stack trace is lost.
+						</p>
+						<p>
+							This is used to maintain exception types and states across thread boundaries, such as when an exception cause
+							is obtained from an <code>ExecutionException</code>.
+						</p>
 					</li>
 					<!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
 					<!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
