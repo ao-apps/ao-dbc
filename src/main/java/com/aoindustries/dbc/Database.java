@@ -644,7 +644,7 @@ public class Database implements DatabaseAccess {
 			t0 = Throwables.addSuppressed(t0, t);
 		}
 		// Perform appropriate release by fail-fast state
-		if(conn.getFailFastCause() != null) {
+		if(conn.getFailFastState() != FailFastConnection.State.OK) {
 			// Validate connection in the background, then abort or close based on if connection still valid
 			Executor unbounded = executors.getUnbounded();
 			unbounded.execute(() -> {
