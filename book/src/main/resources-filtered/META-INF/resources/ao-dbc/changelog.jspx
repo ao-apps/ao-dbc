@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-11-29T20:33:59-06:00"
+		dateModified="2020-11-29T21:54:17-06:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -53,190 +53,200 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{project.scm.url}"
 			>
-				<ul>
-					<li><code>createObject</code> now unwraps cause from <code>InvocationTargetException</code>.</li>
-					<li>Integrated support of <code>Throwable.addSuppressed(Throwable)</code>:
-						<ol>
-							<li>
-								<code>DatabaseConnection.rollback()</code> now throws <code>SQLException</code>, instead of
-								logging and returning.
-							</li>
-							<li>
-								New <code>DatabaseConnection.rollback(Throwable)</code> that adds any exceptions occurring
-								during rollback to the given throwable via <code>Throwable.addSuppressed(Throwable)</code>.
-							</li>
-							<li>
-								Deprecated <code>DatabaseConnection.rollbackAndClose()</code> in favor of either explicit
-								<code>DatabaseConnection.rollback()</code> or relying on the automatic rollback
-								of transactions in-progress during <code>DatabaseConnection.close()</code>.  Furthermore,
-								any connection with an unresolved fail-fast state will be validated and closed as-needed
-								before being returned to the underlying connection pool.
-							</li>
-							<li>
-								<code>DatabaseConnection.rollbackAndClose()</code> (now deprecated) now throws
-								<code>SQLException</code>, instead of logging and returning.
-							</li>
-							<li>
-								New <code>DatabaseConnection.rollbackAndClose(Throwable)</code> (also deprecated) that adds
-								any exceptions occurring during rollback to the given throwable via
-								<code>Throwable.addSuppressed(Throwable)</code>.
-							</li>
-							<li>
-								<code>Database.getConnection(…)</code> now adds any exceptions occurring
-								during clean-up (close and/or release connection) to the first throwable via
-								<code>Throwable.addSuppressed(Throwable)</code>.
-							</li>
-							<li>
-								<code>DatabaseConnection</code> now implements <code>AutoCloseable</code>, with the
-								expectation to by used via try-with-resources.
-							</li>
-						</ol>
-					</li>
-					<li>
-						Any exception during <code>SQLData</code> initialization will now clean-up properly
-						(close and/or release connection).
-					</li>
-					<li>
-						<code>execute*(…)</code> methods now also rollback on all types of <code>Throwable</code>
-						except <code>ThreadDeath</code> and <code>NoRowException</code>, versus just handling
-						<code>Exception</code> and below.
-					</li>
-					<li>
-						<code>AutoCloseable</code> implementation moved to a new class <code>CloseableDatabase</code>,
-						which extends <code>Database</code>.  This allows the return of <code>Database</code> in
-						contexts where it is not expected to be closed.
-					</li>
-					<li>
-						Now logs <code>SQLWarning</code> from connections obtained from both <code>AOConnectionPool</code>
-						and <code>DataSource</code>.  Previously, warnings were only logged by <code>AOConnectionPool</code>.
-					</li>
-					<li>Created <code>ObjectFactory</code> instances for common types in <code>ObjectFactories</code>.</li>
-					<li>
-						<p>
-							<code>execute*Query(…)</code> and <code>execute*Update(…)</code> that return Java primitives,
-							along with the specialized primitive-list <code>executeIntList*(…)</code> and
-							<code>executeLongList*(…)</code>, now throw a new <code>NullDataException</code> when the
-							result returns a <code>NULL</code> value.
-						</p>
-						<p>
-							Previously, the default conversion was used.  Any code that relied on this default conversion
-							will need to be updated: a small lambda on <code>queryObject(…)</code> or
-							<code>updateObject(…)</code> would do the trick.
-						</p>
-					</li>
-					<li>
-						Moved base implementation methods from <code>AbstractDatabaseAccess</code> abstract class to
-						default methods on the <code>DatabaseAccess</code> interface, then removed
-						<code>AbstractDatabaseAccess</code>.
-					</li>
-					<li>Declared throws of <code>ExtraRowException</code> where it may occur.</li>
-					<li>No longer automatically rollback transaction on <code>ExtraRowException</code>.</li>
-					<li>
-						When <code>Database.getConnection(…)</code> gets a connection from an underlying
-						<code>DataSource</code>, if the connection is not auto-commit, it will be rolled-back and set to
-						auto-commit.  As this is not expected to happen normally, a warning will be logged.
-					</li>
-					<li>
-						<code>Database.getConnection(…)</code> will no longer perform automatic commits that were to
-						facilitate read-only and transaction isolation level changes.  Exceptions may now be thrown by
-						the underlying JDBC driver when attempts are made to change read-only state or isolation levels
-						during a transaction; this is a safer behavior.
-					</li>
-					<li>Added support for primitive <code>double</code> and <code>float</code> queries and updates.</li>
-					<li>Added support for Java 8+ streaming queries and updates.</li>
-					<li>
-						Deprecated <code>executeShortList*(…)</code> methods.  These offer no performance advantage over
-						<code>queryList(…)</code> combined with <code>ObjectFactories.Short</code>, plus we do not have
-						this type of list method for other wrapper types.
-					</li>
-					<li>
-						Deprecated <code>executeObject*(…)</code> methods that accept a <code><![CDATA[Class&lt;T&gt;]]></code>
-						parameter.  This class has its constructor accessed via reflection.  This construct has been
-						obsoleted by constructor lamdas <code>Class::new</code> used as <code>ObjectFactory</code>.
-					</li>
-					<li>Renamed <code>execute*Query(…)</code> methods to <code>query*(…)</code>.</li>
-					<li>Renamed <code>execute*Update(…)</code> methods to <code>update*(…)</code>.</li>
-					<li>
-						Deprecated <code>ResultSetHandler</code> and <code>ResultSetHandlerE</code> in favor of new
-						<code>ResultSetRunnable</code>, <code>ResultSetRunnableE</code>, <code>ResultSetCallable</code>,
-						and <code>ResultSetCallableE</code>.  Having both runnable and callable variants allows
-						implementations to not return anything.  Previously, to satisfy the interface, something always
-						had to be returned, even if just a <code>(Void)null</code>.
-					</li>
-					<li>
-						Renamed <code>Database.executeTransaction(…)</code> to <code>Database.transactionCall(…)</code> and
-						<code>Database.transactionRun(…)</code>.
-					</li>
-					<li>
-						Added new methods <code>Database.transactionRun(RunnableE)</code> and
-						<code>Database.transactionCall(CallableE)</code>, which are useful when a transaction scope is
-						needed, but the <code>DatabaseConnection</code> itself is not required.
-					</li>
-					<li>
-						Renamed <code>Database.createDatabaseConnection()</code> to <code>connect()</code>.  Since this
-						method puts the burden of transaction management on the caller, please consider using the various
-						<code>transactionCall(…)</code> or <code>transactionRun(…)</code> methods.
-					</li>
-					<li>
-						Added overloads of <code>Database.getConnection(…)</code> and
-						<code>DatabaseConnection.getConnection(…)</code>, paralleling the methods of the underlying
-						<code>AOConnectionPool</code>.
-					</li>
-					<li>
-						<code>NullDataException</code> and <code>ExtraRowException</code> now include a summary of the
-						row as the exception message.  This implementation adds
-						<core:link book="/ao-encoding" page="/index.jspx" /> as new dependency.
-					</li>
-					<li>
-						Deprecated <code>Database.releaseConnection(Connection)</code> and
-						<code>DatabaseConnection.releaseConnection()</code>
-						in favor of <code>Connection.close()</code>
-						for use in try-with-resources:
-						<ol>
-							<li>New protected method <code>Database.release(Connection)</code> that performs the release.</li>
-							<li>This implementation adds <core:link book="/ao-concurrent" page="/index.jspx" /> as new dependency.</li>
-						</ol>
-					</li>
-					<li>Changed generic bounds from specific to bounded, where appropriate.</li>
-					<li>Generic exception upper bounds changed from <code>Exception</code> to <code>Throwable</code>.</li>
-					<li>Now pre-sizing collections when number of rows in result set is known.</li>
-					<li>Added support for <code>executeLargeUpdate</code>.</li>
-					<li>
-						Now uses the fail-fast state of the new <code>FailFastConnection</code> to know when to close or
-						abort the underlying database connection.
-					</li>
-					<li>
-						<p>
-							Now registering exception types for use with <code>Throwables.newSurrogate(…)</code> that supports creating new instances
-							of throwables in order to have caller stack trace.  When wrapped, the original throwable is the
-							cause of the new throwable.  When not wrapped, the original throwable is used directly and
-							caller stack trace is lost.
-						</p>
-						<p>
-							This is used to maintain exception types and states across thread boundaries, such as when an exception cause
-							is obtained from an <code>ExecutionException</code>.
-						</p>
-					</li>
-					<li>
-						Defined <ao:a href="https://en.wikipedia.org/wiki/SQLSTATE">SQLSTATE</ao:a> values for all
-						<ao:a rel="nofollow" href="@{javadoc.link.javase}java/sql/SQLException.html">SQLException</ao:a>.
-					</li>
-					<li>
-						<p>
-							Fetch size increased from 1000 to 10000 rows.
-						</p>
-						<p>
-							This value may be increased over time as the amount of typical system memory increases.  As
-							this may affect the number of round trips, and the speed of light is not likely to change,
-							future increases may be of benefit.
-						</p>
-					</li>
-					<li>Added JDBC 4.2 Types.</li>
-					<!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
-					<!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
-				</ul>
+				<!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
+				<!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
 			</changelog:release>
 		</c:if>
+
+		<changelog:release
+			projectName="@{documented.name}"
+			version="2.0.0"
+			datePublished="2020-11-29T21:54:17-06:00"
+			groupId="@{project.groupId}"
+			artifactId="@{documented.artifactId}"
+			scmUrl="@{project.scm.url}"
+		>
+			<ul>
+				<li><code>createObject</code> now unwraps cause from <code>InvocationTargetException</code>.</li>
+				<li>Integrated support of <code>Throwable.addSuppressed(Throwable)</code>:
+					<ol>
+						<li>
+							<code>DatabaseConnection.rollback()</code> now throws <code>SQLException</code>, instead of
+							logging and returning.
+						</li>
+						<li>
+							New <code>DatabaseConnection.rollback(Throwable)</code> that adds any exceptions occurring
+							during rollback to the given throwable via <code>Throwable.addSuppressed(Throwable)</code>.
+						</li>
+						<li>
+							Deprecated <code>DatabaseConnection.rollbackAndClose()</code> in favor of either explicit
+							<code>DatabaseConnection.rollback()</code> or relying on the automatic rollback
+							of transactions in-progress during <code>DatabaseConnection.close()</code>.  Furthermore,
+							any connection with an unresolved fail-fast state will be validated and closed as-needed
+							before being returned to the underlying connection pool.
+						</li>
+						<li>
+							<code>DatabaseConnection.rollbackAndClose()</code> (now deprecated) now throws
+							<code>SQLException</code>, instead of logging and returning.
+						</li>
+						<li>
+							New <code>DatabaseConnection.rollbackAndClose(Throwable)</code> (also deprecated) that adds
+							any exceptions occurring during rollback to the given throwable via
+							<code>Throwable.addSuppressed(Throwable)</code>.
+						</li>
+						<li>
+							<code>Database.getConnection(…)</code> now adds any exceptions occurring
+							during clean-up (close and/or release connection) to the first throwable via
+							<code>Throwable.addSuppressed(Throwable)</code>.
+						</li>
+						<li>
+							<code>DatabaseConnection</code> now implements <code>AutoCloseable</code>, with the
+							expectation to by used via try-with-resources.
+						</li>
+					</ol>
+				</li>
+				<li>
+					Any exception during <code>SQLData</code> initialization will now clean-up properly
+					(close and/or release connection).
+				</li>
+				<li>
+					<code>execute*(…)</code> methods now also rollback on all types of <code>Throwable</code>
+					except <code>ThreadDeath</code> and <code>NoRowException</code>, versus just handling
+					<code>Exception</code> and below.
+				</li>
+				<li>
+					<code>AutoCloseable</code> implementation moved to a new class <code>CloseableDatabase</code>,
+					which extends <code>Database</code>.  This allows the return of <code>Database</code> in
+					contexts where it is not expected to be closed.
+				</li>
+				<li>
+					Now logs <code>SQLWarning</code> from connections obtained from both <code>AOConnectionPool</code>
+					and <code>DataSource</code>.  Previously, warnings were only logged by <code>AOConnectionPool</code>.
+				</li>
+				<li>Created <code>ObjectFactory</code> instances for common types in <code>ObjectFactories</code>.</li>
+				<li>
+					<p>
+						<code>execute*Query(…)</code> and <code>execute*Update(…)</code> that return Java primitives,
+						along with the specialized primitive-list <code>executeIntList*(…)</code> and
+						<code>executeLongList*(…)</code>, now throw a new <code>NullDataException</code> when the
+						result returns a <code>NULL</code> value.
+					</p>
+					<p>
+						Previously, the default conversion was used.  Any code that relied on this default conversion
+						will need to be updated: a small lambda on <code>queryObject(…)</code> or
+						<code>updateObject(…)</code> would do the trick.
+					</p>
+				</li>
+				<li>
+					Moved base implementation methods from <code>AbstractDatabaseAccess</code> abstract class to
+					default methods on the <code>DatabaseAccess</code> interface, then removed
+					<code>AbstractDatabaseAccess</code>.
+				</li>
+				<li>Declared throws of <code>ExtraRowException</code> where it may occur.</li>
+				<li>No longer automatically rollback transaction on <code>ExtraRowException</code>.</li>
+				<li>
+					When <code>Database.getConnection(…)</code> gets a connection from an underlying
+					<code>DataSource</code>, if the connection is not auto-commit, it will be rolled-back and set to
+					auto-commit.  As this is not expected to happen normally, a warning will be logged.
+				</li>
+				<li>
+					<code>Database.getConnection(…)</code> will no longer perform automatic commits that were to
+					facilitate read-only and transaction isolation level changes.  Exceptions may now be thrown by
+					the underlying JDBC driver when attempts are made to change read-only state or isolation levels
+					during a transaction; this is a safer behavior.
+				</li>
+				<li>Added support for primitive <code>double</code> and <code>float</code> queries and updates.</li>
+				<li>Added support for Java 8+ streaming queries and updates.</li>
+				<li>
+					Deprecated <code>executeShortList*(…)</code> methods.  These offer no performance advantage over
+					<code>queryList(…)</code> combined with <code>ObjectFactories.Short</code>, plus we do not have
+					this type of list method for other wrapper types.
+				</li>
+				<li>
+					Deprecated <code>executeObject*(…)</code> methods that accept a <code><![CDATA[Class&lt;T&gt;]]></code>
+					parameter.  This class has its constructor accessed via reflection.  This construct has been
+					obsoleted by constructor lamdas <code>Class::new</code> used as <code>ObjectFactory</code>.
+				</li>
+				<li>Renamed <code>execute*Query(…)</code> methods to <code>query*(…)</code>.</li>
+				<li>Renamed <code>execute*Update(…)</code> methods to <code>update*(…)</code>.</li>
+				<li>
+					Deprecated <code>ResultSetHandler</code> and <code>ResultSetHandlerE</code> in favor of new
+					<code>ResultSetRunnable</code>, <code>ResultSetRunnableE</code>, <code>ResultSetCallable</code>,
+					and <code>ResultSetCallableE</code>.  Having both runnable and callable variants allows
+					implementations to not return anything.  Previously, to satisfy the interface, something always
+					had to be returned, even if just a <code>(Void)null</code>.
+				</li>
+				<li>
+					Renamed <code>Database.executeTransaction(…)</code> to <code>Database.transactionCall(…)</code> and
+					<code>Database.transactionRun(…)</code>.
+				</li>
+				<li>
+					Added new methods <code>Database.transactionRun(RunnableE)</code> and
+					<code>Database.transactionCall(CallableE)</code>, which are useful when a transaction scope is
+					needed, but the <code>DatabaseConnection</code> itself is not required.
+				</li>
+				<li>
+					Renamed <code>Database.createDatabaseConnection()</code> to <code>connect()</code>.  Since this
+					method puts the burden of transaction management on the caller, please consider using the various
+					<code>transactionCall(…)</code> or <code>transactionRun(…)</code> methods.
+				</li>
+				<li>
+					Added overloads of <code>Database.getConnection(…)</code> and
+					<code>DatabaseConnection.getConnection(…)</code>, paralleling the methods of the underlying
+					<code>AOConnectionPool</code>.
+				</li>
+				<li>
+					<code>NullDataException</code> and <code>ExtraRowException</code> now include a summary of the
+					row as the exception message.  This implementation adds
+					<core:link book="/ao-encoding" page="/index.jspx" /> as new dependency.
+				</li>
+				<li>
+					Deprecated <code>Database.releaseConnection(Connection)</code> and
+					<code>DatabaseConnection.releaseConnection()</code>
+					in favor of <code>Connection.close()</code>
+					for use in try-with-resources:
+					<ol>
+						<li>New protected method <code>Database.release(Connection)</code> that performs the release.</li>
+						<li>This implementation adds <core:link book="/ao-concurrent" page="/index.jspx" /> as new dependency.</li>
+					</ol>
+				</li>
+				<li>Changed generic bounds from specific to bounded, where appropriate.</li>
+				<li>Generic exception upper bounds changed from <code>Exception</code> to <code>Throwable</code>.</li>
+				<li>Now pre-sizing collections when number of rows in result set is known.</li>
+				<li>Added support for <code>executeLargeUpdate</code>.</li>
+				<li>
+					Now uses the fail-fast state of the new <code>FailFastConnection</code> to know when to close or
+					abort the underlying database connection.
+				</li>
+				<li>
+					<p>
+						Now registering exception types for use with <code>Throwables.newSurrogate(…)</code> that supports creating new instances
+						of throwables in order to have caller stack trace.  When wrapped, the original throwable is the
+						cause of the new throwable.  When not wrapped, the original throwable is used directly and
+						caller stack trace is lost.
+					</p>
+					<p>
+						This is used to maintain exception types and states across thread boundaries, such as when an exception cause
+						is obtained from an <code>ExecutionException</code>.
+					</p>
+				</li>
+				<li>
+					Defined <ao:a href="https://en.wikipedia.org/wiki/SQLSTATE">SQLSTATE</ao:a> values for all
+					<ao:a rel="nofollow" href="@{javadoc.link.javase}java/sql/SQLException.html">SQLException</ao:a>.
+				</li>
+				<li>
+					<p>
+						Fetch size increased from 1000 to 10000 rows.
+					</p>
+					<p>
+						This value may be increased over time as the amount of typical system memory increases.  As
+						this may affect the number of round trips, and the speed of light is not likely to change,
+						future increases may be of benefit.
+					</p>
+				</li>
+				<li>Added JDBC 4.2 Types.</li>
+			</ul>
+		</changelog:release>
 
 		<changelog:release
 			projectName="@{documented.name}"
