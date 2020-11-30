@@ -79,9 +79,16 @@ import java.util.stream.StreamSupport;
 //       associated objects, much like overall rollback and/or close?
 public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
-	// TODO: Larger value now, since systems have more RAM generally?
-	// TODO: Share value with aoserv-master?
-	private static final int FETCH_SIZE = 1000;
+	/**
+	 * The fetch size given to {@link Statement#setFetchSize(int)}.  This value may be increased over time as the amount
+	 * of typical system memory increases.  As this may affect the number of round trips, and the speed of light is not
+	 * likely to change, future increases may be of benefit.
+	 * <p>
+	 * We've been using a value of {@code 1000} for nearly two decades.  As of the year 2020, we've bumped this up to
+	 * {@code 10000}.
+	 * </p>
+	 */
+	public static final int FETCH_SIZE = 10000;
 
 	private final Database database;
 
