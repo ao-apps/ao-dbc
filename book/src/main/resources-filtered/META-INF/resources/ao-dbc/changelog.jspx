@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-11-29T19:59:55-06:00"
+		dateModified="2020-11-29T20:33:59-06:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -231,6 +231,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 							future increases may be of benefit.
 						</p>
 					</li>
+					<li>Added JDBC 4.2 Types.</li>
 					<!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
 					<!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
 				</ul>

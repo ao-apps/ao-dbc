@@ -58,6 +58,8 @@ final public class DatabaseUtils {
 			if(c>1) sb.append(", ");
 			int colType = metaData.getColumnType(c);
 			switch(colType) {
+				// Types without quotes
+				// Note: Matches JdbcResourceSynchronizer
 				case Types.BIGINT :
 				case Types.BIT :
 				case Types.BOOLEAN :
@@ -65,6 +67,7 @@ final public class DatabaseUtils {
 				case Types.DOUBLE :
 				case Types.FLOAT :
 				case Types.INTEGER :
+				case Types.NULL :
 				case Types.NUMERIC :
 				case Types.REAL :
 				case Types.SMALLINT :
@@ -78,12 +81,14 @@ final public class DatabaseUtils {
 					// Fall-through to quoted
 				case Types.CHAR :
 				case Types.DATE :
-				case Types.LONGNVARCHAR :
+				case Types.LONGNVARCHAR : // JDBC 4.0 Types
 				case Types.LONGVARCHAR :
-				case Types.NCHAR :
-				case Types.NVARCHAR :
+				case Types.NCHAR : // JDBC 4.0 Types
+				case Types.NVARCHAR : // JDBC 4.0 Types
 				case Types.TIME :
+				case Types.TIME_WITH_TIMEZONE : // JDBC 4.2 Types
 				case Types.TIMESTAMP :
+				case Types.TIMESTAMP_WITH_TIMEZONE : // JDBC 4.2 Types
 				case Types.VARCHAR :
 					String value = result.getString(c);
 					if(value == null) {

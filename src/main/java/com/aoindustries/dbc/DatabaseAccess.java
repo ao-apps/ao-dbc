@@ -58,7 +58,6 @@ public interface DatabaseAccess {
 	 * @see  Types
 	 * @see  PreparedStatement#setNull(int, int)
 	 */
-	// TODO: Wrap JDBCType also/instead?
 	public enum Null {
 		BIT(Types.BIT),
 		TINYINT(Types.TINYINT),
@@ -90,12 +89,17 @@ public interface DatabaseAccess {
 		REF(Types.REF),
 		DATALINK(Types.DATALINK),
 		BOOLEAN(Types.BOOLEAN),
+		/* JDBC 4.0 Types */
 		ROWID(Types.ROWID),
 		NCHAR(Types.NCHAR),
 		NVARCHAR(Types.NVARCHAR),
 		LONGNVARCHAR(Types.LONGNVARCHAR),
 		NCLOB(Types.NCLOB),
-		SQLXML(Types.SQLXML);
+		SQLXML(Types.SQLXML),
+		/* JDBC 4.2 Types */
+		REF_CURSOR(Types.REF_CURSOR),
+		TIME_WITH_TIMEZONE(Types.TIME_WITH_TIMEZONE),
+		TIMESTAMP_WITH_TIMEZONE(Types.TIMESTAMP_WITH_TIMEZONE);
 
 		private final int type;
 
