@@ -25,11 +25,12 @@ package com.aoindustries.dbc;
 import com.aoindustries.lang.Throwables;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLNonTransientException;
 
 /**
  * Thrown when more rows are retrieved than expected.
  */
-public class ExtraRowException extends SQLException {
+public class ExtraRowException extends SQLNonTransientException {
 
 	private static final long serialVersionUID = 1L;
 

@@ -23,12 +23,12 @@
 package com.aoindustries.dbc;
 
 import com.aoindustries.lang.Throwables;
-import java.sql.SQLException;
+import java.sql.SQLNonTransientException;
 
 /**
  * Thrown when no row available and a row is required.
  */
-public class NoRowException extends SQLException {
+public class NoRowException extends SQLNonTransientException {
 
 	private static final long serialVersionUID = 5397878995581459678L;
 

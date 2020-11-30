@@ -24,12 +24,14 @@ package com.aoindustries.dbc;
 
 import com.aoindustries.lang.Throwables;
 import java.sql.ResultSet;
+import java.sql.SQLDataException;
 import java.sql.SQLException;
 
 /**
  * Thrown when database contains a null value and a non-null value is required.
  */
-public class NullDataException extends SQLException {
+// TODO: Extend SQLDataException, review all subclasses of SQLException for better base class
+public class NullDataException extends SQLDataException {
 
 	private static final long serialVersionUID = 1L;
 
