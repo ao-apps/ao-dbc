@@ -28,25 +28,24 @@ import java.sql.SQLException;
 /**
  * Thrown when no row available and a row is required.
  */
-// TODO: Provide SQLState: https://en.wikipedia.org/wiki/SQLSTATE
 public class NoRowException extends SQLException {
 
 	private static final long serialVersionUID = 5397878995581459678L;
 
 	public NoRowException() {
-		super();
+		super("no data", "02000");
 	}
 
 	public NoRowException(String reason) {
-		super(reason);
+		super(reason, "02000");
 	}
 
 	public NoRowException(Throwable cause) {
-		super(cause);
+		super("no data", "02000", cause);
 	}
 
 	public NoRowException(String reason, Throwable cause) {
-		super(reason, cause);
+		super(reason, "02000", cause);
 	}
 
 	static {

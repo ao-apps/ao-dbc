@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-11-16T19:28:31-06:00"
+		dateModified="2020-11-29T19:00:46-06:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -216,6 +216,10 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 							This is used to maintain exception types and states across thread boundaries, such as when an exception cause
 							is obtained from an <code>ExecutionException</code>.
 						</p>
+					</li>
+					<li>
+						Defined <ao:a href="https://en.wikipedia.org/wiki/SQLSTATE">SQLSTATE</ao:a> values for all
+						<ao:a rel="nofollow" href="@{javadoc.link.javase}java/sql/SQLException.html">SQLException</ao:a>.
 					</li>
 					<!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
 					<!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->

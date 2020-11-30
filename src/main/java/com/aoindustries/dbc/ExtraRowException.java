@@ -29,33 +29,32 @@ import java.sql.SQLException;
 /**
  * Thrown when more rows are retrieved than expected.
  */
-// TODO: Provide SQLState: https://en.wikipedia.org/wiki/SQLSTATE
 public class ExtraRowException extends SQLException {
 
 	private static final long serialVersionUID = 1L;
 
 	public ExtraRowException() {
-		super();
+		super("additional result sets returned", "0100D");
 	}
 
 	public ExtraRowException(String reason) {
-		super(reason);
+		super(reason, "0100D");
 	}
 
 	public ExtraRowException(ResultSet result) throws SQLException {
-		super(DatabaseUtils.getRow(result));
+		super(DatabaseUtils.getRow(result), "0100D");
 	}
 
 	public ExtraRowException(Throwable cause) {
-		super(cause);
+		super("additional result sets returned", "0100D", cause);
 	}
 
 	public ExtraRowException(String reason, Throwable cause) {
-		super(reason, cause);
+		super(reason, "0100D", cause);
 	}
 
 	public ExtraRowException(ResultSet result, Throwable cause) throws SQLException {
-		super(DatabaseUtils.getRow(result), cause);
+		super(DatabaseUtils.getRow(result), "0100D", cause);
 	}
 
 	static {

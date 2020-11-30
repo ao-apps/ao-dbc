@@ -29,33 +29,32 @@ import java.sql.SQLException;
 /**
  * Thrown when database contains a null value and a non-null value is required.
  */
-// TODO: Provide SQLState: https://en.wikipedia.org/wiki/SQLSTATE
 public class NullDataException extends SQLException {
 
 	private static final long serialVersionUID = 1L;
 
 	public NullDataException() {
-		super();
+		super("null value not allowed", "22004");
 	}
 
 	public NullDataException(String reason) {
-		super(reason);
+		super(reason, "22004");
 	}
 
 	public NullDataException(ResultSet result) throws SQLException {
-		super(DatabaseUtils.getRow(result));
+		super(DatabaseUtils.getRow(result), "22004");
 	}
 
 	public NullDataException(Throwable cause) {
-		super(cause);
+		super("null value not allowed", "22004", cause);
 	}
 
 	public NullDataException(String reason, Throwable cause) {
-		super(reason, cause);
+		super(reason, "22004", cause);
 	}
 
 	public NullDataException(ResultSet result, Throwable cause) throws SQLException {
-		super(DatabaseUtils.getRow(result), cause);
+		super(DatabaseUtils.getRow(result), "22004", cause);
 	}
 
 	static {
