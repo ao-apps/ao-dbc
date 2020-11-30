@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-11-30T05:54:21-06:00"
+		dateModified="2020-11-30T06:12:56-06:00"
 	>
 		<!-- The current snapshot, unreleased version -->
 		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
@@ -53,17 +53,27 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{project.scm.url}"
 			>
-				<ul>
-					<li>
-						Now subclassing more specific exception types where appropriate, instead of just using
-						<ao:a rel="nofollow" href="@{javadoc.link.javase}java/sql/SQLException.html">SQLException</ao:a>
-						everywhere.
-					</li>
-				</ul>
 				<!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
 				<!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
 			</changelog:release>
 		</c:if>
+
+		<changelog:release
+			projectName="@{documented.name}"
+			version="2.0.1"
+			datePublished="2020-11-30T06:12:56-06:00"
+			groupId="@{project.groupId}"
+			artifactId="@{documented.artifactId}"
+			scmUrl="@{project.scm.url}"
+		>
+			<ul>
+				<li>
+					Now subclassing more specific exception types where appropriate, instead of just using
+					<ao:a rel="nofollow" href="@{javadoc.link.javase}java/sql/SQLException.html">SQLException</ao:a>
+					everywhere.
+				</li>
+			</ul>
+		</changelog:release>
 
 		<changelog:release
 			projectName="@{documented.name}"
