@@ -39,16 +39,10 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		datePublished="2016-10-29T19:31:26-0500"
 		dateModified="2020-11-30T06:12:56-06:00"
 	>
-		<!-- The current snapshot, unreleased version -->
-		<c:set var="version" value="@{com.aoindustries:ao-dbc:pom.version}" />
-		<ao:assert
-			test="${!fn:startsWith(version, '@')}"
-			message="Version not substituted: #{version}"
-		/>
-		<c:if test="${fn:endsWith(version, '-SNAPSHOT') and !fn:endsWith(version, '-POST-SNAPSHOT')}">
+		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
 				projectName="@{documented.name}"
-				version="#{version}"
+				version="@{project.version}"
 				groupId="@{project.groupId}"
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{project.scm.url}"
