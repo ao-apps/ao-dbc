@@ -22,7 +22,10 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.i18n.Resources;
+import com.aoindustries.lang.EmptyArrays;
 import com.aoindustries.lang.Throwables;
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLDataException;
 import java.sql.SQLException;
@@ -35,33 +38,78 @@ public class NullDataException extends SQLDataException {
 
 	private static final long serialVersionUID = 1L;
 
+	protected final Resources resources;
+	protected final String key;
+	protected final Serializable[] args;
+
 	public NullDataException() {
-		super("null value not allowed", "22004");
+		this("null value not allowed");
 	}
 
 	public NullDataException(String reason) {
 		super(reason, "22004");
+		resources = null;
+		key = null;
+		args = null;
 	}
 
 	public NullDataException(ResultSet result) throws SQLException {
-		super(DatabaseUtils.getRow(result), "22004");
+		this(DatabaseUtils.getRow(result));
+	}
+
+	public NullDataException(Resources resources, String key) {
+		super(resources.getMessage(key), "22004");
+		this.resources = resources;
+		this.key = key;
+		this.args = EmptyArrays.EMPTY_SERIALIZABLE_ARRAY;
+	}
+
+	public NullDataException(Resources resources, String key, Serializable... args) {
+		super(resources.getMessage(key, (Object[])args), "22004");
+		this.resources = resources;
+		this.key = key;
+		this.args = args;
 	}
 
 	public NullDataException(Throwable cause) {
-		super("null value not allowed", "22004", cause);
+		this("null value not allowed", cause);
 	}
 
 	public NullDataException(String reason, Throwable cause) {
 		super(reason, "22004", cause);
+		resources = null;
+		key = null;
+		args = null;
 	}
 
 	public NullDataException(ResultSet result, Throwable cause) throws SQLException {
-		super(DatabaseUtils.getRow(result), "22004", cause);
+		this(DatabaseUtils.getRow(result), cause);
+	}
+
+	public NullDataException(Throwable cause, Resources resources, String key) {
+		super(resources.getMessage(key), "22004", cause);
+		this.resources = resources;
+		this.key = key;
+		this.args = EmptyArrays.EMPTY_SERIALIZABLE_ARRAY;
+	}
+
+	public NullDataException(Throwable cause, Resources resources, String key, Serializable... args) {
+		super(resources.getMessage(key, (Object[])args), "22004", cause);
+		this.resources = resources;
+		this.key = key;
+		this.args = args;
+	}
+
+	@Override
+	public String getLocalizedMessage() {
+		return (resources == null) ? super.getLocalizedMessage() : resources.getMessage(key, (Object[])args);
 	}
 
 	static {
 		Throwables.registerSurrogateFactory(NullDataException.class, (template, cause) ->
-			new NullDataException(template.getMessage(), cause)
+			(template.resources == null)
+				? new NullDataException(template.getMessage(), cause)
+				: new NullDataException(cause, template.resources, template.key, template.args)
 		);
 	}
 }

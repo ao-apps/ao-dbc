@@ -22,7 +22,10 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.i18n.Resources;
+import com.aoindustries.lang.EmptyArrays;
 import com.aoindustries.lang.Throwables;
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientException;
@@ -34,33 +37,78 @@ public class ExtraRowException extends SQLNonTransientException {
 
 	private static final long serialVersionUID = 1L;
 
+	protected final Resources resources;
+	protected final String key;
+	protected final Serializable[] args;
+
 	public ExtraRowException() {
-		super("additional result sets returned", "0100D");
+		this("additional result sets returned");
 	}
 
 	public ExtraRowException(String reason) {
 		super(reason, "0100D");
+		resources = null;
+		key = null;
+		args = null;
 	}
 
 	public ExtraRowException(ResultSet result) throws SQLException {
-		super(DatabaseUtils.getRow(result), "0100D");
+		this(DatabaseUtils.getRow(result));
+	}
+
+	public ExtraRowException(Resources resources, String key) {
+		super(resources.getMessage(key), "0100D");
+		this.resources = resources;
+		this.key = key;
+		this.args = EmptyArrays.EMPTY_SERIALIZABLE_ARRAY;
+	}
+
+	public ExtraRowException(Resources resources, String key, Serializable... args) {
+		super(resources.getMessage(key, (Object[])args), "0100D");
+		this.resources = resources;
+		this.key = key;
+		this.args = args;
 	}
 
 	public ExtraRowException(Throwable cause) {
-		super("additional result sets returned", "0100D", cause);
+		this("additional result sets returned", cause);
 	}
 
 	public ExtraRowException(String reason, Throwable cause) {
 		super(reason, "0100D", cause);
+		resources = null;
+		key = null;
+		args = null;
 	}
 
 	public ExtraRowException(ResultSet result, Throwable cause) throws SQLException {
-		super(DatabaseUtils.getRow(result), "0100D", cause);
+		this(DatabaseUtils.getRow(result), cause);
+	}
+
+	public ExtraRowException(Throwable cause, Resources resources, String key) {
+		super(resources.getMessage(key), "0100D", cause);
+		this.resources = resources;
+		this.key = key;
+		this.args = EmptyArrays.EMPTY_SERIALIZABLE_ARRAY;
+	}
+
+	public ExtraRowException(Throwable cause, Resources resources, String key, Serializable... args) {
+		super(resources.getMessage(key, (Object[])args), "0100D", cause);
+		this.resources = resources;
+		this.key = key;
+		this.args = args;
+	}
+
+	@Override
+	public String getLocalizedMessage() {
+		return (resources == null) ? super.getLocalizedMessage() : resources.getMessage(key, (Object[])args);
 	}
 
 	static {
 		Throwables.registerSurrogateFactory(ExtraRowException.class, (template, cause) ->
-			new ExtraRowException(template.getMessage(), cause)
+			(template.resources == null)
+				? new ExtraRowException(template.getMessage(), cause)
+				: new ExtraRowException(cause, template.resources, template.key, template.args)
 		);
 	}
 }

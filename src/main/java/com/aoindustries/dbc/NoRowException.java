@@ -22,7 +22,10 @@
  */
 package com.aoindustries.dbc;
 
+import com.aoindustries.i18n.Resources;
+import com.aoindustries.lang.EmptyArrays;
 import com.aoindustries.lang.Throwables;
+import java.io.Serializable;
 import java.sql.SQLNonTransientException;
 
 /**
@@ -32,25 +35,70 @@ public class NoRowException extends SQLNonTransientException {
 
 	private static final long serialVersionUID = 5397878995581459678L;
 
+	protected final Resources resources;
+	protected final String key;
+	protected final Serializable[] args;
+
 	public NoRowException() {
-		super("no data", "02000");
+		this("no data");
 	}
 
 	public NoRowException(String reason) {
 		super(reason, "02000");
+		resources = null;
+		key = null;
+		args = null;
+	}
+
+	public NoRowException(Resources resources, String key) {
+		super(resources.getMessage(key), "02000");
+		this.resources = resources;
+		this.key = key;
+		this.args = EmptyArrays.EMPTY_SERIALIZABLE_ARRAY;
+	}
+
+	public NoRowException(Resources resources, String key, Serializable... args) {
+		super(resources.getMessage(key, (Object[])args), "02000");
+		this.resources = resources;
+		this.key = key;
+		this.args = args;
 	}
 
 	public NoRowException(Throwable cause) {
-		super("no data", "02000", cause);
+		this("no data", cause);
 	}
 
 	public NoRowException(String reason, Throwable cause) {
 		super(reason, "02000", cause);
+		resources = null;
+		key = null;
+		args = null;
+	}
+
+	public NoRowException(Throwable cause, Resources resources, String key) {
+		super(resources.getMessage(key), "02000", cause);
+		this.resources = resources;
+		this.key = key;
+		this.args = EmptyArrays.EMPTY_SERIALIZABLE_ARRAY;
+	}
+
+	public NoRowException(Throwable cause, Resources resources, String key, Serializable... args) {
+		super(resources.getMessage(key, (Object[])args), "02000", cause);
+		this.resources = resources;
+		this.key = key;
+		this.args = args;
+	}
+
+	@Override
+	public String getLocalizedMessage() {
+		return (resources == null) ? super.getLocalizedMessage() : resources.getMessage(key, (Object[])args);
 	}
 
 	static {
 		Throwables.registerSurrogateFactory(NoRowException.class, (template, cause) ->
-			new NoRowException(template.getMessage(), cause)
+			(template.resources == null)
+				? new NoRowException(template.getMessage(), cause)
+				: new NoRowException(cause, template.resources, template.key, template.args)
 		);
 	}
 }
