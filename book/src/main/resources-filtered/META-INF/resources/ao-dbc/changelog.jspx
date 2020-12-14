@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-12-14T10:21:47-06:00"
+		dateModified="2020-12-14T15:33:21-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -49,14 +49,24 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			>
 				<!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
 				<!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
-				<ul>
-					<li>
-						Added localization constructors to <code>ExtraRowException</code>, <code>NoRowException</code>,
-						and <code>NullDataException</code>.
-					</li>
-				</ul>
 			</changelog:release>
 		</c:if>
+
+		<changelog:release
+			projectName="@{documented.name}"
+			version="2.1.0"
+			datePublished="2020-12-14T15:33:21-06:00"
+			groupId="@{project.groupId}"
+			artifactId="@{documented.artifactId}"
+			scmUrl="@{project.scm.url}"
+		>
+			<ul>
+				<li>
+					Added localization constructors to <code>ExtraRowException</code>, <code>NoRowException</code>,
+					and <code>NullDataException</code>.
+				</li>
+			</ul>
+		</changelog:release>
 
 		<changelog:release
 			projectName="@{documented.name}"
