@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-0500"
-		dateModified="2020-12-26T22:24:48-06:00"
+		dateModified="2020-12-26T23:02:34-06:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -47,24 +47,34 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				artifactId="@{documented.artifactId}"
 				scmUrl="@{project.scm.url}"
 			>
-				<ul>
-					<li>
-						<p>
-							Fixed bug where <code><ao:a href="apidocs/com/aoindustries/dbc/NoRowException.html">NoRowException</ao:a></code>
-							(and similar) were being wrapped, which was interfering with catch blocks.
-						</p>
-						<p>
-							Removed all uses of <ao:a href="https://aoindustries.com/ao-sql/apidocs/com/aoindustries/sql/WrappedSQLException.html">WrappedSQLException</ao:a>.
-							Now registers SQL statements directly with <code><ao:a href="https://aoindustries.com/ao-lang/apidocs/com/aoindustries/util/ErrorPrinter.html">ErrorPrinter</ao:a></code>
-							instead.  This allows the SQL statements to be logged while not altering exception types underneath
-							the application.
-						</p>
-					</li>
-				</ul>
 				<!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
 				<!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
 			</changelog:release>
 		</c:if>
+
+		<changelog:release
+			projectName="@{documented.name}"
+			version="2.1.1"
+			datePublished="2020-12-26T23:02:34-06:00"
+			groupId="@{project.groupId}"
+			artifactId="@{documented.artifactId}"
+			scmUrl="@{project.scm.url}"
+		>
+			<ul>
+				<li>
+					<p>
+						Fixed bug where <code><ao:a href="apidocs/com/aoindustries/dbc/NoRowException.html">NoRowException</ao:a></code>
+						(and similar) were being wrapped, which was interfering with catch blocks.
+					</p>
+					<p>
+						Removed all uses of <ao:a href="https://aoindustries.com/ao-sql/apidocs/com/aoindustries/sql/WrappedSQLException.html">WrappedSQLException</ao:a>.
+						Now registers SQL statements directly with <code><ao:a href="https://aoindustries.com/ao-lang/apidocs/com/aoindustries/util/ErrorPrinter.html">ErrorPrinter</ao:a></code>
+						instead.  This allows the SQL statements to be logged while not altering exception types underneath
+						the application.
+					</p>
+				</li>
+			</ul>
+		</changelog:release>
 
 		<changelog:release
 			projectName="@{documented.name}"
