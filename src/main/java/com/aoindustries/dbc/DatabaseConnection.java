@@ -26,9 +26,9 @@ import com.aoindustries.exception.WrappedException;
 import com.aoindustries.lang.AutoCloseables;
 import com.aoindustries.lang.Throwables;
 import com.aoindustries.sql.Connections;
-import com.aoindustries.sql.WrappedSQLException;
 import com.aoindustries.sql.failfast.FailFastConnection;
 import com.aoindustries.sql.tracker.ConnectionTracker;
+import com.aoindustries.util.ErrorPrinter;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -806,8 +806,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				} catch(Throwable t) {
 					throw AutoCloseables.closeAndCatch(t, results);
 				}
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
+			} catch(Error | RuntimeException | SQLException e) {
+				ErrorPrinter.addSQL(e, pstmt);
+				throw e;
 			}
 		} catch(Throwable t) {
 			throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, pstmt);
@@ -870,8 +871,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				} catch(Throwable t) {
 					throw AutoCloseables.closeAndCatch(t, results);
 				}
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
+			} catch(Error | RuntimeException | SQLException e) {
+				ErrorPrinter.addSQL(e, pstmt);
+				throw e;
 			}
 		} catch(Throwable t) {
 			throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, pstmt);
@@ -934,8 +936,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				} catch(Throwable t) {
 					throw AutoCloseables.closeAndCatch(t, results);
 				}
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
+			} catch(Error | RuntimeException | SQLException e) {
+				ErrorPrinter.addSQL(e, pstmt);
+				throw e;
 			}
 		} catch(Throwable t) {
 			throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, pstmt);
@@ -1045,8 +1048,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				} catch(Throwable t) {
 					throw AutoCloseables.closeAndCatch(t, results);
 				}
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
+			} catch(Error | RuntimeException | SQLException e) {
+				ErrorPrinter.addSQL(e, pstmt);
+				throw e;
 			}
 		} catch(Throwable t) {
 			t = AutoCloseables.closeAndCatch(t, pstmt);
@@ -1066,8 +1070,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 				try (ResultSet results = pstmt.executeQuery()) {
 					return resultSetCallable.call(results);
 				}
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
+			} catch(Error | RuntimeException | SQLException e) {
+				ErrorPrinter.addSQL(e, pstmt);
+				throw e;
 			}
 		}
 	}
@@ -1079,8 +1084,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 			try {
 				setParams(conn, pstmt, params);
 				return pstmt.executeUpdate();
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
+			} catch(Error | RuntimeException | SQLException e) {
+				ErrorPrinter.addSQL(e, pstmt);
+				throw e;
 			}
 		}
 	}
@@ -1092,8 +1098,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 			try {
 				setParams(conn, pstmt, params);
 				return pstmt.executeLargeUpdate();
-			} catch(SQLException err) {
-				throw new WrappedSQLException(err, pstmt);
+			} catch(Error | RuntimeException | SQLException e) {
+				ErrorPrinter.addSQL(e, pstmt);
+				throw e;
 			}
 		}
 	}
