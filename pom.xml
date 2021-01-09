@@ -217,7 +217,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				<groupId>com.aoindustries</groupId><artifactId>ao-sql-tracker</artifactId><version>1.0.0${POST-SNAPSHOT}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.aoindustries</groupId><artifactId>aocode-public</artifactId><version>4.7.1${POST-SNAPSHOT}</version>
+				<groupId>com.aoindustries</groupId><artifactId>aocode-public</artifactId><version>4.7.2${POST-SNAPSHOT}</version>
 			</dependency>
 			<!-- Transitive -->
 			<dependency>
