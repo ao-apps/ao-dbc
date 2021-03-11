@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2020  AO Industries, Inc.
+ * Copyright (C) 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -131,17 +131,19 @@ final public class ObjectFactories {
 
 	/**
 	 * Wraps an object factory, throwing {@link NullDataException} on any {@code null} result.
+	 *
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 */
-	private static class NotNullE<T,E extends Throwable> implements ObjectFactoryE<T,E> {
+	private static class NotNullE<T, Ex extends Throwable> implements ObjectFactoryE<T, Ex> {
 
-		private final ObjectFactoryE<? extends T,E> objectFactory;
+		private final ObjectFactoryE<? extends T, Ex> objectFactory;
 
-		private NotNullE(ObjectFactoryE<? extends T,E> objectFactory) {
+		private NotNullE(ObjectFactoryE<? extends T, Ex> objectFactory) {
 			this.objectFactory = objectFactory;
 		}
 
 		@Override
-		public T createObject(ResultSet result) throws NullDataException, SQLException, E {
+		public T createObject(ResultSet result) throws NullDataException, SQLException, Ex {
 			T obj = objectFactory.createObject(result);
 			if(obj == null) throw new NullDataException(result);
 			return obj;
@@ -159,7 +161,7 @@ final public class ObjectFactories {
 	/**
 	 * Wraps an object factory, throwing {@link NullDataException} on any {@code null} result.
 	 */
-	private static final class NotNull<T> extends NotNullE<T,RuntimeException> implements ObjectFactory<T> {
+	private static final class NotNull<T> extends NotNullE<T, RuntimeException> implements ObjectFactory<T> {
 		
 		private NotNull(ObjectFactory<? extends T> objectFactory) {
 			super(objectFactory);
@@ -169,11 +171,13 @@ final public class ObjectFactories {
 	/**
 	 * Wraps an object factory, unless it is already not {@linkplain ObjectFactory#isNullable() nullable}.
 	 *
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
 	 * @return  If {@linkplain ObjectFactory#isNullable() nullable}, trusts the given object factory to not return
 	 *          {@code null}, otherwise wraps.  Also wraps when assertions are enabled.
 	 */
 	@SuppressWarnings({"AssertWithSideEffects", "overloads"})
-	public static <T,E extends Throwable> ObjectFactoryE<T,E> notNull(ObjectFactoryE<T,E> objectFactory) {
+	public static <T, Ex extends Throwable> ObjectFactoryE<T, Ex> notNull(ObjectFactoryE<T, Ex> objectFactory) {
 		boolean wrap;
 		if(objectFactory.isNullable()) {
 			// Needs wrapping

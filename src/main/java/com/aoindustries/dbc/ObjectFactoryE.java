@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2014, 2015, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2014, 2015, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -29,15 +29,17 @@ import java.util.Spliterator;
 /**
  * Creates instances of objects of the generics type from a result set.
  *
+ * @param  <Ex>  An arbitrary exception type that may be thrown
+ *
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface ObjectFactoryE<T,E extends Throwable> {
+public interface ObjectFactoryE<T, Ex extends Throwable> {
 
 	/**
 	 * Creates one object from the current values in the ResultSet.
 	 */
-	T createObject(ResultSet result) throws SQLException, E;
+	T createObject(ResultSet result) throws SQLException, Ex;
 
 	/**
 	 * Can this object factory return {@code null} from {@link #createObject(java.sql.ResultSet)}?

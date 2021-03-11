@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -64,7 +64,7 @@ public class Catalog {
 
 	private static class GetSchemasLock {}
 	private final GetSchemasLock getSchemasLock = new GetSchemasLock();
-	private SortedMap<String,Schema> getSchemasCache;
+	private SortedMap<String, Schema> getSchemasCache;
 
 	/**
 	 * Gets all schemas for this catalog keyed by unique name.
@@ -72,10 +72,10 @@ public class Catalog {
 	 * @see  java.sql.DatabaseMetaData#getSchemas()
 	 */
 	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public SortedMap<String,Schema> getSchemas() throws SQLException {
+	public SortedMap<String, Schema> getSchemas() throws SQLException {
 		synchronized(getSchemasLock) {
 			if(getSchemasCache==null) {
-				SortedMap<String,Schema> newSchemas = new TreeMap<>(DatabaseMetaData.getCollator());
+				SortedMap<String, Schema> newSchemas = new TreeMap<>(DatabaseMetaData.getCollator());
 				try (ResultSet results = metaData.getMetaData().getSchemas()) {
 					ResultSetMetaData resultsMeta = results.getMetaData();
 					while(results.next()) {
@@ -117,7 +117,7 @@ public class Catalog {
 	/**
 	 * Gets a graph view of the imported/exported table relationships within this catalog.
 	 */
-	public SymmetricGraph<Table,Edge<Table>,SQLException> getForeignKeyGraph() {
+	public SymmetricGraph<Table, Edge<Table>, SQLException> getForeignKeyGraph() {
 		return getForeignKeyGraph(null);
 	}
 
@@ -128,7 +128,7 @@ public class Catalog {
 	 *
 	 * @param tableTypes  the set of tables types or {@code null} for all types
 	 */
-	public SymmetricGraph<Table,Edge<Table>,SQLException> getForeignKeyGraph(final Set<String> tableTypes) {
+	public SymmetricGraph<Table, Edge<Table>, SQLException> getForeignKeyGraph(final Set<String> tableTypes) {
 		return new SymmetricGraph<Table, Edge<Table>, SQLException>() {
 
 			@Override

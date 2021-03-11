@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015, 2016, 2020  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -93,7 +93,7 @@ public class Table {
 
 	private static class GetColumnMapLock {}
 	private final GetColumnMapLock getColumnMapLock = new GetColumnMapLock();
-	private SortedMap<String,Column> getColumnMapCache;
+	private SortedMap<String, Column> getColumnMapCache;
 
 	private static Integer getInteger(ResultSet results, String columnName) throws SQLException {
 		int val = results.getInt(columnName);
@@ -107,10 +107,10 @@ public class Table {
 	 * @see  java.sql.DatabaseMetaData#getColumns(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public SortedMap<String,Column> getColumnMap() throws SQLException {
+	public SortedMap<String, Column> getColumnMap() throws SQLException {
 		synchronized(getColumnMapLock) {
 			if(getColumnMapCache==null) {
-				SortedMap<String,Column> newColumnMap = new TreeMap<>(DatabaseMetaData.getCollator());
+				SortedMap<String, Column> newColumnMap = new TreeMap<>(DatabaseMetaData.getCollator());
 				try (ResultSet results = schema.getCatalog().getMetaData().getMetaData().getColumns(schema.getCatalog().getName(), schema.getName(), name, null)) {
 					while(results.next()) {
 						Column newColumn = new Column(
@@ -161,7 +161,7 @@ public class Table {
 	public List<Column> getColumns() throws SQLException {
 		synchronized(getColumnsLock) {
 			if(getColumnsCache==null) {
-				SortedMap<String,Column> columnMap = getColumnMap();
+				SortedMap<String, Column> columnMap = getColumnMap();
 				List<Column> newColumns = new ArrayList<>(columnMap.size());
 				for(int i=0; i<columnMap.size(); i++) {
 					newColumns.add(null);

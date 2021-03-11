@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2010, 2011, 2014, 2015, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2010, 2011, 2014, 2015, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,7 +32,7 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface DatabaseCallable<V> extends DatabaseCallableE<V,RuntimeException> {
+public interface DatabaseCallable<V> extends DatabaseCallableE<V, RuntimeException> {
 
 	@Override
 	// TODO: Should these take DatabaseAccess instead?

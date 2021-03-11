@@ -61,7 +61,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 		}
 	}
 
-	private static final ConcurrentMap<Class<?>,Method> valueOfIntMethods = new ConcurrentHashMap<>();
+	private static final ConcurrentMap<Class<?>, Method> valueOfIntMethods = new ConcurrentHashMap<>();
 
 	/**
 	 * Gets the {@code valueOf(int)} for the provided class or {@code null} if doesn't
@@ -84,7 +84,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
 		return existing==notExists ? null : existing;
 	}
 
-	private static final ConcurrentMap<Class<?>,Method> valueOfStringMethods = new ConcurrentHashMap<>();
+	private static final ConcurrentMap<Class<?>, Method> valueOfStringMethods = new ConcurrentHashMap<>();
 
 	/**
 	 * Gets the {@code valueOf(String)} for the provided class or {@code null} if doesn't

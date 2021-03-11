@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2014, 2015, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2014, 2015, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -28,12 +28,14 @@ import java.sql.SQLException;
  * Target that may be used by {@link Database#transactionCall(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)}
  * and allows any arbitrary exception type in addition to the usual SQLException.
  *
+ * @param  <Ex>  An arbitrary exception type that may be thrown
+ *
  * @see  Database#transactionCall(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
  *
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface DatabaseCallableE<V,E extends Throwable> {
+public interface DatabaseCallableE<V, Ex extends Throwable> {
 
-	V call(DatabaseConnection db) throws SQLException, E;
+	V call(DatabaseConnection db) throws SQLException, Ex;
 }

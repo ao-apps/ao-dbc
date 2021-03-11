@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2020  AO Industries, Inc.
+ * Copyright (C) 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -29,13 +29,15 @@ import java.sql.SQLException;
  * Processes the results from a query.  This is called only once.
  * Iteration over the results is up to the implementation.
  *
+ * @param  <Ex>  An arbitrary exception type that may be thrown
+ *
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface ResultSetCallableE<T,E extends Throwable> {
+public interface ResultSetCallableE<T, Ex extends Throwable> {
 
 	/**
 	 * Process one set of results.
 	 */
-	T call(ResultSet results) throws SQLException, E;
+	T call(ResultSet results) throws SQLException, Ex;
 }

@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -169,16 +169,16 @@ public class Database implements DatabaseAccess {
 	/**
 	 * The custom types discovered via {@link ServiceLoader}.
 	 */
-	private volatile Map<String,Class<?>> sqlDataTypes;
+	private volatile Map<String, Class<?>> sqlDataTypes;
 
 	/**
 	 * Loads the custom types when first needed and caches the results.
 	 */
 	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Only used within this class
-	private Map<String,Class<?>> getSqlDataTypes() throws SQLException {
+	private Map<String, Class<?>> getSqlDataTypes() throws SQLException {
 		if(sqlDataTypes == null) {
 			// Load custom types from ServiceLoader
-			Map<String,Class<?>> newMap = new LinkedHashMap<>();
+			Map<String, Class<?>> newMap = new LinkedHashMap<>();
 			for(SQLData sqlData : ServiceLoader.load(SQLData.class)) {
 				newMap.put(sqlData.getSQLTypeName(), sqlData.getClass());
 			}
@@ -187,7 +187,7 @@ public class Database implements DatabaseAccess {
 		return sqlDataTypes;
 	}
 
-	private final Map<Connection,Map<String,Class<?>>> oldTypeMaps = new IdentityHashMap<>();
+	private final Map<Connection, Map<String, Class<?>>> oldTypeMaps = new IdentityHashMap<>();
 
 	/**
 	 * Whenever a new connection is obtained from the pool or the dataSource,
@@ -198,10 +198,10 @@ public class Database implements DatabaseAccess {
 	 */
 	protected void initSqlDataTypes(Connection conn) throws SQLException {
 		// Load custom types from ServiceLoader
-		Map<String,Class<?>> newTypes = getSqlDataTypes();
+		Map<String, Class<?>> newTypes = getSqlDataTypes();
 		int size = newTypes.size();
 		if(size != 0) {
-			Map<String,Class<?>> typeMap = conn.getTypeMap();
+			Map<String, Class<?>> typeMap = conn.getTypeMap();
 			// Note: We get "null" back from PostgreSQL driver, despite documentation of returning empty
 			if(typeMap == null) typeMap = AoCollections.newLinkedHashMap(size);
 			oldTypeMaps.put(conn, new LinkedHashMap<>(typeMap));
@@ -219,7 +219,7 @@ public class Database implements DatabaseAccess {
 	 */
 	protected void deinitSqlDataTypes(Connection conn) throws SQLException {
 		// TODO: Do not remove on release and avoid re-adding for performance?
-		Map<String,Class<?>> oldTypeMap = oldTypeMaps.remove(conn);
+		Map<String, Class<?>> oldTypeMap = oldTypeMaps.remove(conn);
 		if(oldTypeMap != null && !conn.isClosed()) conn.setTypeMap(oldTypeMap);
 	}
 
@@ -764,7 +764,7 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @see #isInTransaction()
 	 */
-	public <V> V transactionCall(CallableE<? extends V,? extends SQLException> callable) throws SQLException {
+	public <V> V transactionCall(CallableE<? extends V, ? extends SQLException> callable) throws SQLException {
 		return transactionCall(SQLException.class, callable);
 	}
 
@@ -784,9 +784,11 @@ public class Database implements DatabaseAccess {
 	 * entire transaction on any exception.
 	 * </p>
 	 *
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
 	 * @see #isInTransaction()
 	 */
-	public <V,E extends Throwable> V transactionCall(Class<? extends E> eClass, CallableE<? extends V,? extends E> callable) throws SQLException, E {
+	public <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> eClass, CallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex {
 		return transactionCall(eClass, (DatabaseConnection db) -> callable.call());
 	}
 
@@ -837,10 +839,12 @@ public class Database implements DatabaseAccess {
 	 * entire transaction on any exception.
 	 * </p>
 	 *
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
 	 * @see #isInTransaction()
 	 */
 	@SuppressWarnings("UseSpecificCatch")
-	public <V,E extends Throwable> V transactionCall(Class<? extends E> eClass, DatabaseCallableE<? extends V,? extends E> callable) throws SQLException, E {
+	public <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> eClass, DatabaseCallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex {
 		Throwable t0 = null;
 		DatabaseConnection conn = transactionConnection.get();
 		if(conn != null) {
@@ -877,10 +881,12 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
 	 * @deprecated  Please use {@link #transactionCall(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)}
 	 */
 	@Deprecated
-	final public <V,E extends Exception> V executeTransaction(Class<E> eClass, DatabaseCallableE<V,E> callable) throws SQLException, E {
+	final public <V, Ex extends Exception> V executeTransaction(Class<Ex> eClass, DatabaseCallableE<V, Ex> callable) throws SQLException, Ex {
 		return transactionCall(eClass, callable);
 	}
 
@@ -922,9 +928,11 @@ public class Database implements DatabaseAccess {
 	 * entire transaction on any exception.
 	 * </p>
 	 *
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
 	 * @see #isInTransaction()
 	 */
-	public <E extends Throwable> void transactionRun(Class<? extends E> eClass, RunnableE<? extends E> runnable) throws SQLException, E {
+	public <Ex extends Throwable> void transactionRun(Class<? extends Ex> eClass, RunnableE<? extends Ex> runnable) throws SQLException, Ex {
 		transactionRun(eClass, (DatabaseConnection db) -> runnable.run());
 	}
 
@@ -975,9 +983,11 @@ public class Database implements DatabaseAccess {
 	 * entire transaction on any exception.
 	 * </p>
 	 *
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
 	 * @see #isInTransaction()
 	 */
-	public <E extends Throwable> void transactionRun(Class<? extends E> eClass, DatabaseRunnableE<? extends E> runnable) throws SQLException, E {
+	public <Ex extends Throwable> void transactionRun(Class<? extends Ex> eClass, DatabaseRunnableE<? extends Ex> runnable) throws SQLException, Ex {
 		transactionCall(
 			eClass,
 			(DatabaseConnection db) -> {
@@ -988,10 +998,12 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 *
 	 * @deprecated  Please use {@link #transactionRun(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)}
 	 */
 	@Deprecated
-	final public <E extends Exception> void executeTransaction(Class<E> eClass, DatabaseRunnableE<E> runnable) throws SQLException, E {
+	final public <Ex extends Exception> void executeTransaction(Class<Ex> eClass, DatabaseRunnableE<Ex> runnable) throws SQLException, Ex {
 		transactionRun(eClass, runnable);
 	}
 
@@ -1021,15 +1033,21 @@ public class Database implements DatabaseAccess {
 		);
 	}
 
+	/**
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 */
 	@Override
-	public <T,E extends Throwable> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	public <T, Ex extends Throwable> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
 		return transactionCall(eClass, (DatabaseConnection conn) ->
 			conn.stream(isolationLevel, readOnly, eClass, objectFactory, sql, params)
 		);
 	}
 
+	/**
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 */
 	@Override
-	public <T,E extends Throwable> T queryCall(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+	public <T, Ex extends Throwable> T queryCall(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable, String sql, Object ... params) throws SQLException, Ex {
 		return transactionCall(eClass, (DatabaseConnection conn) ->
 			conn.queryCall(isolationLevel, readOnly, eClass, resultSetCallable, sql, params)
 		);

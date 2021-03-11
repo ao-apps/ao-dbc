@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2008, 2009, 2010, 2011, 2014, 2015, 2019  AO Industries, Inc.
+ * Copyright (C) 2008, 2009, 2010, 2011, 2014, 2015, 2019, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -31,7 +31,7 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface ObjectFactory<T> extends ObjectFactoryE<T,RuntimeException>{
+public interface ObjectFactory<T> extends ObjectFactoryE<T, RuntimeException>{
 
 	/**
 	 * Creates one object from the current values in the ResultSet.

@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -945,22 +945,25 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		}
 	}
 
-	private static class ResultSetIterator<T,E extends Throwable> implements Iterator<T> {
+	/**
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 */
+	private static class ResultSetIterator<T, Ex extends Throwable> implements Iterator<T> {
 
-		private final ObjectFactoryE<? extends T,? extends E> objectFactory;
+		private final ObjectFactoryE<? extends T, ? extends Ex> objectFactory;
 		private final ResultSet results;
 		private final boolean isNullable;
 
 		private T next;
 		private boolean nextSet; // next may be null, so extra flag
 
-		private ResultSetIterator(ObjectFactoryE<? extends T,? extends E> objectFactory, boolean isNullable, ResultSet results) {
+		private ResultSetIterator(ObjectFactoryE<? extends T, ? extends Ex> objectFactory, boolean isNullable, ResultSet results) {
 			this.objectFactory = objectFactory;
 			this.results = results;
 			this.isNullable = isNullable;
 		}
 
-		private T createAndCheckNullable(ResultSet results) throws SQLException, E {
+		private T createAndCheckNullable(ResultSet results) throws SQLException, Ex {
 			T t = objectFactory.createObject(results);
 			if(t == null && !isNullable) throw new NullDataException(results);
 			return t;
@@ -1000,10 +1003,13 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		}
 	}
 
+	/**
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 */
 	@Override
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter", "fallthrough"})
 	// TODO: Take an optional int for additional characteristics?  Might be useful for DISTINCT and SORTED, in particular.
-	public <T,E extends Throwable> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ObjectFactoryE<? extends T,? extends E> objectFactory, String sql, Object ... params) throws SQLException, E {
+	public <T, Ex extends Throwable> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		try {
@@ -1021,7 +1027,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 						switch(resultType) {
 							case ResultSet.TYPE_FORWARD_ONLY :
 								spliterator = Spliterators.spliteratorUnknownSize(
-									new ResultSetIterator<T,E>(objectFactory, isNullable, results),
+									new ResultSetIterator<T, Ex>(objectFactory, isNullable, results),
 									characteristics
 								);
 								break;
@@ -1035,7 +1041,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 									results.beforeFirst();
 								}
 								spliterator = Spliterators.spliterator(
-									new ResultSetIterator<T,E>(objectFactory, isNullable, results),
+									new ResultSetIterator<T, Ex>(objectFactory, isNullable, results),
 									rowCount,
 									characteristics
 								);
@@ -1059,8 +1065,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 		}
 	}
 
+	/**
+	 * @param  <Ex>  An arbitrary exception type that may be thrown
+	 */
 	@Override
-	public <T,E extends Throwable> T queryCall(int isolationLevel, boolean readOnly, Class<? extends E> eClass, ResultSetCallableE<? extends T,? extends E> resultSetCallable, String sql, Object ... params) throws SQLException, E {
+	public <T, Ex extends Throwable> T queryCall(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable, String sql, Object ... params) throws SQLException, Ex {
 		Connection conn = getConnection(isolationLevel, readOnly);
 		// TODO: Use regular Statement when there are no params?  Interaction with PostgreSQL prepared statement caching?
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
