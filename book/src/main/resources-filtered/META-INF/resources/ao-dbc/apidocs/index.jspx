@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ao-dbc - Simplified JDBC access for simplified code.
-Copyright (C) 2016, 2019, 2020  AO Industries, Inc.
+Copyright (C) 2016, 2019, 2020, 2021  AO Industries, Inc.
 	support@aoindustries.com
 	7262 Bull Pen Cir
 	Mobile, AL 36695
@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 	<core:page
 		title="@{documented.name} ${ao:getProjectVersion('./', 'com.aoindustries', 'ao-dbc', '¿@{project.version}?')} API Docs"
 		shortTitle="API Docs"
-		datePublished="2016-10-16T21:59:00-0500"
+		datePublished="2016-10-16T21:59:00-05:00"
 		dateModified="${ao:getLastModified('index.html')}"
 	/>
 </jsp:root>
