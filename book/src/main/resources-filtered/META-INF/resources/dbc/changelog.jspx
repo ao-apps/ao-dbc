@@ -22,7 +22,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 -->
 <jsp:root
-	xmlns:ao="https://aoindustries.com/ao-taglib/"
+	xmlns:ao="https://oss.aoapps.com/taglib/"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:changelog="https://semanticcms.com/changelog/taglib/"
 	xmlns:core="https://semanticcms.com/core/taglib/"
@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-05:00"
-		dateModified="2021-05-26T06:36:49-05:00"
+		dateModified="2021-05-31T01:04:26-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -45,10 +45,12 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				version="@{project.version}"
 				groupId="@{project.groupId}"
 				artifactId="@{documented.artifactId}"
+				repository="https://s01.oss.sonatype.org/content/repositories/snapshots/"
 				scmUrl="@{project.scm.url}"
 			>
 				<ul>
 					<li>Minimum Java version changed from 1.8 to 11.</li>
+					<li>Maven artifact relocated from <code>com.aoindustries:ao-dbc</code> to <code>com.aoapps:ao-dbc</code>.</li>
 				</ul>
 				<!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
 				<!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
@@ -59,7 +61,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="2.1.1"
 			datePublished="2020-12-26T23:02:34-06:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
@@ -70,8 +72,8 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 						(and similar) were being wrapped, which was interfering with catch blocks.
 					</p>
 					<p>
-						Removed all uses of <ao:a href="https://aoindustries.com/ao-sql/apidocs/com/aoindustries/sql/WrappedSQLException.html">WrappedSQLException</ao:a>.
-						Now registers SQL statements directly with <code><ao:a href="https://aoindustries.com/ao-lang/apidocs/com/aoindustries/util/ErrorPrinter.html">ErrorPrinter</ao:a></code>
+						Removed all uses of <ao:a href="https://oss.aoapps.com/sql/apidocs/com/aoindustries/sql/WrappedSQLException.html">WrappedSQLException</ao:a>.
+						Now registers SQL statements directly with <code><ao:a href="https://oss.aoapps.com/lang/apidocs/com/aoindustries/util/ErrorPrinter.html">ErrorPrinter</ao:a></code>
 						instead.  This allows the SQL statements to be logged while not altering exception types underneath
 						the application.
 					</p>
@@ -83,7 +85,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="2.1.0"
 			datePublished="2020-12-14T15:33:21-06:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
@@ -99,7 +101,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="2.0.1"
 			datePublished="2020-11-30T06:12:56-06:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
@@ -116,7 +118,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="2.0.0"
 			datePublished="2020-11-29T21:54:17-06:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
@@ -252,7 +254,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				<li>
 					<code>NullDataException</code> and <code>ExtraRowException</code> now include a summary of the
 					row as the exception message.  This implementation adds
-					<core:link book="/ao-encoding" page="/index.jspx" /> as new dependency.
+					<core:link book="/encoding" page="/index.jspx" /> as new dependency.
 				</li>
 				<li>
 					Deprecated <code>Database.releaseConnection(Connection)</code> and
@@ -261,7 +263,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					for use in try-with-resources:
 					<ol>
 						<li>New protected method <code>Database.release(Connection)</code> that performs the release.</li>
-						<li>This implementation adds <core:link book="/ao-concurrent" page="/index.jspx" /> as new dependency.</li>
+						<li>This implementation adds <core:link book="/concurrent" page="/index.jspx" /> as new dependency.</li>
 					</ol>
 				</li>
 				<li>Changed generic bounds from specific to bounded, where appropriate.</li>
@@ -306,7 +308,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.4.1"
 			datePublished="2020-08-27T22:47:28-05:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
@@ -323,7 +325,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.4.0"
 			datePublished="2020-03-28T02:21:51-05:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
@@ -344,12 +346,12 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.3.0"
 			datePublished="2019-10-01T20:44:38-05:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
 			<ul>
-				<li>Updated for compatibility with <core:link book="/aocode-public" page="/changelog.jspx" element="release-notes-3.1.0">aocode-public-3.1.0</core:link>.</li>
+				<li>Updated for compatibility with <core:link book="/hodgepodge" page="/changelog.jspx" element="release-notes-3.1.0">aocode-public-3.1.0</core:link>.</li>
 			</ul>
 		</changelog:release>
 
@@ -357,7 +359,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.2.1"
 			datePublished="2019-06-20T22:08:18-05:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
@@ -376,7 +378,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.2.0"
 			datePublished="2019-04-23T04:46:32-05:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
@@ -401,7 +403,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.1.3"
 			datePublished="2017-07-19T19:16:33-05:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
@@ -414,12 +416,12 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.1.2"
 			datePublished="2016-11-15T18:37:30-06:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
 			<ul>
-				<li>New <core:link book="/ao-oss-parent" page="/index.jspx" /> POM to simplify <code>pom.xml</code> files.</li>
+				<li>New <core:link book="/parent" page="/index.jspx" /> POM to simplify <code>pom.xml</code> files.</li>
 				<li>Project documentation moved to per-project book in <ao:a href="https://semanticcms.com/">SemanticCMS</ao:a> format.</li>
 				<li>Added changelog as top-level project link.</li>
 			</ul>
@@ -429,7 +431,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.1.1"
 			datePublished="2016-10-20T18:09:00-05:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
@@ -443,7 +445,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.1.0"
 			datePublished="2016-10-04T19:27:00-05:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
@@ -463,7 +465,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			projectName="@{documented.name}"
 			version="1.0"
 			datePublished="2016-09-04T22:44:00-05:00"
-			groupId="@{project.groupId}"
+			groupId="com.aoindustries"
 			artifactId="@{documented.artifactId}"
 			scmUrl="@{project.scm.url}"
 		>
