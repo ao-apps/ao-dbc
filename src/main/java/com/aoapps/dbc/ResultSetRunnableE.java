@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc;
+package com.aoapps.dbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,14 +29,15 @@ import java.sql.SQLException;
  * Processes the results from a query.  This is called only once.
  * Iteration over the results is up to the implementation.
  *
+ * @param  <Ex>  An arbitrary exception type that may be thrown
+ *
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface ResultSetCallable<T> extends ResultSetCallableE<T, RuntimeException> {
+public interface ResultSetRunnableE<Ex extends Throwable> {
 
 	/**
 	 * Process one set of results.
 	 */
-	@Override
-	T call(ResultSet results) throws SQLException;
+	void run(ResultSet results) throws SQLException, Ex;
 }

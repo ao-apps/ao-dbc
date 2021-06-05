@@ -20,20 +20,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc;
+package com.aoapps.dbc;
 
-import com.aoindustries.collections.AoCollections;
-import com.aoindustries.concurrent.Executors;
-import com.aoindustries.lang.AutoCloseables;
-import com.aoindustries.lang.RunnableE;
-import com.aoindustries.lang.Throwables;
-import com.aoindustries.sql.Connections;
-import com.aoindustries.sql.failfast.FailFastConnection;
-import com.aoindustries.sql.failfast.FailFastConnectionImpl;
-import com.aoindustries.sql.pool.AOConnectionPool;
-import com.aoindustries.sql.tracker.ConnectionTracker;
-import com.aoindustries.sql.tracker.ConnectionTrackerImpl;
-import com.aoindustries.util.concurrent.CallableE;
+import com.aoapps.collections.AoCollections;
+import com.aoapps.concurrent.Executors;
+import com.aoapps.lang.AutoCloseables;
+import com.aoapps.lang.RunnableE;
+import com.aoapps.lang.Throwables;
+import com.aoapps.lang.concurrent.CallableE;
+import com.aoapps.sql.Connections;
+import com.aoapps.sql.failfast.FailFastConnection;
+import com.aoapps.sql.failfast.FailFastConnectionImpl;
+import com.aoapps.sql.pool.AOConnectionPool;
+import com.aoapps.sql.tracker.ConnectionTracker;
+import com.aoapps.sql.tracker.ConnectionTrackerImpl;
 import java.sql.Connection;
 import java.sql.SQLData;
 import java.sql.SQLException;
@@ -116,14 +116,14 @@ public class Database implements DatabaseAccess {
 	 * perform any necessary {@link DatabaseConnection#commit()}.
 	 * </p>
 	 *
-	 * @see #transactionCall(com.aoindustries.util.concurrent.CallableE)
-	 * @see #transactionCall(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
-	 * @see #transactionCall(com.aoindustries.dbc.DatabaseCallable)
-	 * @see #transactionCall(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
-	 * @see #transactionRun(com.aoindustries.lang.RunnableE)
-	 * @see #transactionRun(java.lang.Class, com.aoindustries.lang.RunnableE)
-	 * @see #transactionRun(com.aoindustries.dbc.DatabaseRunnable)
-	 * @see #transactionRun(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
+	 * @see #transactionCall(com.aoapps.lang.concurrent.CallableE)
+	 * @see #transactionCall(java.lang.Class, com.aoapps.lang.concurrent.CallableE)
+	 * @see #transactionCall(com.aoapps.dbc.DatabaseCallable)
+	 * @see #transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)
+	 * @see #transactionRun(com.aoapps.lang.RunnableE)
+	 * @see #transactionRun(java.lang.Class, com.aoapps.lang.RunnableE)
+	 * @see #transactionRun(com.aoapps.dbc.DatabaseRunnable)
+	 * @see #transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)
 	 */
 	public DatabaseConnection connect() {
 		return new DatabaseConnection(this);
@@ -215,7 +215,7 @@ public class Database implements DatabaseAccess {
 	 * it is passed here for de-initialization of {@link #getSqlDataTypes()}.
 	 *
 	 * @see  #initSqlDataTypes(java.sql.Connection)
-	 * @see  #release(com.aoindustries.sql.failfast.FailFastConnection)
+	 * @see  #release(com.aoapps.sql.failfast.FailFastConnection)
 	 */
 	protected void deinitSqlDataTypes(Connection conn) throws SQLException {
 		// TODO: Do not remove on release and avoid re-adding for performance?
@@ -245,7 +245,7 @@ public class Database implements DatabaseAccess {
 	 * </p>
 	 *
 	 * @see  #initConnection(java.sql.Connection)
-	 * @see  #release(com.aoindustries.sql.failfast.FailFastConnection)
+	 * @see  #release(com.aoapps.sql.failfast.FailFastConnection)
 	 */
 	protected void deinitConnection(Connection conn) throws SQLException {
 		// Do nothing
@@ -676,7 +676,7 @@ public class Database implements DatabaseAccess {
 	/**
 	 * Performs the deinit and close of the wrapped connection.
 	 *
-	 * @see  #release(com.aoindustries.sql.failfast.FailFastConnection)
+	 * @see  #release(com.aoapps.sql.failfast.FailFastConnection)
 	 */
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	private Throwable closeWrappedConnection(Throwable t0, Connection wrapped) {
@@ -733,14 +733,14 @@ public class Database implements DatabaseAccess {
 	/**
 	 * Checks if the current thread is in a transaction.
 	 *
-	 * @see #transactionCall(com.aoindustries.util.concurrent.CallableE)
-	 * @see #transactionCall(java.lang.Class, com.aoindustries.util.concurrent.CallableE)
-	 * @see #transactionCall(com.aoindustries.dbc.DatabaseCallable)
-	 * @see #transactionCall(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)
-	 * @see #transactionRun(com.aoindustries.lang.RunnableE)
-	 * @see #transactionRun(java.lang.Class, com.aoindustries.lang.RunnableE)
-	 * @see #transactionRun(com.aoindustries.dbc.DatabaseRunnable)
-	 * @see #transactionRun(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
+	 * @see #transactionCall(com.aoapps.lang.concurrent.CallableE)
+	 * @see #transactionCall(java.lang.Class, com.aoapps.lang.concurrent.CallableE)
+	 * @see #transactionCall(com.aoapps.dbc.DatabaseCallable)
+	 * @see #transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)
+	 * @see #transactionRun(com.aoapps.lang.RunnableE)
+	 * @see #transactionRun(java.lang.Class, com.aoapps.lang.RunnableE)
+	 * @see #transactionRun(com.aoapps.dbc.DatabaseRunnable)
+	 * @see #transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)
 	 */
 	public boolean isInTransaction() {
 		return transactionConnection.get()!=null;
@@ -815,7 +815,7 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * @deprecated  Please use {@link #transactionCall(com.aoindustries.dbc.DatabaseCallable)}
+	 * @deprecated  Please use {@link #transactionCall(com.aoapps.dbc.DatabaseCallable)}
 	 */
 	@Deprecated
 	@SuppressWarnings("overloads")
@@ -883,7 +883,7 @@ public class Database implements DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #transactionCall(java.lang.Class, com.aoindustries.dbc.DatabaseCallableE)}
+	 * @deprecated  Please use {@link #transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)}
 	 */
 	@Deprecated
 	final public <V, Ex extends Exception> V executeTransaction(Class<Ex> eClass, DatabaseCallableE<V, Ex> callable) throws SQLException, Ex {
@@ -959,7 +959,7 @@ public class Database implements DatabaseAccess {
 	}
 
 	/**
-	 * @deprecated  Please use {@link #transactionRun(com.aoindustries.dbc.DatabaseRunnable)}
+	 * @deprecated  Please use {@link #transactionRun(com.aoapps.dbc.DatabaseRunnable)}
 	 */
 	@Deprecated
 	@SuppressWarnings("overloads")
@@ -1000,7 +1000,7 @@ public class Database implements DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #transactionRun(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)}
+	 * @deprecated  Please use {@link #transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)}
 	 */
 	@Deprecated
 	final public <Ex extends Exception> void executeTransaction(Class<Ex> eClass, DatabaseRunnableE<Ex> runnable) throws SQLException, Ex {

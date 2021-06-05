@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2014, 2015, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2010, 2011, 2014, 2015, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -20,22 +20,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc;
+package com.aoapps.dbc;
 
 import java.sql.SQLException;
 
 /**
- * Target that may be used by {@link Database#transactionRun(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)}
- * and allows any arbitrary exception type in addition to the usual SQLException.
+ * Target that may be used by {@link Database#transactionRun(com.aoapps.dbc.DatabaseRunnable)}.
  *
- * @param  <Ex>  An arbitrary exception type that may be thrown
- *
- * @see  Database#transactionRun(java.lang.Class, com.aoindustries.dbc.DatabaseRunnableE)
+ * @see  Database#transactionRun(com.aoapps.dbc.DatabaseRunnable)
  *
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface DatabaseRunnableE<Ex extends Throwable> {
+public interface DatabaseRunnable extends DatabaseRunnableE<RuntimeException> {
 
-	void run(DatabaseConnection db) throws SQLException, Ex;
+	@Override
+	void run(DatabaseConnection db) throws SQLException;
 }

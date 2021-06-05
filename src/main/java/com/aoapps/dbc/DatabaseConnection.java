@@ -20,15 +20,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc;
+package com.aoapps.dbc;
 
-import com.aoindustries.exception.WrappedException;
-import com.aoindustries.lang.AutoCloseables;
-import com.aoindustries.lang.Throwables;
-import com.aoindustries.sql.Connections;
-import com.aoindustries.sql.failfast.FailFastConnection;
-import com.aoindustries.sql.tracker.ConnectionTracker;
-import com.aoindustries.util.ErrorPrinter;
+import com.aoapps.lang.AutoCloseables;
+import com.aoapps.lang.Throwables;
+import com.aoapps.lang.exception.WrappedException;
+import com.aoapps.lang.util.ErrorPrinter;
+import com.aoapps.sql.Connections;
+import com.aoapps.sql.failfast.FailFastConnection;
+import com.aoapps.sql.tracker.ConnectionTracker;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -589,7 +589,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * Closes and/or releases the current connection back to the pool.
 	 * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
 	 *
-	 * @see  Database#release(com.aoindustries.sql.failfast.FailFastConnection)
+	 * @see  Database#release(com.aoapps.sql.failfast.FailFastConnection)
 	 * @see  #close(java.lang.Throwable)
 	 */
 	@Override

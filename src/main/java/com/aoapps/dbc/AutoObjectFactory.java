@@ -20,9 +20,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc;
+package com.aoapps.dbc;
 
-import com.aoindustries.lang.Throwables;
+import com.aoapps.lang.Throwables;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

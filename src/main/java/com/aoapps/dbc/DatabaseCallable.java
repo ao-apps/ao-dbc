@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2014, 2015, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2010, 2011, 2014, 2015, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -20,32 +20,24 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc;
+package com.aoapps.dbc;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Processes the results from a query.  This is called only once, it is no longer row-by-row.
- * Iteration over the results is up to the implementation.
+ * Target that may be used by {@link Database#transactionCall(com.aoapps.dbc.DatabaseCallable)}.
  *
- * @param  <Ex>  An arbitrary exception type that may be thrown
+ * @see  Database#transactionCall(com.aoapps.dbc.DatabaseCallable)
  *
  * @author  AO Industries, Inc.
- *
- * @deprecated  Please use {@link ResultSetCallableE} or {@link ResultSetRunnableE}
  */
-@Deprecated
 @FunctionalInterface
-public interface ResultSetHandlerE<T, Ex extends Exception> extends ResultSetCallableE<T, Ex> {
+public interface DatabaseCallable<V> extends DatabaseCallableE<V, RuntimeException> {
 
 	@Override
-	default T call(ResultSet results) throws SQLException, Ex {
-		return handleResultSet(results);
-	}
-
-	/**
-	 * Process one set of results.
-	 */
-	T handleResultSet(ResultSet results) throws SQLException, Ex;
+	// TODO: Should these take DatabaseAccess instead?
+	//       This would support non-transactional, auto-commit, direct usage through Database,
+	//       which might be more optimal for one-off actions.
+	//       DatabaseAccess might have to gain some methods, though, such as close()/rollback()/commit(), which would be no-ops?
+	V call(DatabaseConnection db) throws SQLException;
 }

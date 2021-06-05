@@ -20,12 +20,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc;
+package com.aoapps.dbc;
 
-import com.aoindustries.collections.AoCollections;
-import com.aoindustries.collections.IntList;
-import com.aoindustries.collections.LongList;
-import com.aoindustries.sql.Connections;
+import com.aoapps.collections.AoCollections;
+import com.aoapps.collections.IntList;
+import com.aoapps.collections.LongList;
+import com.aoapps.sql.Connections;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -860,7 +860,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeObjectUpdate(java.lang.Class, java.lang.String, java.lang.Object...)
 	 *
-	 * @deprecated  Please use {@link #queryObject(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with a constructor lambda {@code Class::new}.
 	 */
 	@Deprecated
@@ -880,7 +880,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeObjectQuery(java.lang.Class, java.lang.String, java.lang.Object...)
 	 *
-	 * @deprecated  Please use {@link #updateObject(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with a constructor lambda {@code Class::new}.
 	 */
 	@Deprecated
@@ -893,7 +893,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when no row and row not required, or when row with null value.
 	 *
-	 * @deprecated  Please use {@link #queryObject(int, boolean, boolean, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryObject(int, boolean, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with a constructor lambda {@code Class::new}.
 	 */
 	@Deprecated
@@ -911,14 +911,14 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when row with null value.
 	 *
-	 * @see  #updateObject(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 * @see  #updateObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> T queryObject(ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, objectFactory, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #queryObject(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> T executeObjectQuery(ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
@@ -935,14 +935,14 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when row with null value.
 	 *
-	 * @see  #queryObject(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 * @see  #queryObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> T updateObject(ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
 		return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, objectFactory, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #updateObject(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> T executeObjectUpdate(ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
@@ -959,7 +959,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * @deprecated  Please use {@link #queryObject(int, boolean, boolean, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryObject(int, boolean, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, ObjectFactory<T> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException {
@@ -978,7 +978,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when row with null value.
 	 *
-	 * @see  #updateObject(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 * @see  #updateObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T, Ex extends Throwable> T queryObject(Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, Ex {
 		return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, eClass, objectFactory, sql, params);
@@ -987,7 +987,7 @@ public interface DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #queryObject(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, Ex extends Exception> T executeObjectQuery(Class<Ex> eClass, ObjectFactoryE<T, Ex> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, Ex {
@@ -1006,7 +1006,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  The value or {@code null} when row with null value.
 	 *
-	 * @see  #queryObject(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 * @see  #queryObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T, Ex extends Throwable> T updateObject(Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, Ex {
 		return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, eClass, objectFactory, sql, params);
@@ -1015,7 +1015,7 @@ public interface DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #updateObject(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, Ex extends Exception> T executeObjectUpdate(Class<Ex> eClass, ObjectFactoryE<T, Ex> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, Ex {
@@ -1051,7 +1051,7 @@ public interface DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #queryObject(int, boolean, boolean, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryObject(int, boolean, boolean, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, Ex extends Exception> T executeObjectQuery(int isolationLevel, boolean readOnly, boolean rowRequired, Class<Ex> eClass, ObjectFactoryE<T, Ex> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, Ex {
@@ -1069,7 +1069,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeObjectListUpdate(java.lang.Class, java.lang.String, java.lang.Object...)
 	 *
-	 * @deprecated  Please use {@link #queryList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with a constructor lambda {@code Class::new}.
 	 */
 	@Deprecated
@@ -1088,7 +1088,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeObjectListQuery(java.lang.Class, java.lang.String, java.lang.Object...)
 	 *
-	 * @deprecated  Please use {@link #updateList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with a constructor lambda {@code Class::new}.
 	 */
 	@Deprecated
@@ -1101,7 +1101,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  An unmodifiable list
 	 *
-	 * @deprecated  Please use {@link #queryList(int, boolean, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryList(int, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with a constructor lambda {@code Class::new}.
 	 */
 	@Deprecated
@@ -1118,14 +1118,14 @@ public interface DatabaseAccess {
 	 *
 	 * @return  An unmodifiable list
 	 *
-	 * @see  #updateList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 * @see  #updateList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> List<T> queryList(ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws SQLException {
 		return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, objectFactory, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #queryList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> List<T> executeObjectListQuery(ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
@@ -1141,14 +1141,14 @@ public interface DatabaseAccess {
 	 *
 	 * @return  An unmodifiable list
 	 *
-	 * @see  #queryList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 * @see  #queryList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> List<T> updateList(ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws SQLException {
 		return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, objectFactory, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #updateList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> List<T> executeObjectListUpdate(ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
@@ -1165,7 +1165,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * @deprecated  Please use {@link #queryList(int, boolean, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryList(int, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> List<T> executeObjectListQuery(int isolationLevel, boolean readOnly, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
@@ -1183,7 +1183,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  An unmodifiable list
 	 *
-	 * @see  #updateList(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 * @see  #updateList(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T, Ex extends Throwable> List<T> queryList(Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
 		return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, objectFactory, sql, params);
@@ -1192,7 +1192,7 @@ public interface DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #queryList(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryList(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, Ex extends Exception> List<T> executeObjectListQuery(Class<Ex> eClass, ObjectFactoryE<T, Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
@@ -1210,7 +1210,7 @@ public interface DatabaseAccess {
 	 *
 	 * @return  An unmodifiable list
 	 *
-	 * @see  #queryList(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 * @see  #queryList(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T, Ex extends Throwable> List<T> updateList(Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
 		return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, objectFactory, sql, params);
@@ -1219,7 +1219,7 @@ public interface DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #updateList(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateList(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, Ex extends Exception> List<T> executeObjectListUpdate(Class<Ex> eClass, ObjectFactoryE<T, Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
@@ -1241,7 +1241,7 @@ public interface DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #queryList(int, boolean, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryList(int, boolean, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, Ex extends Exception> List<T> executeObjectListQuery(int isolationLevel, boolean readOnly, Class<Ex> eClass, ObjectFactoryE<T, Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
@@ -1259,7 +1259,7 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
-	 * @see  #streamUpdate(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 * @see  #streamUpdate(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> Stream<T> stream(ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws SQLException {
 		return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, objectFactory, sql, params);
@@ -1276,7 +1276,7 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
-	 * @see  #stream(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 * @see  #stream(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> Stream<T> streamUpdate(ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws SQLException {
 		return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, objectFactory, sql, params);
@@ -1306,7 +1306,7 @@ public interface DatabaseAccess {
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #streamUpdate(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 * @see  #streamUpdate(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T, Ex extends Throwable> Stream<T> stream(Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
 		return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, objectFactory, sql, params);
@@ -1325,7 +1325,7 @@ public interface DatabaseAccess {
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #stream(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 * @see  #stream(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T, Ex extends Throwable> Stream<T> streamUpdate(Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
 		return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, objectFactory, sql, params);
@@ -1352,7 +1352,7 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
-	 * @see  #streamOptionalUpdate(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 * @see  #streamOptionalUpdate(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> Stream<Optional<T>> streamOptional(ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws SQLException {
 		return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, true, objectFactory, sql, params);
@@ -1368,7 +1368,7 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
-	 * @see  #streamOptional(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 * @see  #streamOptional(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T> Stream<Optional<T>> streamOptionalUpdate(ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws SQLException {
 		return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, false, objectFactory, sql, params);
@@ -1396,7 +1396,7 @@ public interface DatabaseAccess {
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #streamOptionalUpdate(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 * @see  #streamOptionalUpdate(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T, Ex extends Throwable> Stream<Optional<T>> streamOptional(Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
 		return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, objectFactory, sql, params);
@@ -1414,7 +1414,7 @@ public interface DatabaseAccess {
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #streamOptional(java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 * @see  #streamOptional(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T, Ex extends Throwable> Stream<Optional<T>> streamOptionalUpdate(Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
 		return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, objectFactory, sql, params);
@@ -1464,7 +1464,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeObjectCollectionUpdate(java.util.Collection, java.lang.Class, java.lang.String, java.lang.Object...)
 	 *
-	 * @deprecated  Please use {@link #queryCollection(java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with a constructor lambda {@code Class::new}.
 	 */
 	@Deprecated
@@ -1481,7 +1481,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeObjectCollectionQuery(java.util.Collection, java.lang.Class, java.lang.String, java.lang.Object...)
 	 *
-	 * @deprecated  Please use {@link #updateCollection(java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with a constructor lambda {@code Class::new}.
 	 */
 	@Deprecated
@@ -1492,7 +1492,7 @@ public interface DatabaseAccess {
 	/**
 	 * Query the database with a {@link Collection Collection&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
 	 *
-	 * @deprecated  Please use {@link #queryCollection(int, boolean, java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCollection(int, boolean, java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with a constructor lambda {@code Class::new}.
 	 */
 	@Deprecated
@@ -1507,14 +1507,14 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
-	 * @see  #updateCollection(java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 * @see  #updateCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T, C extends Collection<? super T>> C queryCollection(C collection, ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws SQLException {
 		return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, collection, objectFactory, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #queryCollection(java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, C extends Collection<? super T>> C executeObjectCollectionQuery(C collection, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
@@ -1528,14 +1528,14 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
-	 * @see  #queryCollection(java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 * @see  #queryCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	default <T, C extends Collection<? super T>> C updateCollection(C collection, ObjectFactory<? extends T> objectFactory, String sql, Object ... params) throws SQLException {
 		return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, collection, objectFactory, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #updateCollection(java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, C extends Collection<? super T>> C executeObjectCollectionUpdate(C collection, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
@@ -1550,7 +1550,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * @deprecated  Please use {@link #queryCollection(int, boolean, java.util.Collection, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCollection(int, boolean, java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, C extends Collection<? super T>> C executeObjectCollectionQuery(int isolationLevel, boolean readOnly, C collection, ObjectFactory<T> objectFactory, String sql, Object ... params) throws SQLException {
@@ -1566,7 +1566,7 @@ public interface DatabaseAccess {
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #updateCollection(java.util.Collection, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 * @see  #updateCollection(java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T, C extends Collection<? super T>, Ex extends Throwable> C queryCollection(C collection, Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
 		return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, collection, eClass, objectFactory, sql, params);
@@ -1575,7 +1575,7 @@ public interface DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #queryCollection(java.util.Collection, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCollection(java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, C extends Collection<? super T>, Ex extends Exception> C executeObjectCollectionQuery(C collection, Class<Ex> eClass, ObjectFactoryE<T, Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
@@ -1591,7 +1591,7 @@ public interface DatabaseAccess {
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #queryCollection(java.util.Collection, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 * @see  #queryCollection(java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	default <T, C extends Collection<? super T>, Ex extends Throwable> C updateCollection(C collection, Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
 		return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, collection, eClass, objectFactory, sql, params);
@@ -1600,7 +1600,7 @@ public interface DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #updateCollection(java.util.Collection, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateCollection(java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, C extends Collection<? super T>, Ex extends Exception> C executeObjectCollectionUpdate(C collection, Class<Ex> eClass, ObjectFactoryE<T, Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
@@ -1634,7 +1634,7 @@ public interface DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #queryCollection(int, boolean, java.util.Collection, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCollection(int, boolean, java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, C extends Collection<? super T>, Ex extends Exception> C executeObjectCollectionQuery(int isolationLevel, boolean readOnly, C collection, Class<Ex> eClass, ObjectFactoryE<T, Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
@@ -1650,7 +1650,7 @@ public interface DatabaseAccess {
 	 *
 	 * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
 	 *
-	 * @see  #updateNewCollection(java.util.function.Function, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+	 * @see  #updateNewCollection(java.util.function.Function, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
 	 */
 	@SuppressWarnings("overloads")
 	default <T, C extends Collection<? super T>> C queryNewCollection(
@@ -1669,7 +1669,7 @@ public interface DatabaseAccess {
 	 *
 	 * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
 	 *
-	 * @see  #queryNewCollection(java.util.function.Function, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object[])
+	 * @see  #queryNewCollection(java.util.function.Function, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object[])
 	 */
 	@SuppressWarnings("overloads")
 	default <T, C extends Collection<? super T>> C updateNewCollection(
@@ -1703,7 +1703,7 @@ public interface DatabaseAccess {
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
 	 *
-	 * @see  #updateNewCollection(java.util.function.Function, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+	 * @see  #updateNewCollection(java.util.function.Function, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
 	 */
 	@SuppressWarnings("overloads")
 	default <T, C extends Collection<? super T>, Ex extends Throwable> C queryNewCollection(
@@ -1723,7 +1723,7 @@ public interface DatabaseAccess {
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
 	 *
-	 * @see  #queryNewCollection(java.util.function.Function, java.lang.Class, com.aoindustries.dbc.ObjectFactoryE, java.lang.String, java.lang.Object[])
+	 * @see  #queryNewCollection(java.util.function.Function, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object[])
 	 */
 	@SuppressWarnings("overloads")
 	default <T, C extends Collection<? super T>, Ex extends Throwable> C updateNewCollection(
@@ -1772,14 +1772,14 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
-	 * @see  #updateCall(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object[])
+	 * @see  #updateCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object[])
 	 */
 	default <T> T queryCall(ResultSetCallable<? extends T> resultSetCallable, String sql, Object ... params) throws SQLException {
 		return queryCall(Connections.DEFAULT_TRANSACTION_ISOLATION, true, resultSetCallable, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #queryCall(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> T executeQuery(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
@@ -1793,14 +1793,14 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
-	 * @see  #queryCall(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object[])
+	 * @see  #queryCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object[])
 	 */
 	default <T> T updateCall(ResultSetCallable<? extends T> resultSetCallable, String sql, Object ... params) throws SQLException {
 		return queryCall(Connections.DEFAULT_TRANSACTION_ISOLATION, false, resultSetCallable, sql, params);
 	}
 
 	/**
-	 * @deprecated  Please use {@link #updateCall(com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> T executeUpdate(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
@@ -1815,7 +1815,7 @@ public interface DatabaseAccess {
 	}
 
 	/**
-	 * @deprecated  Please use {@link #queryCall(int, boolean, com.aoindustries.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCall(int, boolean, com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T> T executeQuery(int isolationLevel, boolean readOnly, ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
@@ -1831,7 +1831,7 @@ public interface DatabaseAccess {
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #updateCall(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object[])
+	 * @see  #updateCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object[])
 	 */
 	default <T, Ex extends Throwable> T queryCall(Class<? extends Ex> eClass, ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable, String sql, Object ... params) throws SQLException, Ex {
 		return queryCall(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, resultSetCallable, sql, params);
@@ -1840,7 +1840,7 @@ public interface DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #queryCall(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, Ex extends Exception> T executeQuery(Class<Ex> eClass, ResultSetHandlerE<T, Ex> resultSetHandler, String sql, Object ... params) throws SQLException, Ex {
@@ -1856,7 +1856,7 @@ public interface DatabaseAccess {
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #queryCall(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object[])
+	 * @see  #queryCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object[])
 	 */
 	default <T, Ex extends Throwable> T updateCall(Class<? extends Ex> eClass, ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable, String sql, Object ... params) throws SQLException, Ex {
 		return queryCall(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, resultSetCallable, sql, params);
@@ -1865,7 +1865,7 @@ public interface DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #updateCall(java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, Ex extends Exception> T executeUpdate(Class<Ex> eClass, ResultSetHandlerE<T, Ex> resultSetHandler, String sql, Object ... params) throws SQLException, Ex {
@@ -1882,7 +1882,7 @@ public interface DatabaseAccess {
 	/**
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @deprecated  Please use {@link #queryCall(int, boolean, java.lang.Class, com.aoindustries.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryCall(int, boolean, java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated
 	default <T, Ex extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<Ex> eClass, ResultSetHandlerE<T, Ex> resultSetHandler, String sql, Object ... params) throws SQLException, Ex {
@@ -1896,7 +1896,7 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code true}</li>
 	 * </ul>
 	 *
-	 * @see  #updateRun(com.aoindustries.dbc.ResultSetRunnable, java.lang.String, java.lang.Object[])
+	 * @see  #updateRun(com.aoapps.dbc.ResultSetRunnable, java.lang.String, java.lang.Object[])
 	 */
 	default void queryRun(ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
 		queryRun(Connections.DEFAULT_TRANSACTION_ISOLATION, true, resultSetRunnable, sql, params);
@@ -1909,7 +1909,7 @@ public interface DatabaseAccess {
 	 *   <li>readOnly = {@code false}</li>
 	 * </ul>
 	 *
-	 * @see  #queryRun(com.aoindustries.dbc.ResultSetRunnable, java.lang.String, java.lang.Object[])
+	 * @see  #queryRun(com.aoapps.dbc.ResultSetRunnable, java.lang.String, java.lang.Object[])
 	 */
 	default void updateRun(ResultSetRunnable resultSetRunnable, String sql, Object ... params) throws SQLException {
 		queryRun(Connections.DEFAULT_TRANSACTION_ISOLATION, false, resultSetRunnable, sql, params);
@@ -1931,7 +1931,7 @@ public interface DatabaseAccess {
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #updateRun(java.lang.Class, com.aoindustries.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object[])
+	 * @see  #updateRun(java.lang.Class, com.aoapps.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object[])
 	 */
 	default <Ex extends Throwable> void queryRun(Class<? extends Ex> eClass, ResultSetRunnableE<? extends Ex> resultSetRunnable, String sql, Object ... params) throws SQLException, Ex {
 		queryRun(Connections.DEFAULT_TRANSACTION_ISOLATION, true, eClass, resultSetRunnable, sql, params);
@@ -1946,7 +1946,7 @@ public interface DatabaseAccess {
 	 *
 	 * @param  <Ex>  An arbitrary exception type that may be thrown
 	 *
-	 * @see  #queryRun(java.lang.Class, com.aoindustries.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object[])
+	 * @see  #queryRun(java.lang.Class, com.aoapps.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object[])
 	 */
 	default <Ex extends Throwable> void updateRun(Class<? extends Ex> eClass, ResultSetRunnableE<? extends Ex> resultSetRunnable, String sql, Object ... params) throws SQLException, Ex {
 		queryRun(Connections.DEFAULT_TRANSACTION_ISOLATION, false, eClass, resultSetRunnable, sql, params);
@@ -2055,7 +2055,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeShortListUpdate(java.lang.String, java.lang.Object...)
 	 *
-	 * @deprecated  Please use {@link #queryList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with {@link ObjectFactories#Short}
 	 */
 	@Deprecated
@@ -2072,7 +2072,7 @@ public interface DatabaseAccess {
 	 *
 	 * @see  #executeShortListQuery(java.lang.String, java.lang.Object...)
 	 *
-	 * @deprecated  Please use {@link #updateList(com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #updateList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with {@link ObjectFactories#Short}
 	 */
 	@Deprecated
@@ -2083,7 +2083,7 @@ public interface DatabaseAccess {
 	/**
 	 * Query the database with a {@code List<Short>} return type.
 	 *
-	 * @deprecated  Please use {@link #queryList(int, boolean, com.aoindustries.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+	 * @deprecated  Please use {@link #queryList(int, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
 	 *              with {@link ObjectFactories#Short}
 	 */
 	@Deprecated

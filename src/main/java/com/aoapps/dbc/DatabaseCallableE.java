@@ -20,36 +20,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc;
+package com.aoapps.dbc;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Spliterator;
 
 /**
- * Creates instances of objects of the generics type from a result set.
+ * Target that may be used by {@link Database#transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)}
+ * and allows any arbitrary exception type in addition to the usual SQLException.
  *
  * @param  <Ex>  An arbitrary exception type that may be thrown
+ *
+ * @see  Database#transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)
  *
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface ObjectFactoryE<T, Ex extends Throwable> {
+public interface DatabaseCallableE<V, Ex extends Throwable> {
 
-	/**
-	 * Creates one object from the current values in the ResultSet.
-	 */
-	T createObject(ResultSet result) throws SQLException, Ex;
-
-	/**
-	 * Can this object factory return {@code null} from {@link #createObject(java.sql.ResultSet)}?
-	 * <p>
-	 * Note: This is used to enable the {@link Spliterator#NONNULL} on streams.
-	 * </p>
-	 *
-	 * @return  {@code true} by default
-	 */
-	default boolean isNullable() {
-		return true;
-	}
+	V call(DatabaseConnection db) throws SQLException, Ex;
 }

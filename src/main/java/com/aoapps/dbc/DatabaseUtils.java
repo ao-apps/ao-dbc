@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -20,9 +20,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc;
+package com.aoapps.dbc;
 
-import static com.aoindustries.encoding.TextInPsqlEncoder.textInPsqlEncoder;
+import static com.aoapps.encoding.TextInPsqlEncoder.textInPsqlEncoder;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

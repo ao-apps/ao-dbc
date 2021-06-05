@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2020  AO Industries, Inc.
+ * Copyright (C) 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -20,9 +20,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc;
+package com.aoapps.dbc;
 
-import com.aoindustries.sql.pool.AOConnectionPool;
+import com.aoapps.sql.pool.AOConnectionPool;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
 

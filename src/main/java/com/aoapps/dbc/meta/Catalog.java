@@ -20,12 +20,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc.meta;
+package com.aoapps.dbc.meta;
 
-import com.aoindustries.collections.AoCollections;
-import com.aoindustries.dbc.NoRowException;
-import com.aoindustries.util.graph.Edge;
-import com.aoindustries.util.graph.SymmetricGraph;
+import com.aoapps.collections.AoCollections;
+import com.aoapps.dbc.NoRowException;
+import com.aoapps.hodgepodge.graph.Edge;
+import com.aoapps.hodgepodge.graph.SymmetricGraph;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

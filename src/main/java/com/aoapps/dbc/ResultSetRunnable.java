@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2010, 2011, 2014, 2015, 2019, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -20,24 +20,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc;
+package com.aoapps.dbc;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Target that may be used by {@link Database#transactionCall(com.aoindustries.dbc.DatabaseCallable)}.
- *
- * @see  Database#transactionCall(com.aoindustries.dbc.DatabaseCallable)
+ * Processes the results from a query.  This is called only once.
+ * Iteration over the results is up to the implementation.
  *
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface DatabaseCallable<V> extends DatabaseCallableE<V, RuntimeException> {
+public interface ResultSetRunnable extends ResultSetRunnableE<RuntimeException> {
 
+	/**
+	 * Process one set of results.
+	 */
 	@Override
-	// TODO: Should these take DatabaseAccess instead?
-	//       This would support non-transactional, auto-commit, direct usage through Database,
-	//       which might be more optimal for one-off actions.
-	//       DatabaseAccess might have to gain some methods, though, such as close()/rollback()/commit(), which would be no-ops?
-	V call(DatabaseConnection db) throws SQLException;
+	void run(ResultSet results) throws SQLException;
 }

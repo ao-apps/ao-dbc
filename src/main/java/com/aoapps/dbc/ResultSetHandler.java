@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2008, 2009, 2010, 2011, 2014, 2015, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -20,24 +20,31 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.aoindustries.dbc;
+package com.aoapps.dbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Processes the results from a query.  This is called only once.
+ * Processes the results from a query.  This is called only once, it is no longer row-by-row.
  * Iteration over the results is up to the implementation.
  *
- * @param  <Ex>  An arbitrary exception type that may be thrown
- *
  * @author  AO Industries, Inc.
+ *
+ * @deprecated  Please use {@link ResultSetCallable} or {@link ResultSetRunnable}
  */
+@Deprecated
 @FunctionalInterface
-public interface ResultSetCallableE<T, Ex extends Throwable> {
+public interface ResultSetHandler<T> extends ResultSetCallable<T>, ResultSetHandlerE<T, RuntimeException> {
+
+	@Override
+	default T call(ResultSet results) throws SQLException {
+		return handleResultSet(results);
+	}
 
 	/**
 	 * Process one set of results.
 	 */
-	T call(ResultSet results) throws SQLException, Ex;
+	@Override
+	T handleResultSet(ResultSet results) throws SQLException;
 }
