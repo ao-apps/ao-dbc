@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 		shortTitle="Changelog"
 		tocLevels="1"
 		datePublished="2016-10-29T19:31:26-05:00"
-		dateModified="2021-06-03T22:53:21-05:00"
+		dateModified="2021-06-27T16:13:41-05:00"
 	>
 		<c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
 			<changelog:release
@@ -50,6 +50,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			>
 				<ul>
 					<li>Minimum Java version changed from 1.8 to 11.</li>
+					<li>Now supports Java 9+ modules with included <code>module-info.class</code>.</li>
 					<li>Maven artifact relocated from <code>com.aoindustries:ao-dbc</code> to <code>com.aoapps:ao-dbc</code>.</li>
 					<li>Package renamed from <code>com.aoindustries.dbc</code> to <code>com.aoapps.dbc</code>.</li>
 				</ul>
@@ -69,12 +70,12 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			<ul>
 				<li>
 					<p>
-						Fixed bug where <code><ao:a href="apidocs/com/aoapps/dbc/NoRowException.html">NoRowException</ao:a></code>
+						Fixed bug where <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/NoRowException.html">NoRowException</ao:a></code>
 						(and similar) were being wrapped, which was interfering with catch blocks.
 					</p>
 					<p>
-						Removed all uses of <ao:a href="https://oss.aoapps.com/sql/apidocs/com/aoapps/sql/WrappedSQLException.html">WrappedSQLException</ao:a>.
-						Now registers SQL statements directly with <code><ao:a href="https://oss.aoapps.com/lang/apidocs/com/aoapps/lang/util/ErrorPrinter.html">ErrorPrinter</ao:a></code>
+						Removed all uses of <ao:a href="https://oss.aoapps.com/sql/apidocs/com.aoapps.sql/com/aoapps/sql/WrappedSQLException.html">WrappedSQLException</ao:a>.
+						Now registers SQL statements directly with <code><ao:a href="https://oss.aoapps.com/lang/apidocs/com.aoapps.lang/com/aoapps/lang/util/ErrorPrinter.html">ErrorPrinter</ao:a></code>
 						instead.  This allows the SQL statements to be logged while not altering exception types underneath
 						the application.
 					</p>
@@ -109,7 +110,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 			<ul>
 				<li>
 					Now subclassing more specific exception types where appropriate, instead of just using
-					<ao:a rel="nofollow" href="@{javadoc.link.javase}java/sql/SQLException.html">SQLException</ao:a>
+					<ao:a rel="nofollow" href="@{javadoc.link.javase}java.sql/java/sql/SQLException.html">SQLException</ao:a>
 					everywhere.
 				</li>
 			</ul>
@@ -289,7 +290,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 				</li>
 				<li>
 					Defined <ao:a href="https://en.wikipedia.org/wiki/SQLSTATE">SQLSTATE</ao:a> values for all
-					<ao:a rel="nofollow" href="@{javadoc.link.javase}java/sql/SQLException.html">SQLException</ao:a>.
+					<ao:a rel="nofollow" href="@{javadoc.link.javase}java.sql/java/sql/SQLException.html">SQLException</ao:a>.
 				</li>
 				<li>
 					<p>
@@ -390,11 +391,11 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					<code>execute*Query</code>.  Less is more - now get back to work!
 				</li>
 				<li>
-					Now supports the automatic loading of <ao:a rel="nofollow" href="@{javadoc.link.javase}java/sql/SQLData.html">SQLData</ao:a>
-					implementations via <ao:a rel="nofollow" href="@{javadoc.link.javase}java/util/ServiceLoader.html">ServiceLoader</ao:a>.
+					Now supports the automatic loading of <ao:a rel="nofollow" href="@{javadoc.link.javase}java.sql/java/sql/SQLData.html">SQLData</ao:a>
+					implementations via <ao:a rel="nofollow" href="@{javadoc.link.javase}java.base/java/util/ServiceLoader.html">ServiceLoader</ao:a>.
 				</li>
 				<li>
-					Now calling <ao:a rel="nofollow" href="@{javadoc.link.javase}java/sql/PreparedStatement.html#setObject(int, java.lang.Object)">PreparedStatement.setObject(int, java.lang.Object)</ao:a>
+					Now calling <ao:a rel="nofollow" href="@{javadoc.link.javase}java.sql/java/sql/PreparedStatement.html#setObject(int, java.lang.Object)">PreparedStatement.setObject(int, java.lang.Object)</ao:a>
 					to give the database driver a chance to decide what to do.
 				</li>
 			</ul>
