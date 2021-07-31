@@ -168,7 +168,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId><artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
-							<offlineLinks>
+							<offlineLinks combine.children="append">
 								<!-- Direct -->
 								<offlineLink>
 									<url>https://oss.aoapps.com/collections/apidocs/</url>
@@ -205,11 +205,6 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 								<offlineLink>
 									<url>https://oss.aoapps.com/sql/tracker/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoapps/ao-sql-tracker</location>
-								</offlineLink>
-								<!-- Java SE -->
-								<offlineLink>
-									<url>${javadoc.link.javase}</url>
-									<location>${project.build.directory}/offlineLinks/com/aoapps/javadoc/offline/javase/${javase.release}</location>
 								</offlineLink>
 							</offlineLinks>
 						</configuration>
