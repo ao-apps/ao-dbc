@@ -24,6 +24,7 @@ package com.aoapps.dbc;
 
 import com.aoapps.lang.EmptyArrays;
 import com.aoapps.lang.Throwables;
+import com.aoapps.lang.exception.LocalizedException;
 import com.aoapps.lang.i18n.Resources;
 import java.io.Serializable;
 import java.sql.ResultSet;
@@ -33,7 +34,7 @@ import java.sql.SQLNonTransientException;
 /**
  * Thrown when more rows are retrieved than expected.
  */
-public class ExtraRowException extends SQLNonTransientException {
+public class ExtraRowException extends SQLNonTransientException implements LocalizedException {
 
 	private static final long serialVersionUID = 1L;
 
@@ -102,6 +103,25 @@ public class ExtraRowException extends SQLNonTransientException {
 	@Override
 	public String getLocalizedMessage() {
 		return (resources == null) ? super.getLocalizedMessage() : resources.getMessage(key, (Object[])args);
+	}
+
+	@Override
+	final public Resources getResources() {
+		return resources;
+	}
+
+	@Override
+	final public String getKey() {
+		return key;
+	}
+
+	/**
+	 * @return  No defensive copy
+	 */
+	@Override
+	@SuppressWarnings("ReturnOfCollectionOrArrayField")
+	final public Serializable[] getArgs() {
+		return args;
 	}
 
 	static {
