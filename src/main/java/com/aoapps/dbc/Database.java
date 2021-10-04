@@ -103,7 +103,7 @@ public class Database implements DatabaseAccess {
 	 *              the transaction semantics.
 	 */
 	@Deprecated
-	final public DatabaseConnection createDatabaseConnection() {
+	public final DatabaseConnection createDatabaseConnection() {
 		return connect();
 	}
 
@@ -599,7 +599,7 @@ public class Database implements DatabaseAccess {
 	 */
 	@Deprecated
 	@SuppressWarnings("null")
-	final public void releaseConnection(Connection conn) throws SQLException {
+	public final void releaseConnection(Connection conn) throws SQLException {
 		FailFastConnection failFastConnection;
 		if(conn instanceof FailFastConnection) {
 			failFastConnection = (FailFastConnection)conn;
@@ -819,7 +819,7 @@ public class Database implements DatabaseAccess {
 	 */
 	@Deprecated
 	@SuppressWarnings("overloads")
-	final public <V> V executeTransaction(DatabaseCallable<V> callable) throws SQLException {
+	public final <V> V executeTransaction(DatabaseCallable<V> callable) throws SQLException {
 		return transactionCall(callable);
 	}
 
@@ -886,7 +886,7 @@ public class Database implements DatabaseAccess {
 	 * @deprecated  Please use {@link #transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)}
 	 */
 	@Deprecated
-	final public <V, Ex extends Exception> V executeTransaction(Class<Ex> eClass, DatabaseCallableE<V, Ex> callable) throws SQLException, Ex {
+	public final <V, Ex extends Exception> V executeTransaction(Class<Ex> eClass, DatabaseCallableE<V, Ex> callable) throws SQLException, Ex {
 		return transactionCall(eClass, callable);
 	}
 
@@ -963,7 +963,7 @@ public class Database implements DatabaseAccess {
 	 */
 	@Deprecated
 	@SuppressWarnings("overloads")
-	final public void executeTransaction(DatabaseRunnable runnable) throws SQLException {
+	public final void executeTransaction(DatabaseRunnable runnable) throws SQLException {
 		transactionRun(runnable);
 	}
 
@@ -1003,7 +1003,7 @@ public class Database implements DatabaseAccess {
 	 * @deprecated  Please use {@link #transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)}
 	 */
 	@Deprecated
-	final public <Ex extends Exception> void executeTransaction(Class<Ex> eClass, DatabaseRunnableE<Ex> runnable) throws SQLException, Ex {
+	public final <Ex extends Exception> void executeTransaction(Class<Ex> eClass, DatabaseRunnableE<Ex> runnable) throws SQLException, Ex {
 		transactionRun(eClass, runnable);
 	}
 

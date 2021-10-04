@@ -37,7 +37,7 @@ import java.util.logging.Logger;
  *
  * @author  AO Industries, Inc.
  */
-final public class DatabaseUtils {
+public final class DatabaseUtils {
 
 	private static final Logger logger = Logger.getLogger(DatabaseUtils.class.getName());
 

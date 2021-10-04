@@ -33,7 +33,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class ObjectFactories {
+public final class ObjectFactories {
 
 	/**
 	 * Make no instances.
@@ -153,7 +153,7 @@ final public class ObjectFactories {
 		 * @return  {@code false}
 		 */
 		@Override
-		final public boolean isNullable() {
+		public final boolean isNullable() {
 			return false;
 		}
 	}
