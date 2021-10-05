@@ -38,7 +38,7 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 / <a target="${javadoc.target}" href="${project.url}">Database Connectivity</a>]]></javadoc.breadcrumbs>
 		<!-- SonarQube -->
 		<sonar.projectKey>${project.groupId}:${project.artifactId}</sonar.projectKey>
-		<sonar.organization>aoindustries</sonar.organization>
+		<sonar.organization>ao-apps</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<!-- TODO: Implement tests -->
 		<sonar.coverage.exclusions>**.*</sonar.coverage.exclusions>
@@ -73,20 +73,20 @@ along with ao-dbc.  If not, see <http://www.gnu.org/licenses />.
 	</developers>
 
 	<scm>
-		<connection>scm:git:git://github.com/aoindustries/ao-dbc.git</connection>
-		<developerConnection>scm:git:git@github.com:aoindustries/ao-dbc.git</developerConnection>
-		<url>https://github.com/aoindustries/ao-dbc</url>
+		<connection>scm:git:git://github.com/ao-apps/ao-dbc.git</connection>
+		<developerConnection>scm:git:git@github.com:ao-apps/ao-dbc.git</developerConnection>
+		<url>https://github.com/ao-apps/ao-dbc</url>
 		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
 		<system>GitHub Issues</system>
-		<url>https://github.com/aoindustries/ao-dbc/issues</url>
+		<url>https://github.com/ao-apps/ao-dbc/issues</url>
 	</issueManagement>
 
 	<ciManagement>
 		<system>GitHub Actions</system>
-		<url>https://github.com/aoindustries/ao-dbc/actions</url>
+		<url>https://github.com/ao-apps/ao-dbc/actions</url>
 	</ciManagement>
 
 	<repositories>
