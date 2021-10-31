@@ -743,7 +743,7 @@ public class Database implements DatabaseAccess {
 	 * @see #transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)
 	 */
 	public boolean isInTransaction() {
-		return transactionConnection.get()!=null;
+		return transactionConnection.get() != null;
 	}
 
 	/**
