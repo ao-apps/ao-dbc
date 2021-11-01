@@ -985,7 +985,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
 		@Override
 		@SuppressWarnings("UseSpecificCatch")
-		public T next() {
+		public T next() throws NoSuchElementException {
 			try {
 				if(nextSet) {
 					T t = next;
