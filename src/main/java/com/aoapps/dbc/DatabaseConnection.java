@@ -1027,7 +1027,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 						switch(resultType) {
 							case ResultSet.TYPE_FORWARD_ONLY :
 								spliterator = Spliterators.spliteratorUnknownSize(
-									new ResultSetIterator<T, Ex>(objectFactory, isNullable, results),
+									new ResultSetIterator<>(objectFactory, isNullable, results),
 									characteristics
 								);
 								break;
@@ -1041,7 +1041,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 									results.beforeFirst();
 								}
 								spliterator = Spliterators.spliterator(
-									new ResultSetIterator<T, Ex>(objectFactory, isNullable, results),
+									new ResultSetIterator<>(objectFactory, isNullable, results),
 									rowCount,
 									characteristics
 								);

@@ -129,7 +129,7 @@ public class Catalog {
 	 * @param tableTypes  the set of tables types or {@code null} for all types
 	 */
 	public SymmetricGraph<Table, Edge<Table>, SQLException> getForeignKeyGraph(final Set<String> tableTypes) {
-		return new SymmetricGraph<Table, Edge<Table>, SQLException>() {
+		return new SymmetricGraph<>() {
 
 			@Override
 			public Set<Table> getVertices() throws SQLException {

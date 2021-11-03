@@ -1962,7 +1962,7 @@ public interface DatabaseAccess {
 			isolationLevel,
 			readOnly,
 			eClass,
-			(ResultSet results) -> {
+			results -> {
 				resultSetRunnable.run(results);
 				return null;
 			},
