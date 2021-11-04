@@ -118,7 +118,7 @@ public final class ObjectFactories {
 		public boolean isNullable() {
 			return false;
 		}
-	};
+	}
 
 	public static final ObjectFactory<java.lang.Short> Short = result -> {
 		short s = result.getShort(1);
@@ -162,7 +162,7 @@ public final class ObjectFactories {
 	 * Wraps an object factory, throwing {@link NullDataException} on any {@code null} result.
 	 */
 	private static final class NotNull<T> extends NotNullE<T, RuntimeException> implements ObjectFactory<T> {
-		
+
 		private NotNull(ObjectFactory<? extends T> objectFactory) {
 			super(objectFactory);
 		}
