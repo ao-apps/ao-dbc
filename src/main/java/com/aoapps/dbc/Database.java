@@ -789,7 +789,7 @@ public class Database implements DatabaseAccess {
 	 * @see #isInTransaction()
 	 */
 	public <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> eClass, CallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex {
-		return transactionCall(eClass, (DatabaseConnection db) -> callable.call());
+		return transactionCall(eClass, db -> callable.call());
 	}
 
 	/**
@@ -846,16 +846,16 @@ public class Database implements DatabaseAccess {
 	@SuppressWarnings("UseSpecificCatch")
 	public <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> eClass, DatabaseCallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex {
 		Throwable t0 = null;
-		DatabaseConnection conn = transactionConnection.get();
-		if(conn != null) {
+		DatabaseConnection db = transactionConnection.get();
+		if(db != null) {
 			// Reuse existing connection
 			try {
-				return callable.call(conn);
+				return callable.call(db);
 			} catch(NoRowException | NullDataException | ExtraRowException e) {
 				throw e;
 			} catch(Throwable t) {
 				t0 = Throwables.addSuppressed(t0, t);
-				t0 = conn.rollback(t0);
+				t0 = db.rollback(t0);
 			}
 		} else {
 			// Create new connection
@@ -933,7 +933,7 @@ public class Database implements DatabaseAccess {
 	 * @see #isInTransaction()
 	 */
 	public <Ex extends Throwable> void transactionRun(Class<? extends Ex> eClass, RunnableE<? extends Ex> runnable) throws SQLException, Ex {
-		transactionRun(eClass, (DatabaseConnection db) -> runnable.run());
+		transactionRun(eClass, db -> runnable.run());
 	}
 
 	/**
@@ -990,7 +990,7 @@ public class Database implements DatabaseAccess {
 	public <Ex extends Throwable> void transactionRun(Class<? extends Ex> eClass, DatabaseRunnableE<? extends Ex> runnable) throws SQLException, Ex {
 		transactionCall(
 			eClass,
-			(DatabaseConnection db) -> {
+			db -> {
 				runnable.run(db);
 				return null;
 			}
@@ -1014,23 +1014,17 @@ public class Database implements DatabaseAccess {
 
 	@Override
 	public DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return transactionCall((DatabaseConnection conn) ->
-			conn.doubleStream(isolationLevel, readOnly, sql, params)
-		);
+		return transactionCall(db -> db.doubleStream(isolationLevel, readOnly, sql, params));
 	}
 
 	@Override
 	public IntStream intStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return transactionCall((DatabaseConnection conn) ->
-			conn.intStream(isolationLevel, readOnly, sql, params)
-		);
+		return transactionCall(db -> db.intStream(isolationLevel, readOnly, sql, params));
 	}
 
 	@Override
 	public LongStream longStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
-		return transactionCall((DatabaseConnection conn) ->
-			conn.longStream(isolationLevel, readOnly, sql, params)
-		);
+		return transactionCall(db -> db.longStream(isolationLevel, readOnly, sql, params));
 	}
 
 	/**
@@ -1038,8 +1032,9 @@ public class Database implements DatabaseAccess {
 	 */
 	@Override
 	public <T, Ex extends Throwable> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
-		return transactionCall(eClass, (DatabaseConnection conn) ->
-			conn.stream(isolationLevel, readOnly, eClass, objectFactory, sql, params)
+		return transactionCall(
+			eClass,
+			db -> db.stream(isolationLevel, readOnly, eClass, objectFactory, sql, params)
 		);
 	}
 
@@ -1048,22 +1043,19 @@ public class Database implements DatabaseAccess {
 	 */
 	@Override
 	public <T, Ex extends Throwable> T queryCall(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable, String sql, Object ... params) throws SQLException, Ex {
-		return transactionCall(eClass, (DatabaseConnection conn) ->
-			conn.queryCall(isolationLevel, readOnly, eClass, resultSetCallable, sql, params)
+		return transactionCall(
+			eClass,
+			db -> db.queryCall(isolationLevel, readOnly, eClass, resultSetCallable, sql, params)
 		);
 	}
 
 	@Override
 	public int update(String sql, Object ... params) throws SQLException {
-		return transactionCall((DatabaseConnection conn) ->
-			conn.update(sql, params)
-		);
+		return transactionCall(db -> db.update(sql, params));
 	}
 
 	@Override
 	public long largeUpdate(String sql, Object ... params) throws SQLException {
-		return transactionCall((DatabaseConnection conn) ->
-			conn.largeUpdate(sql, params)
-		);
+		return transactionCall(db -> db.largeUpdate(sql, params));
 	}
 }
