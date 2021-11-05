@@ -73,7 +73,7 @@ public abstract class ObjectFactories {
 	 *
 	 * @deprecated  Please use a constructor lambda {@code Class::new}.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = false)
 	public static class Object<T> implements ObjectFactory<T> {
 
 		private final Class<? extends T> clazz;

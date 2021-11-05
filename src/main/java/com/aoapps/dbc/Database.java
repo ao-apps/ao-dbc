@@ -102,7 +102,7 @@ public class Database implements DatabaseAccess {
 	 * @deprecated  Please use either {@link #connect()} or one of the various call/run methods, which enforce
 	 *              the transaction semantics.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public final DatabaseConnection createDatabaseConnection() {
 		return connect();
 	}
@@ -597,7 +597,7 @@ public class Database implements DatabaseAccess {
 	 * @deprecated  Please release to the pool by {@linkplain Connection#close() closing the connection},
 	 *              preferably via try-with-resources.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	@SuppressWarnings("null")
 	public final void releaseConnection(Connection conn) throws SQLException {
 		FailFastConnection failFastConnection;
@@ -817,7 +817,7 @@ public class Database implements DatabaseAccess {
 	/**
 	 * @deprecated  Please use {@link #transactionCall(com.aoapps.dbc.DatabaseCallable)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	@SuppressWarnings("overloads")
 	public final <V> V executeTransaction(DatabaseCallable<V> callable) throws SQLException {
 		return transactionCall(callable);
@@ -885,7 +885,7 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @deprecated  Please use {@link #transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public final <V, Ex extends Exception> V executeTransaction(Class<Ex> eClass, DatabaseCallableE<V, Ex> callable) throws SQLException, Ex {
 		return transactionCall(eClass, callable);
 	}
@@ -961,7 +961,7 @@ public class Database implements DatabaseAccess {
 	/**
 	 * @deprecated  Please use {@link #transactionRun(com.aoapps.dbc.DatabaseRunnable)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	@SuppressWarnings("overloads")
 	public final void executeTransaction(DatabaseRunnable runnable) throws SQLException {
 		transactionRun(runnable);
@@ -1002,7 +1002,7 @@ public class Database implements DatabaseAccess {
 	 *
 	 * @deprecated  Please use {@link #transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public final <Ex extends Exception> void executeTransaction(Class<Ex> eClass, DatabaseRunnableE<Ex> runnable) throws SQLException, Ex {
 		transactionRun(eClass, runnable);
 	}

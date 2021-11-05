@@ -35,7 +35,7 @@ import java.sql.SQLException;
  *
  * @deprecated  Please use {@link ResultSetCallableE} or {@link ResultSetRunnableE}
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 @FunctionalInterface
 public interface ResultSetHandlerE<T, Ex extends Exception> extends ResultSetCallableE<T, Ex> {
 

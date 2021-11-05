@@ -580,7 +580,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	/**
 	 * @deprecated  Please use {@link #close()}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public void releaseConnection() throws SQLException {
 		close();
 	}
@@ -666,7 +666,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * @deprecated  Please use {@link #rollback()}.  The connection will be {@linkplain Connection#isValid(int) validated}
 	 *              during {@link #close()} when there is any unresolved {@linkplain FailFastConnection#getFailFastState() fail-fast state}.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public boolean rollbackAndClose() throws SQLException {
 		FailFastConnection c = _conn;
@@ -723,7 +723,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 	 * @deprecated  Please use {@link #rollback(java.lang.Throwable)}.  The connection will be {@linkplain Connection#isValid(int) validated}
 	 *              during {@link #close(java.lang.Throwable)} when there is any unresolved {@linkplain FailFastConnection#getFailFastState() fail-fast state}.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
 	public Throwable rollbackAndClose(Throwable t0) {
 		try {
