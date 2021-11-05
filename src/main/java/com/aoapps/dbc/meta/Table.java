@@ -91,7 +91,7 @@ public class Table {
 		return tableType;
 	}
 
-	private static class GetColumnMapLock {}
+	private static class GetColumnMapLock {/* Empty lock class to help heap profile */}
 	private final GetColumnMapLock getColumnMapLock = new GetColumnMapLock();
 	private SortedMap<String, Column> getColumnMapCache;
 
@@ -147,7 +147,7 @@ public class Table {
 		return column;
 	}
 
-	private static class GetColumnsLock {}
+	private static class GetColumnsLock {/* Empty lock class to help heap profile */}
 	private final GetColumnsLock getColumnsLock = new GetColumnsLock();
 	private List<Column> getColumnsCache;
 
@@ -192,7 +192,7 @@ public class Table {
 		}
 	}
 
-	private static class GetPrimaryKeyLock {}
+	private static class GetPrimaryKeyLock {/* Empty lock class to help heap profile */}
 	private final GetPrimaryKeyLock getPrimaryKeyLock = new GetPrimaryKeyLock();
 	private boolean getPrimaryKeyCached = false;
 	private Index getPrimaryKeyCache;
@@ -233,7 +233,7 @@ public class Table {
 		}
 	}
 
-	private static class GetImportedTablesLock {}
+	private static class GetImportedTablesLock {/* Empty lock class to help heap profile */}
 	private final GetImportedTablesLock getImportedTablesLock = new GetImportedTablesLock();
 	private Set<? extends Table> getImportedTablesCache;
 
@@ -267,7 +267,7 @@ public class Table {
 		}
 	}
 
-	private static class GetExportedTablesLock {}
+	private static class GetExportedTablesLock {/* Empty lock class to help heap profile */}
 	private final GetExportedTablesLock getExportedTablesLock = new GetExportedTablesLock();
 	private Set<? extends Table> getExportedTablesCache;
 

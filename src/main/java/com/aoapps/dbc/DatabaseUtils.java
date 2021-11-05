@@ -37,7 +37,10 @@ import java.util.logging.Logger;
  *
  * @author  AO Industries, Inc.
  */
-public final class DatabaseUtils {
+public abstract class DatabaseUtils {
+
+	/** Make no instances. */
+	private DatabaseUtils() {throw new AssertionError();}
 
 	private static final Logger logger = Logger.getLogger(DatabaseUtils.class.getName());
 
@@ -45,7 +48,7 @@ public final class DatabaseUtils {
 
 	/**
 	 * Gets a user-friendly description of the provided result in a string formatted like
-	 * {@code ('value', 'value', 'long_value_cutoff_at_32_characte…', int_value, NULL, …)}. 
+	 * {@code ('value', 'value', 'long_value_cutoff_at_32_characte…', int_value, NULL, …)}.
 	 * This must not be used generate SQL statements - it is just to provide user display.
 	 */
 	@SuppressWarnings("fallthrough")
@@ -151,6 +154,4 @@ public final class DatabaseUtils {
 				throw new AssertionError(resultType);
 		}
 	}
-
-	private DatabaseUtils() {}
 }

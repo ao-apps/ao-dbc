@@ -78,7 +78,7 @@ public class Schema {
 		return name;
 	}
 
-	private static class GetTablesLock {}
+	private static class GetTablesLock {/* Empty lock class to help heap profile */}
 	private final GetTablesLock getTablesLock = new GetTablesLock();
 	private SortedMap<String, Table> getTablesCache;
 

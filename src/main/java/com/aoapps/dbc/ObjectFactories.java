@@ -33,13 +33,10 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public final class ObjectFactories {
+public abstract class ObjectFactories {
 
-	/**
-	 * Make no instances.
-	 */
-	private ObjectFactories() {
-	}
+	/** Make no instances. */
+	private ObjectFactories() {throw new AssertionError();}
 
 	public static final ObjectFactory<java.math.BigDecimal> BigDecimal = result -> result.getBigDecimal(1);
 

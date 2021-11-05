@@ -62,7 +62,7 @@ public class Catalog {
 		return name;
 	}
 
-	private static class GetSchemasLock {}
+	private static class GetSchemasLock {/* Empty lock class to help heap profile */}
 	private final GetSchemasLock getSchemasLock = new GetSchemasLock();
 	private SortedMap<String, Schema> getSchemasCache;
 

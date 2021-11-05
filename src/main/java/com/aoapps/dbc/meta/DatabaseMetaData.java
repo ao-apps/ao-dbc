@@ -81,7 +81,7 @@ public class DatabaseMetaData {
 		return metaData;
 	}
 
-	private static class GetCatalogsLock {}
+	private static class GetCatalogsLock {/* Empty lock class to help heap profile */}
 	private final GetCatalogsLock getCatalogsLock = new GetCatalogsLock();
 	private SortedMap<String, Catalog> getCatalogsCache;
 
