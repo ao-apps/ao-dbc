@@ -119,7 +119,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
 						<groupId>org.apache.maven.plugins</groupId><artifactId>maven-dependency-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>unpack.offlineLinks</id><phase>generate-sources</phase><goals><goal>unpack</goal></goals>
+								<id>unpack.offlineLinks</id><phase>prepare-package</phase><goals><goal>unpack</goal></goals>
 								<configuration>
 									<artifactItems>
 										<!-- Direct -->
