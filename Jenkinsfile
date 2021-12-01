@@ -79,8 +79,10 @@ def upstreamProjects = [
  *                          '.'     -> [[path:'/*'],                                      *
  *                                      [path:'!/book/'],                                 *
  *                                      [path:'!/devel/']]                                *
- *                          'book'  -> [[path:'/book/']]                                  *
- *                          'devel' -> [[path:'/devel/']]                                 *
+ *                          'book'  -> [[path:'/.gitignore'],                             *
+ *                                      [path:'/book/']]                                  *
+ *                          'devel' -> [[path:'/.gitignore'],                             *
+ *                                      [path:'/devel/']]                                 *
  *                                                                                        *
  * scmUrl               The Git URL.                                                      *
  *                      Default depends on the project's SCM settings:                    *
@@ -175,6 +177,7 @@ if (!binding.hasVariable('sparseCheckoutPaths')) {
 		]
 	} else if (projectDir == 'book' || projectDir == 'devel') {
 		sparseCheckoutPaths = [
+			[path:'/.gitignore'],
 			[path:"/$projectDir/"]
 		]
 	} else {
