@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -33,7 +33,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public abstract class ObjectFactories {
+public final class ObjectFactories {
 
 	/** Make no instances. */
 	private ObjectFactories() {throw new AssertionError();}
