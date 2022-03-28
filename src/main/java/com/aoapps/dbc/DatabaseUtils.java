@@ -121,7 +121,7 @@ public final class DatabaseUtils {
 									textInPsqlEncoder.append((char)codePoint, sb);
 								}
 							}
-							textInPsqlEncoder.writeSuffixTo(sb);
+							textInPsqlEncoder.writeSuffixTo(sb, false);
 						} catch(IOException e) {
 							// TODO: This pattern is used may places, define in ao-lang?
 							throw new AssertionError("IOException should not occur on StringBuilder", e);

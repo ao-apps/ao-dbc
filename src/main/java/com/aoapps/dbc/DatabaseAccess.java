@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2018, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2018, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -1782,6 +1782,7 @@ public interface DatabaseAccess {
 	 * @deprecated  Please use {@link #queryCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated(forRemoval = true)
+	@SuppressWarnings("removal")
 	default <T> T executeQuery(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
 		return queryCall(resultSetHandler, sql, params);
 	}
@@ -1803,6 +1804,7 @@ public interface DatabaseAccess {
 	 * @deprecated  Please use {@link #updateCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated(forRemoval = true)
+	@SuppressWarnings("removal")
 	default <T> T executeUpdate(ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
 		return updateCall(resultSetHandler, sql, params);
 	}
@@ -1818,6 +1820,7 @@ public interface DatabaseAccess {
 	 * @deprecated  Please use {@link #queryCall(int, boolean, com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated(forRemoval = true)
+	@SuppressWarnings("removal")
 	default <T> T executeQuery(int isolationLevel, boolean readOnly, ResultSetHandler<T> resultSetHandler, String sql, Object ... params) throws SQLException {
 		return queryCall(isolationLevel, readOnly, resultSetHandler, sql, params);
 	}
@@ -1843,6 +1846,7 @@ public interface DatabaseAccess {
 	 * @deprecated  Please use {@link #queryCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated(forRemoval = true)
+	@SuppressWarnings("removal")
 	default <T, Ex extends Exception> T executeQuery(Class<Ex> eClass, ResultSetHandlerE<T, Ex> resultSetHandler, String sql, Object ... params) throws SQLException, Ex {
 		return queryCall(eClass, resultSetHandler, sql, params);
 	}
@@ -1868,6 +1872,7 @@ public interface DatabaseAccess {
 	 * @deprecated  Please use {@link #updateCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated(forRemoval = true)
+	@SuppressWarnings("removal")
 	default <T, Ex extends Exception> T executeUpdate(Class<Ex> eClass, ResultSetHandlerE<T, Ex> resultSetHandler, String sql, Object ... params) throws SQLException, Ex {
 		return updateCall(eClass, resultSetHandler, sql, params);
 	}
@@ -1885,6 +1890,7 @@ public interface DatabaseAccess {
 	 * @deprecated  Please use {@link #queryCall(int, boolean, java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
 	 */
 	@Deprecated(forRemoval = true)
+	@SuppressWarnings("removal")
 	default <T, Ex extends Exception> T executeQuery(int isolationLevel, boolean readOnly, Class<Ex> eClass, ResultSetHandlerE<T, Ex> resultSetHandler, String sql, Object ... params) throws SQLException, Ex {
 		return queryCall(isolationLevel, readOnly, eClass, resultSetHandler, sql, params);
 	}
