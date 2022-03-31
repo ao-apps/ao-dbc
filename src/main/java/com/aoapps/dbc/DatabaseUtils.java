@@ -114,8 +114,12 @@ public final class DatabaseUtils {
 								if(codePoint == 0) {
 									sb.append("\\x00");
 								} else if(charCount == 2) {
-									textInPsqlEncoder.append(Character.highSurrogate(codePoint), sb);
-									textInPsqlEncoder.append(Character.lowSurrogate(codePoint), sb);
+									if(Character.isValidCodePoint(codePoint)) {
+										textInPsqlEncoder.append(Character.highSurrogate(codePoint), sb);
+										textInPsqlEncoder.append(Character.lowSurrogate(codePoint), sb);
+									} else {
+										throw new IOException(String.format("Invalid code point: 0x%X", codePoint));
+									}
 								} else {
 									assert charCount == 1;
 									textInPsqlEncoder.append((char)codePoint, sb);
