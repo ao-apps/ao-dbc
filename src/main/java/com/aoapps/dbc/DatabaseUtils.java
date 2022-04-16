@@ -20,6 +20,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 package com.aoapps.dbc;
 
 import static com.aoapps.encoding.TextInPsqlEncoder.textInPsqlEncoder;
