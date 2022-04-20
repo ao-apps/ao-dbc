@@ -37,20 +37,20 @@ import java.util.Spliterator;
 @FunctionalInterface
 public interface ObjectFactoryE<T, Ex extends Throwable> {
 
-	/**
-	 * Creates one object from the current values in the ResultSet.
-	 */
-	T createObject(ResultSet result) throws SQLException, Ex;
+  /**
+   * Creates one object from the current values in the ResultSet.
+   */
+  T createObject(ResultSet result) throws SQLException, Ex;
 
-	/**
-	 * Can this object factory return {@code null} from {@link #createObject(java.sql.ResultSet)}?
-	 * <p>
-	 * Note: This is used to enable the {@link Spliterator#NONNULL} on streams.
-	 * </p>
-	 *
-	 * @return  {@code true} by default
-	 */
-	default boolean isNullable() {
-		return true;
-	}
+  /**
+   * Can this object factory return {@code null} from {@link #createObject(java.sql.ResultSet)}?
+   * <p>
+   * Note: This is used to enable the {@link Spliterator#NONNULL} on streams.
+   * </p>
+   *
+   * @return  {@code true} by default
+   */
+  default boolean isNullable() {
+    return true;
+  }
 }

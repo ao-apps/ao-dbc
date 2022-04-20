@@ -40,13 +40,13 @@ import java.sql.SQLException;
 @FunctionalInterface
 public interface ResultSetHandlerE<T, Ex extends Exception> extends ResultSetCallableE<T, Ex> {
 
-	@Override
-	default T call(ResultSet results) throws SQLException, Ex {
-		return handleResultSet(results);
-	}
+  @Override
+  default T call(ResultSet results) throws SQLException, Ex {
+    return handleResultSet(results);
+  }
 
-	/**
-	 * Process one set of results.
-	 */
-	T handleResultSet(ResultSet results) throws SQLException, Ex;
+  /**
+   * Process one set of results.
+   */
+  T handleResultSet(ResultSet results) throws SQLException, Ex;
 }

@@ -40,82 +40,88 @@ import java.util.TreeMap;
  */
 public class DatabaseMetaData {
 
-	private static final Collator englishCollator = Collator.getInstance(Locale.ENGLISH);
+  private static final Collator englishCollator = Collator.getInstance(Locale.ENGLISH);
 
-	/**
-	 * Gets the collator used for result ordering.
-	 */
-	public static Collator getCollator() {
-		return englishCollator;
-	}
+  /**
+   * Gets the collator used for result ordering.
+   */
+  public static Collator getCollator() {
+    return englishCollator;
+  }
 
-	private final java.sql.DatabaseMetaData metaData;
+  private final java.sql.DatabaseMetaData metaData;
 
-	/**
-	 * Creates a new meta data wrapper.  Results are cached, so for a fresh view of
-	 * meta data, create a new instance.
-	 */
-	public DatabaseMetaData(Connection conn) throws SQLException {
-		this(conn.getMetaData());
-	}
+  /**
+   * Creates a new meta data wrapper.  Results are cached, so for a fresh view of
+   * meta data, create a new instance.
+   */
+  public DatabaseMetaData(Connection conn) throws SQLException {
+    this(conn.getMetaData());
+  }
 
-	/**
-	 * Creates a new meta data wrapper.  Results are cached, so for a fresh view of
-	 * meta data, create a new instance.
-	 */
-	public DatabaseMetaData(java.sql.DatabaseMetaData metaData) {
-		this.metaData = metaData;
-	}
+  /**
+   * Creates a new meta data wrapper.  Results are cached, so for a fresh view of
+   * meta data, create a new instance.
+   */
+  public DatabaseMetaData(java.sql.DatabaseMetaData metaData) {
+    this.metaData = metaData;
+  }
 
-	@Override
-	public String toString() {
-		try {
-			String url = metaData.getURL();
-			if(url!=null) return url;
-		} catch(SQLException exc) {
-			// Ignored
-		}
-		return super.toString();
-	}
+  @Override
+  public String toString() {
+    try {
+      String url = metaData.getURL();
+      if (url != null) {
+        return url;
+      }
+    } catch (SQLException exc) {
+      // Ignored
+    }
+    return super.toString();
+  }
 
-	public java.sql.DatabaseMetaData getMetaData() {
-		return metaData;
-	}
+  public java.sql.DatabaseMetaData getMetaData() {
+    return metaData;
+  }
 
-	private static class GetCatalogsLock {/* Empty lock class to help heap profile */}
-	private final GetCatalogsLock getCatalogsLock = new GetCatalogsLock();
-	private SortedMap<String, Catalog> getCatalogsCache;
+  private static class GetCatalogsLock {/* Empty lock class to help heap profile */}
+  private final GetCatalogsLock getCatalogsLock = new GetCatalogsLock();
+  private SortedMap<String, Catalog> getCatalogsCache;
 
-	/**
-	 * Gets all catalogs for this database keyed by unique name.
-	 *
-	 * @see  java.sql.DatabaseMetaData#getCatalogs()
-	 */
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public SortedMap<String, Catalog> getCatalogs() throws SQLException {
-		synchronized(getCatalogsLock) {
-			if(getCatalogsCache==null) {
-				SortedMap<String, Catalog> newCatalogs = new TreeMap<>(englishCollator);
-				try (ResultSet results = metaData.getCatalogs()) {
-					while(results.next()) {
-						Catalog newCatalog = new Catalog(this, results.getString(1));
-						if(newCatalogs.put(newCatalog.getName(), newCatalog)!=null) throw new AssertionError("Duplicate catalog: "+newCatalog);
-					}
-				}
-				getCatalogsCache = AoCollections.optimalUnmodifiableSortedMap(newCatalogs);
-			}
-			return getCatalogsCache;
-		}
-	}
+  /**
+   * Gets all catalogs for this database keyed by unique name.
+   *
+   * @see  java.sql.DatabaseMetaData#getCatalogs()
+   */
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public SortedMap<String, Catalog> getCatalogs() throws SQLException {
+    synchronized (getCatalogsLock) {
+      if (getCatalogsCache == null) {
+        SortedMap<String, Catalog> newCatalogs = new TreeMap<>(englishCollator);
+        try (ResultSet results = metaData.getCatalogs()) {
+          while (results.next()) {
+            Catalog newCatalog = new Catalog(this, results.getString(1));
+            if (newCatalogs.put(newCatalog.getName(), newCatalog) != null) {
+              throw new AssertionError("Duplicate catalog: "+newCatalog);
+            }
+          }
+        }
+        getCatalogsCache = AoCollections.optimalUnmodifiableSortedMap(newCatalogs);
+      }
+      return getCatalogsCache;
+    }
+  }
 
-	/**
-	 * Gets the catalog of the provided name.
-	 *
-	 * @throws  NoRowException if the catalog doesn't exist
-	 */
-	public Catalog getCatalog(String name) throws NoRowException, SQLException {
-		Catalog catalog = getCatalogs().get(name);
-		if(catalog==null) throw new NoRowException();
-		return catalog;
-	}
+  /**
+   * Gets the catalog of the provided name.
+   *
+   * @throws  NoRowException if the catalog doesn't exist
+   */
+  public Catalog getCatalog(String name) throws NoRowException, SQLException {
+    Catalog catalog = getCatalogs().get(name);
+    if (catalog == null) {
+      throw new NoRowException();
+    }
+    return catalog;
+  }
 }

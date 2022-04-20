@@ -40,123 +40,127 @@ import java.util.logging.Logger;
  */
 public final class DatabaseUtils {
 
-	/** Make no instances. */
-	private DatabaseUtils() {throw new AssertionError();}
+  /** Make no instances. */
+  private DatabaseUtils() {
+    throw new AssertionError();
+  }
 
-	private static final Logger logger = Logger.getLogger(DatabaseUtils.class.getName());
+  private static final Logger logger = Logger.getLogger(DatabaseUtils.class.getName());
 
-	private static final int AUTO_ELLIPSIS_LEN = 32;
+  private static final int AUTO_ELLIPSIS_LEN = 32;
 
-	/**
-	 * Gets a user-friendly description of the provided result in a string formatted like
-	 * {@code ('value', 'value', 'long_value_cutoff_at_32_characte…', int_value, NULL, …)}.
-	 * This must not be used generate SQL statements - it is just to provide user display.
-	 */
-	@SuppressWarnings("fallthrough")
-	public static String getRow(ResultSet result) throws SQLException {
-		StringBuilder sb = new StringBuilder();
-		sb.append('(');
-		ResultSetMetaData metaData = result.getMetaData();
-		int colCount = metaData.getColumnCount();
-		for(int c=1; c<=colCount; c++) {
-			if(c>1) sb.append(", ");
-			int colType = metaData.getColumnType(c);
-			switch(colType) {
-				// Types without quotes
-				// Note: Matches JdbcResourceSynchronizer
-				case Types.BIGINT :
-				case Types.BIT :
-				case Types.BOOLEAN :
-				case Types.DECIMAL :
-				case Types.DOUBLE :
-				case Types.FLOAT :
-				case Types.INTEGER :
-				case Types.NULL :
-				case Types.NUMERIC :
-				case Types.REAL :
-				case Types.SMALLINT :
-				case Types.TINYINT :
-					sb.append(Objects.toString(result.getObject(c), "NULL"));
-					break;
-				default :
-					if(logger.isLoggable(Level.WARNING)) {
-						logger.log(Level.WARNING, "Unexpected column type: {0}", colType);
-					}
-					// Fall-through to quoted
-				case Types.CHAR :
-				case Types.DATE :
-				case Types.LONGNVARCHAR : // JDBC 4.0 Types
-				case Types.LONGVARCHAR :
-				case Types.NCHAR : // JDBC 4.0 Types
-				case Types.NVARCHAR : // JDBC 4.0 Types
-				case Types.TIME :
-				case Types.TIME_WITH_TIMEZONE : // JDBC 4.2 Types
-				case Types.TIMESTAMP :
-				case Types.TIMESTAMP_WITH_TIMEZONE : // JDBC 4.2 Types
-				case Types.VARCHAR :
-					String value = result.getString(c);
-					if(value == null) {
-						sb.append("NULL");
-					} else {
-						try {
-							textInPsqlEncoder.writePrefixTo(sb);
-							for (
-								int i = 0, chars = 0, len = value.length(), codePoint, charCount;
-								i < len;
-								i += charCount, chars++
-							) {
-								codePoint = value.codePointAt(i);
-								charCount = Character.charCount(codePoint);
-								if(chars >= AUTO_ELLIPSIS_LEN) {
-									sb.append('…');
-									break;
-								}
-								// PostgreSQL encoder does not support NULL, handle it here instead of exception
-								if(codePoint == 0) {
-									sb.append("\\x00");
-								} else if(charCount == 2) {
-									if(Character.isValidCodePoint(codePoint)) {
-										textInPsqlEncoder.append(Character.highSurrogate(codePoint), sb);
-										textInPsqlEncoder.append(Character.lowSurrogate(codePoint), sb);
-									} else {
-										throw new IOException(String.format("Invalid code point: 0x%X", codePoint));
-									}
-								} else {
-									assert charCount == 1;
-									textInPsqlEncoder.append((char)codePoint, sb);
-								}
-							}
-							textInPsqlEncoder.writeSuffixTo(sb, false);
-						} catch(IOException e) {
-							// TODO: This pattern is used may places, define in ao-lang?
-							throw new AssertionError("IOException should not occur on StringBuilder", e);
-						}
-					}
-					break;
-			}
-		}
-		sb.append(')');
-		return sb.toString();
-	}
+  /**
+   * Gets a user-friendly description of the provided result in a string formatted like
+   * {@code ('value', 'value', 'long_value_cutoff_at_32_characte…', int_value, NULL, …)}.
+   * This must not be used generate SQL statements - it is just to provide user display.
+   */
+  @SuppressWarnings("fallthrough")
+  public static String getRow(ResultSet result) throws SQLException {
+    StringBuilder sb = new StringBuilder();
+    sb.append('(');
+    ResultSetMetaData metaData = result.getMetaData();
+    int colCount = metaData.getColumnCount();
+    for (int c=1; c <= colCount; c++) {
+      if (c>1) {
+        sb.append(", ");
+      }
+      int colType = metaData.getColumnType(c);
+      switch (colType) {
+        // Types without quotes
+        // Note: Matches JdbcResourceSynchronizer
+        case Types.BIGINT :
+        case Types.BIT :
+        case Types.BOOLEAN :
+        case Types.DECIMAL :
+        case Types.DOUBLE :
+        case Types.FLOAT :
+        case Types.INTEGER :
+        case Types.NULL :
+        case Types.NUMERIC :
+        case Types.REAL :
+        case Types.SMALLINT :
+        case Types.TINYINT :
+          sb.append(Objects.toString(result.getObject(c), "NULL"));
+          break;
+        default :
+          if (logger.isLoggable(Level.WARNING)) {
+            logger.log(Level.WARNING, "Unexpected column type: {0}", colType);
+          }
+          // Fall-through to quoted
+        case Types.CHAR :
+        case Types.DATE :
+        case Types.LONGNVARCHAR : // JDBC 4.0 Types
+        case Types.LONGVARCHAR :
+        case Types.NCHAR : // JDBC 4.0 Types
+        case Types.NVARCHAR : // JDBC 4.0 Types
+        case Types.TIME :
+        case Types.TIME_WITH_TIMEZONE : // JDBC 4.2 Types
+        case Types.TIMESTAMP :
+        case Types.TIMESTAMP_WITH_TIMEZONE : // JDBC 4.2 Types
+        case Types.VARCHAR :
+          String value = result.getString(c);
+          if (value == null) {
+            sb.append("NULL");
+          } else {
+            try {
+              textInPsqlEncoder.writePrefixTo(sb);
+              for (
+                int i = 0, chars = 0, len = value.length(), codePoint, charCount;
+                i < len;
+                i += charCount, chars++
+              ) {
+                codePoint = value.codePointAt(i);
+                charCount = Character.charCount(codePoint);
+                if (chars >= AUTO_ELLIPSIS_LEN) {
+                  sb.append('…');
+                  break;
+                }
+                // PostgreSQL encoder does not support NULL, handle it here instead of exception
+                if (codePoint == 0) {
+                  sb.append("\\x00");
+                } else if (charCount == 2) {
+                  if (Character.isValidCodePoint(codePoint)) {
+                    textInPsqlEncoder.append(Character.highSurrogate(codePoint), sb);
+                    textInPsqlEncoder.append(Character.lowSurrogate(codePoint), sb);
+                  } else {
+                    throw new IOException(String.format("Invalid code point: 0x%X", codePoint));
+                  }
+                } else {
+                  assert charCount == 1;
+                  textInPsqlEncoder.append((char)codePoint, sb);
+                }
+              }
+              textInPsqlEncoder.writeSuffixTo(sb, false);
+            } catch (IOException e) {
+              // TODO: This pattern is used may places, define in ao-lang?
+              throw new AssertionError("IOException should not occur on StringBuilder", e);
+            }
+          }
+          break;
+      }
+    }
+    sb.append(')');
+    return sb.toString();
+  }
 
-	/**
-	 * Gets the number of rows or {@code -1} when unknown.
-	 */
-	public static int getRowCount(ResultSet results) throws SQLException {
-		int resultType = results.getType();
-		switch(resultType) {
-			case ResultSet.TYPE_FORWARD_ONLY :
-				return -1;
-			case ResultSet.TYPE_SCROLL_INSENSITIVE :
-			case ResultSet.TYPE_SCROLL_SENSITIVE :
-				int rowCount = 0;
-				if(results.last()) {
-					rowCount = results.getRow();
-					results.beforeFirst();
-				}
-				return rowCount;
-			default :
-				throw new AssertionError(resultType);
-		}
-	}
+  /**
+   * Gets the number of rows or {@code -1} when unknown.
+   */
+  public static int getRowCount(ResultSet results) throws SQLException {
+    int resultType = results.getType();
+    switch (resultType) {
+      case ResultSet.TYPE_FORWARD_ONLY :
+        return -1;
+      case ResultSet.TYPE_SCROLL_INSENSITIVE :
+      case ResultSet.TYPE_SCROLL_SENSITIVE :
+        int rowCount = 0;
+        if (results.last()) {
+          rowCount = results.getRow();
+          results.beforeFirst();
+        }
+        return rowCount;
+      default :
+        throw new AssertionError(resultType);
+    }
+  }
 }

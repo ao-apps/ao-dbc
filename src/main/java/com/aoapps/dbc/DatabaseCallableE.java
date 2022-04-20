@@ -38,5 +38,5 @@ import java.sql.SQLException;
 @FunctionalInterface
 public interface DatabaseCallableE<V, Ex extends Throwable> {
 
-	V call(DatabaseConnection db) throws SQLException, Ex;
+  V call(DatabaseConnection db) throws SQLException, Ex;
 }

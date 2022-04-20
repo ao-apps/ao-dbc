@@ -37,25 +37,25 @@ import javax.sql.DataSource;
  */
 public class CloseableDatabase extends Database implements AutoCloseable {
 
-	public CloseableDatabase(String driver, String url, String user, String password, int numConnections, long maxConnectionAge, Logger logger) {
-		super(driver, url, user, password, numConnections, maxConnectionAge, logger);
-	}
+  public CloseableDatabase(String driver, String url, String user, String password, int numConnections, long maxConnectionAge, Logger logger) {
+    super(driver, url, user, password, numConnections, maxConnectionAge, logger);
+  }
 
-	public CloseableDatabase(AOConnectionPool pool) {
-		super(pool);
-	}
+  public CloseableDatabase(AOConnectionPool pool) {
+    super(pool);
+  }
 
-	public CloseableDatabase(DataSource dataSource, Logger logger) {
-		super(dataSource, logger);
-	}
+  public CloseableDatabase(DataSource dataSource, Logger logger) {
+    super(dataSource, logger);
+  }
 
-	/**
-	 * Closes the database.
-	 *
-	 * @see  AOConnectionPool#close()
-	 */
-	@Override
-	public void close() {
-		super.close();
-	}
+  /**
+   * Closes the database.
+   *
+   * @see  AOConnectionPool#close()
+   */
+  @Override
+  public void close() {
+    super.close();
+  }
 }

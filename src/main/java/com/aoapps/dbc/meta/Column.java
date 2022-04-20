@@ -30,119 +30,123 @@ package com.aoapps.dbc.meta;
  */
 public class Column {
 
-	private final Table table;
-	private final String name;
-	private final int dataType;
-	private final String typeName;
-	private final Integer columnSize;
-	private final Integer decimalDigits;
-	private final int nullable;
-	private final String columnDef;
-	private final Integer charOctetLength;
-	private final int ordinalPosition;
-	private final String isNullable;
-	private final String isAutoincrement;
-	private final int hashCode;
+  private final Table table;
+  private final String name;
+  private final int dataType;
+  private final String typeName;
+  private final Integer columnSize;
+  private final Integer decimalDigits;
+  private final int nullable;
+  private final String columnDef;
+  private final Integer charOctetLength;
+  private final int ordinalPosition;
+  private final String isNullable;
+  private final String isAutoincrement;
+  private final int hashCode;
 
-	protected Column(
-		Table table,
-		String name,
-		int dataType,
-		String typeName,
-		Integer columnSize,
-		Integer decimalDigits,
-		int nullable,
-		String columnDef,
-		Integer charOctetLength,
-		int ordinalPosition,
-		String isNullable,
-		String isAutoincrement
-	) {
-		this.table = table;
-		if(name.indexOf('"')!=-1) throw new IllegalArgumentException();
-		this.name = name;
-		this.dataType = dataType;
-		this.typeName = typeName;
-		this.columnSize = columnSize;
-		this.decimalDigits = decimalDigits;
-		this.nullable = nullable;
-		this.columnDef = columnDef;
-		this.charOctetLength = charOctetLength;
-		this.ordinalPosition = ordinalPosition;
-		this.isNullable = isNullable;
-		this.isAutoincrement = isAutoincrement;
-		this.hashCode = table.hashCode() * 31 + name.hashCode();
-	}
+  protected Column(
+    Table table,
+    String name,
+    int dataType,
+    String typeName,
+    Integer columnSize,
+    Integer decimalDigits,
+    int nullable,
+    String columnDef,
+    Integer charOctetLength,
+    int ordinalPosition,
+    String isNullable,
+    String isAutoincrement
+  ) {
+    this.table = table;
+    if (name.indexOf('"') != -1) {
+      throw new IllegalArgumentException();
+    }
+    this.name = name;
+    this.dataType = dataType;
+    this.typeName = typeName;
+    this.columnSize = columnSize;
+    this.decimalDigits = decimalDigits;
+    this.nullable = nullable;
+    this.columnDef = columnDef;
+    this.charOctetLength = charOctetLength;
+    this.ordinalPosition = ordinalPosition;
+    this.isNullable = isNullable;
+    this.isAutoincrement = isAutoincrement;
+    this.hashCode = table.hashCode() * 31 + name.hashCode();
+  }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+  @Override
+  public String toString() {
+    return name;
+  }
 
-	/**
-	 * Two columns are equal if they have the same schema name, table name, and column name.
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if(!(obj instanceof Column)) return false;
-		Column other = (Column)obj;
-		return
-			hashCode==other.hashCode
-			&& name.equals(other.name)
-			&& table.equals(other.table)
-		;
-	}
+  /**
+   * Two columns are equal if they have the same schema name, table name, and column name.
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Column)) {
+      return false;
+    }
+    Column other = (Column)obj;
+    return
+      hashCode == other.hashCode
+      && name.equals(other.name)
+      && table.equals(other.table)
+    ;
+  }
 
-	@Override
-	public int hashCode() {
-		return hashCode;
-	}
+  @Override
+  public int hashCode() {
+    return hashCode;
+  }
 
-	public Table getTable() {
-		return table;
-	}
+  public Table getTable() {
+    return table;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public int getDataType() {
-		return dataType;
-	}
+  public int getDataType() {
+    return dataType;
+  }
 
-	public String getTypeName() {
-		return typeName;
-	}
+  public String getTypeName() {
+    return typeName;
+  }
 
-	public Integer getColumnSize() {
-		return columnSize;
-	}
+  public Integer getColumnSize() {
+    return columnSize;
+  }
 
-	public Integer getDecimalDigits() {
-		return decimalDigits;
-	}
+  public Integer getDecimalDigits() {
+    return decimalDigits;
+  }
 
-	public int getNullable() {
-		return nullable;
-	}
+  public int getNullable() {
+    return nullable;
+  }
 
-	public String getColumnDef() {
-		return columnDef;
-	}
+  public String getColumnDef() {
+    return columnDef;
+  }
 
-	public Integer getCharOctetLength() {
-		return charOctetLength;
-	}
+  public Integer getCharOctetLength() {
+    return charOctetLength;
+  }
 
-	public int getOrdinalPosition() {
-		return ordinalPosition;
-	}
+  public int getOrdinalPosition() {
+    return ordinalPosition;
+  }
 
-	public String getIsNullable() {
-		return isNullable;
-	}
+  public String getIsNullable() {
+    return isNullable;
+  }
 
-	public String getIsAutoincrement() {
-		return isAutoincrement;
-	}
+  public String getIsAutoincrement() {
+    return isAutoincrement;
+  }
 }

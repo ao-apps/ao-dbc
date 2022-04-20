@@ -35,9 +35,9 @@ import java.sql.SQLException;
 @FunctionalInterface
 public interface ResultSetRunnable extends ResultSetRunnableE<RuntimeException> {
 
-	/**
-	 * Process one set of results.
-	 */
-	@Override
-	void run(ResultSet results) throws SQLException;
+  /**
+   * Process one set of results.
+   */
+  @Override
+  void run(ResultSet results) throws SQLException;
 }

@@ -37,8 +37,8 @@ import java.sql.SQLException;
 @FunctionalInterface
 public interface ResultSetCallableE<T, Ex extends Throwable> {
 
-	/**
-	 * Process one set of results.
-	 */
-	T call(ResultSet results) throws SQLException, Ex;
+  /**
+   * Process one set of results.
+   */
+  T call(ResultSet results) throws SQLException, Ex;
 }

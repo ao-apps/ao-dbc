@@ -34,9 +34,9 @@ import java.sql.SQLException;
 @FunctionalInterface
 public interface ObjectFactory<T> extends ObjectFactoryE<T, RuntimeException>{
 
-	/**
-	 * Creates one object from the current values in the ResultSet.
-	 */
-	@Override
-	T createObject(ResultSet result) throws SQLException;
+  /**
+   * Creates one object from the current values in the ResultSet.
+   */
+  @Override
+  T createObject(ResultSet result) throws SQLException;
 }

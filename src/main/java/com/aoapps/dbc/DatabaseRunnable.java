@@ -35,6 +35,6 @@ import java.sql.SQLException;
 @FunctionalInterface
 public interface DatabaseRunnable extends DatabaseRunnableE<RuntimeException> {
 
-	@Override
-	void run(DatabaseConnection db) throws SQLException;
+  @Override
+  void run(DatabaseConnection db) throws SQLException;
 }

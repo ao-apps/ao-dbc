@@ -36,44 +36,49 @@ import java.util.List;
  */
 public class Index {
 
-	private final Table table;
-	private final String name;
-	private final IndexType type;
-	private final List<Column> columns;
+  private final Table table;
+  private final String name;
+  private final IndexType type;
+  private final List<Column> columns;
 
-	protected Index(
-		Table table,
-		String name,
-		IndexType type,
-		List<Column> columns
-	) {
-		this.table = table;
-		this.name = name;
-		this.type = type;
-		if(columns.isEmpty()) throw new IllegalArgumentException("columns.isEmpty()");
-		this.columns = AoCollections.optimalUnmodifiableList(new ArrayList<>(columns));
-	}
+  protected Index(
+    Table table,
+    String name,
+    IndexType type,
+    List<Column> columns
+  ) {
+    this.table = table;
+    this.name = name;
+    this.type = type;
+    if (columns.isEmpty()) {
+      throw new IllegalArgumentException("columns.isEmpty()");
+    }
+    this.columns = AoCollections.optimalUnmodifiableList(new ArrayList<>(columns));
+  }
 
-	@Override
-	public String toString() {
-		if(name==null) return type + " (" + Strings.join(columns, ", ") + ")";
-		else return name + " " + type + " (" + Strings.join(columns, ", ") + ")";
-	}
+  @Override
+  public String toString() {
+    if (name == null) {
+      return type + " (" + Strings.join(columns, ", ") + ")";
+    } else {
+      return name + " " + type + " (" + Strings.join(columns, ", ") + ")";
+    }
+  }
 
-	public Table getTable() {
-		return table;
-	}
+  public Table getTable() {
+    return table;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public IndexType getIndexType() {
-		return type;
-	}
+  public IndexType getIndexType() {
+    return type;
+  }
 
-	@SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
-	public List<Column> getColumns() {
-		return columns;
-	}
+  @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
+  public List<Column> getColumns() {
+    return columns;
+  }
 }

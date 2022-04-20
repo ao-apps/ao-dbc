@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ao-dbc - Simplified JDBC access for simplified code.
-Copyright (C) 2016, 2019, 2020, 2021  AO Industries, Inc.
-	support@aoindustries.com
-	7262 Bull Pen Cir
-	Mobile, AL 36695
+Copyright (C) 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
+    support@aoindustries.com
+    7262 Bull Pen Cir
+    Mobile, AL 36695
 
 This file is part of ao-dbc.
 
@@ -22,23 +22,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
 -->
 <jsp:root
-	xmlns:ao="https://oss.aoapps.com/taglib/"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:core="https://semanticcms.com/core/taglib/"
-	xmlns:jsp="http://java.sun.com/JSP/Page"
-	version="2.1"
+  xmlns:ao="https://oss.aoapps.com/taglib/"
+  xmlns:c="http://java.sun.com/jsp/jstl/core"
+  xmlns:core="https://semanticcms.com/core/taglib/"
+  xmlns:jsp="http://java.sun.com/JSP/Page"
+  version="2.1"
 >
-	<jsp:directive.page language="java" pageEncoding="UTF-8" />
-	<jsp:directive.page session="false" />
-	<jsp:output omit-xml-declaration="true" />
-	<c:if test="${core:getCaptureLevel()==null and empty param.view and !param.navigation}">
-		<jsp:directive.page contentType="text/html" />
-		<ao:forward page="index.html" />
-	</c:if>
-	<core:page
-		title="@{documented.name} ${ao:getProjectVersion('./', 'com.aoapps', 'ao-dbc', '¿@{project.version}?')} API Docs"
-		shortTitle="API Docs"
-		datePublished="2016-10-16T21:59:00-05:00"
-		dateModified="${ao:getLastModified('index.html')}"
-	/>
+  <jsp:directive.page language="java" pageEncoding="UTF-8" />
+  <jsp:directive.page session="false" />
+  <jsp:output omit-xml-declaration="true" />
+  <c:if test="${core:getCaptureLevel() == null and empty param.view and !param.navigation}">
+    <jsp:directive.page contentType="text/html" />
+    <ao:forward page="index.html" />
+  </c:if>
+  <core:page
+    title="@{documented.name} ${ao:getProjectVersion('./', 'com.aoapps', 'ao-dbc', '¿@{project.version}?')} API Docs"
+    shortTitle="API Docs"
+    datePublished="2016-10-16T21:59:00-05:00"
+    dateModified="${ao:getLastModified('index.html')}"
+  />
 </jsp:root>
