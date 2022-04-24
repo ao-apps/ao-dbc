@@ -60,7 +60,7 @@ public class NoRowException extends SQLNonTransientException implements Localize
   }
 
   public NoRowException(Resources resources, String key, Serializable... args) {
-    super(resources.getMessage(key, (Object[])args), "02000");
+    super(resources.getMessage(key, (Object[]) args), "02000");
     this.resources = resources;
     this.key = key;
     this.args = args;
@@ -85,7 +85,7 @@ public class NoRowException extends SQLNonTransientException implements Localize
   }
 
   public NoRowException(Throwable cause, Resources resources, String key, Serializable... args) {
-    super(resources.getMessage(key, (Object[])args), "02000", cause);
+    super(resources.getMessage(key, (Object[]) args), "02000", cause);
     this.resources = resources;
     this.key = key;
     this.args = args;
@@ -93,7 +93,7 @@ public class NoRowException extends SQLNonTransientException implements Localize
 
   @Override
   public String getLocalizedMessage() {
-    return (resources == null) ? super.getLocalizedMessage() : resources.getMessage(key, (Object[])args);
+    return (resources == null) ? super.getLocalizedMessage() : resources.getMessage(key, (Object[]) args);
   }
 
   @Override
@@ -117,9 +117,9 @@ public class NoRowException extends SQLNonTransientException implements Localize
 
   static {
     Throwables.registerSurrogateFactory(NoRowException.class, (template, cause) ->
-      (template.resources == null)
-        ? new NoRowException(template.getMessage(), cause)
-        : new NoRowException(cause, template.resources, template.key, template.args)
+        (template.resources == null)
+            ? new NoRowException(template.getMessage(), cause)
+            : new NoRowException(cause, template.resources, template.key, template.args)
     );
   }
 }

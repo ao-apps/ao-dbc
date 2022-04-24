@@ -42,10 +42,10 @@ public class Index {
   private final List<Column> columns;
 
   protected Index(
-    Table table,
-    String name,
-    IndexType type,
-    List<Column> columns
+      Table table,
+      String name,
+      IndexType type,
+      List<Column> columns
   ) {
     this.table = table;
     this.name = name;

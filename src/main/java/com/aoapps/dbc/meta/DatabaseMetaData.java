@@ -84,7 +84,9 @@ public class DatabaseMetaData {
     return metaData;
   }
 
-  private static class GetCatalogsLock {/* Empty lock class to help heap profile */}
+  private static class GetCatalogsLock {
+    // Empty lock class to help heap profile
+  }
   private final GetCatalogsLock getCatalogsLock = new GetCatalogsLock();
   private SortedMap<String, Catalog> getCatalogsCache;
 
@@ -102,7 +104,7 @@ public class DatabaseMetaData {
           while (results.next()) {
             Catalog newCatalog = new Catalog(this, results.getString(1));
             if (newCatalogs.put(newCatalog.getName(), newCatalog) != null) {
-              throw new AssertionError("Duplicate catalog: "+newCatalog);
+              throw new AssertionError("Duplicate catalog: " + newCatalog);
             }
           }
         }

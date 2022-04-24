@@ -71,11 +71,11 @@ public class Table {
     if (!(obj instanceof Table)) {
       return false;
     }
-    Table other = (Table)obj;
+    Table other = (Table) obj;
     return
-      hashCode == other.hashCode
-      && name.equals(other.name)
-      && schema.equals(other.schema)
+        hashCode == other.hashCode
+            && name.equals(other.name)
+            && schema.equals(other.schema)
     ;
   }
 
@@ -96,7 +96,9 @@ public class Table {
     return tableType;
   }
 
-  private static class GetColumnMapLock {/* Empty lock class to help heap profile */}
+  private static class GetColumnMapLock {
+    // Empty lock class to help heap profile
+  }
   private final GetColumnMapLock getColumnMapLock = new GetColumnMapLock();
   private SortedMap<String, Column> getColumnMapCache;
 
@@ -121,21 +123,21 @@ public class Table {
         try (ResultSet results = schema.getCatalog().getMetaData().getMetaData().getColumns(schema.getCatalog().getName(), schema.getName(), name, null)) {
           while (results.next()) {
             Column newColumn = new Column(
-              this,
-              results.getString("COLUMN_NAME"),
-              results.getInt("DATA_TYPE"),
-              results.getString("TYPE_NAME"),
-              getInteger(results, "COLUMN_SIZE"),
-              getInteger(results, "DECIMAL_DIGITS"),
-              results.getInt("NULLABLE"),
-              results.getString("COLUMN_DEF"),
-              getInteger(results, "CHAR_OCTET_LENGTH"),
-              results.getInt("ORDINAL_POSITION"),
-              results.getString("IS_NULLABLE"),
-              results.getString("IS_AUTOINCREMENT")
+                this,
+                results.getString("COLUMN_NAME"),
+                results.getInt("DATA_TYPE"),
+                results.getString("TYPE_NAME"),
+                getInteger(results, "COLUMN_SIZE"),
+                getInteger(results, "DECIMAL_DIGITS"),
+                results.getInt("NULLABLE"),
+                results.getString("COLUMN_DEF"),
+                getInteger(results, "CHAR_OCTET_LENGTH"),
+                results.getInt("ORDINAL_POSITION"),
+                results.getString("IS_NULLABLE"),
+                results.getString("IS_AUTOINCREMENT")
             );
             if (newColumnMap.put(newColumn.getName(), newColumn) != null) {
-              throw new AssertionError("Duplicate column: "+newColumn);
+              throw new AssertionError("Duplicate column: " + newColumn);
             }
           }
         }
@@ -158,7 +160,9 @@ public class Table {
     return column;
   }
 
-  private static class GetColumnsLock {/* Empty lock class to help heap profile */}
+  private static class GetColumnsLock {
+    // Empty lock class to help heap profile
+  }
   private final GetColumnsLock getColumnsLock = new GetColumnsLock();
   private List<Column> getColumnsCache;
 
@@ -174,18 +178,18 @@ public class Table {
       if (getColumnsCache == null) {
         SortedMap<String, Column> columnMap = getColumnMap();
         List<Column> newColumns = new ArrayList<>(columnMap.size());
-        for (int i=0; i<columnMap.size(); i++) {
+        for (int i = 0; i < columnMap.size(); i++) {
           newColumns.add(null);
         }
         for (Column column : columnMap.values()) {
           int ordinalPosition = column.getOrdinalPosition();
-          if (newColumns.set(ordinalPosition-1, column) != null) {
-            throw new SQLException("Duplicate ordinal position: "+ordinalPosition);
+          if (newColumns.set(ordinalPosition - 1, column) != null) {
+            throw new SQLException("Duplicate ordinal position: " + ordinalPosition);
           }
         }
-        for (int i=0; i<newColumns.size(); i++) {
+        for (int i = 0; i < newColumns.size(); i++) {
           if (newColumns.get(i) == null) {
-            throw new SQLException("Missing ordinal position: "+(i+1));
+            throw new SQLException("Missing ordinal position: " + (i + 1));
           }
         }
         getColumnsCache = AoCollections.optimalUnmodifiableList(newColumns);
@@ -201,13 +205,15 @@ public class Table {
    */
   public Column getColumn(int ordinalPosition) throws NoRowException, SQLException {
     try {
-      return getColumns().get(ordinalPosition-1);
+      return getColumns().get(ordinalPosition - 1);
     } catch (IndexOutOfBoundsException exc) {
       throw new NoRowException(exc);
     }
   }
 
-  private static class GetPrimaryKeyLock {/* Empty lock class to help heap profile */}
+  private static class GetPrimaryKeyLock {
+    // Empty lock class to help heap profile
+  }
   private final GetPrimaryKeyLock getPrimaryKeyLock = new GetPrimaryKeyLock();
   private boolean getPrimaryKeyCached = false;
   private Index getPrimaryKeyCache;
@@ -229,11 +235,11 @@ public class Table {
               if (pkName == null) {
                 pkName = newPkName;
               } else if (!newPkName.equals(pkName)) {
-                throw new SQLException("Mismatched PK_NAME values: "+newPkName+" != "+pkName);
+                throw new SQLException("Mismatched PK_NAME values: " + newPkName + " != " + pkName);
               }
             }
-            if (columns.set(keySeq-1, getColumn(columnName)) != null) {
-              throw new SQLException("Duplicate key sequence: "+keySeq);
+            if (columns.set(keySeq - 1, getColumn(columnName)) != null) {
+              throw new SQLException("Duplicate key sequence: " + keySeq);
             }
           }
         }
@@ -242,9 +248,9 @@ public class Table {
           getPrimaryKeyCached = true;
         } else {
           // Make sure no gaps in the key sequence
-          for (int i=0; i<columns.size(); i++) {
+          for (int i = 0; i < columns.size(); i++) {
             if (columns.get(i) == null) {
-              throw new SQLException("Missing key sequence in index: "+(i+1));
+              throw new SQLException("Missing key sequence in index: " + (i + 1));
             }
           }
           getPrimaryKeyCache = new Index(this, pkName, IndexType.PRIMARY_KEY, columns);
@@ -255,7 +261,9 @@ public class Table {
     }
   }
 
-  private static class GetImportedTablesLock {/* Empty lock class to help heap profile */}
+  private static class GetImportedTablesLock {
+    // Empty lock class to help heap profile
+  }
   private final GetImportedTablesLock getImportedTablesLock = new GetImportedTablesLock();
   private Set<? extends Table> getImportedTablesCache;
 
@@ -277,9 +285,9 @@ public class Table {
             String pkCat = results.getString("PKTABLE_CAT");
             Catalog pkCatalog = pkCat == null ? catalog : metaData.getCatalog(pkCat);
             newImportedTables.add(
-              pkCatalog
-              .getSchema(results.getString("PKTABLE_SCHEM"))
-              .getTable(results.getString("PKTABLE_NAME"))
+                pkCatalog
+                    .getSchema(results.getString("PKTABLE_SCHEM"))
+                    .getTable(results.getString("PKTABLE_NAME"))
             );
           }
         }
@@ -289,7 +297,9 @@ public class Table {
     }
   }
 
-  private static class GetExportedTablesLock {/* Empty lock class to help heap profile */}
+  private static class GetExportedTablesLock {
+    // Empty lock class to help heap profile
+  }
   private final GetExportedTablesLock getExportedTablesLock = new GetExportedTablesLock();
   private Set<? extends Table> getExportedTablesCache;
 
@@ -311,9 +321,9 @@ public class Table {
             String fkCat = results.getString("FKTABLE_CAT");
             Catalog fkCatalog = fkCat == null ? catalog : metaData.getCatalog(fkCat);
             newExportedTables.add(
-              fkCatalog
-              .getSchema(results.getString("FKTABLE_SCHEM"))
-              .getTable(results.getString("FKTABLE_NAME"))
+                fkCatalog
+                    .getSchema(results.getString("FKTABLE_SCHEM"))
+                    .getTable(results.getString("FKTABLE_NAME"))
             );
           }
         }

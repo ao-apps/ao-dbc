@@ -32,7 +32,7 @@ import java.sql.SQLException;
  * @author  AO Industries, Inc.
  */
 @FunctionalInterface
-public interface ObjectFactory<T> extends ObjectFactoryE<T, RuntimeException>{
+public interface ObjectFactory<T> extends ObjectFactoryE<T, RuntimeException> {
 
   /**
    * Creates one object from the current values in the ResultSet.

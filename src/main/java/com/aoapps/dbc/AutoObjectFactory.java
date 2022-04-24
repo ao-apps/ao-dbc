@@ -54,6 +54,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
    * Concurrent map can't store nulls, uses this in place of null values when lookup fails.
    */
   private static final Method notExists;
+
   static {
     try {
       notExists = AutoObjectFactory.class.getMethod("getValueOfStringMethod", Class.class);
@@ -144,11 +145,11 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
         // Find the candidate constructor
         List<String> warnings = null;
         Constructor<?>[] constructors = clazz.getConstructors();
-      CONSTRUCTORS :
+        CONSTRUCTORS :
         for (Constructor<?> constructor : constructors) {
           Class<?>[] paramTypes = constructor.getParameterTypes();
           if (paramTypes.length == numParams) {
-            for (int i=0;i<prefixParams.length;i++) {
+            for (int i = 0; i < prefixParams.length; i++) {
               Class<?> paramType = paramTypes[i];
               if (!paramType.isAssignableFrom(prefixParams[i].getClass())) {
                 continue CONSTRUCTORS;
@@ -157,46 +158,46 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
               //System.err.println(paramType.getName()+" ? "+(params[i] == null ? "null" : params[i].getClass()));
             }
             // All remaining columns must be assignable from JDBC
-            for (int c=1; c <= numColumns; c++) {
-              int i = prefixParams.length + c-1;
+            for (int c = 1; c <= numColumns; c++) {
+              int i = prefixParams.length + c - 1;
               Class<?> paramType = paramTypes[i];
               // String first because it is commonly used
               if (paramType == String.class) {
                 params[i] = result.getString(c);
 
-              // Primitives
+                // Primitives
               } else if (paramType == Integer.TYPE) {
                 int value = result.getInt(c);
                 if (result.wasNull()) {
-                  throw new SQLException(c+": "+metaData.getColumnName(c)+": null int");
+                  throw new SQLException(c + ": " + metaData.getColumnName(c) + ": null int");
                 }
                 params[i] = value;
               } else if (paramType == Short.TYPE) {
                 short value = result.getShort(c);
                 if (result.wasNull()) {
-                  throw new SQLException(c+": "+metaData.getColumnName(c)+": null short");
+                  throw new SQLException(c + ": " + metaData.getColumnName(c) + ": null short");
                 }
                 params[i] = value;
               } else if (paramType == Boolean.TYPE) {
                 boolean b = result.getBoolean(c);
                 if (result.wasNull()) {
-                  throw new SQLException(c+": "+metaData.getColumnName(c)+": null boolean");
+                  throw new SQLException(c + ": " + metaData.getColumnName(c) + ": null boolean");
                 }
                 params[i] = b;
               } else if (paramType == Float.TYPE) {
                 float value = result.getFloat(c);
                 if (result.wasNull()) {
-                  throw new SQLException(c+": "+metaData.getColumnName(c)+": null float");
+                  throw new SQLException(c + ": " + metaData.getColumnName(c) + ": null float");
                 }
                 params[i] = value;
               } else if (paramType == Long.TYPE) {
                 long value = result.getLong(c);
                 if (result.wasNull()) {
-                  throw new SQLException(c+": "+metaData.getColumnName(c)+": null long");
+                  throw new SQLException(c + ": " + metaData.getColumnName(c) + ": null long");
                 }
                 params[i] = value;
 
-              // Other types
+                // Other types
               } else if (paramType == Date.class) {
                 params[i] = result.getDate(c);
               } else if (paramType == Boolean.class) {
@@ -235,7 +236,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
                     if (warnings == null) {
                       warnings = new ArrayList<>();
                     }
-                    warnings.add("Unexpected parameter class: "+paramType.getName());
+                    warnings.add("Unexpected parameter class: " + paramType.getName());
                     continue CONSTRUCTORS;
                   }
                 }

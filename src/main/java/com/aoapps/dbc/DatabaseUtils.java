@@ -60,8 +60,8 @@ public final class DatabaseUtils {
     sb.append('(');
     ResultSetMetaData metaData = result.getMetaData();
     int colCount = metaData.getColumnCount();
-    for (int c=1; c <= colCount; c++) {
-      if (c>1) {
+    for (int c = 1; c <= colCount; c++) {
+      if (c > 1) {
         sb.append(", ");
       }
       int colType = metaData.getColumnType(c);
@@ -86,7 +86,7 @@ public final class DatabaseUtils {
           if (logger.isLoggable(Level.WARNING)) {
             logger.log(Level.WARNING, "Unexpected column type: {0}", colType);
           }
-          // Fall-through to quoted
+        // Fall-through to quoted
         case Types.CHAR :
         case Types.DATE :
         case Types.LONGNVARCHAR : // JDBC 4.0 Types
@@ -127,7 +127,7 @@ public final class DatabaseUtils {
                   }
                 } else {
                   assert charCount == 1;
-                  textInPsqlEncoder.append((char)codePoint, sb);
+                  textInPsqlEncoder.append((char) codePoint, sb);
                 }
               }
               textInPsqlEncoder.writeSuffixTo(sb, false);

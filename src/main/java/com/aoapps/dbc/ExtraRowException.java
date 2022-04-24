@@ -66,7 +66,7 @@ public class ExtraRowException extends SQLNonTransientException implements Local
   }
 
   public ExtraRowException(Resources resources, String key, Serializable... args) {
-    super(resources.getMessage(key, (Object[])args), "0100D");
+    super(resources.getMessage(key, (Object[]) args), "0100D");
     this.resources = resources;
     this.key = key;
     this.args = args;
@@ -95,7 +95,7 @@ public class ExtraRowException extends SQLNonTransientException implements Local
   }
 
   public ExtraRowException(Throwable cause, Resources resources, String key, Serializable... args) {
-    super(resources.getMessage(key, (Object[])args), "0100D", cause);
+    super(resources.getMessage(key, (Object[]) args), "0100D", cause);
     this.resources = resources;
     this.key = key;
     this.args = args;
@@ -103,7 +103,7 @@ public class ExtraRowException extends SQLNonTransientException implements Local
 
   @Override
   public String getLocalizedMessage() {
-    return (resources == null) ? super.getLocalizedMessage() : resources.getMessage(key, (Object[])args);
+    return (resources == null) ? super.getLocalizedMessage() : resources.getMessage(key, (Object[]) args);
   }
 
   @Override
@@ -127,9 +127,9 @@ public class ExtraRowException extends SQLNonTransientException implements Local
 
   static {
     Throwables.registerSurrogateFactory(ExtraRowException.class, (template, cause) ->
-      (template.resources == null)
-        ? new ExtraRowException(template.getMessage(), cause)
-        : new ExtraRowException(cause, template.resources, template.key, template.args)
+        (template.resources == null)
+            ? new ExtraRowException(template.getMessage(), cause)
+            : new ExtraRowException(cause, template.resources, template.key, template.args)
     );
   }
 }

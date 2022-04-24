@@ -96,7 +96,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   private FailFastConnection _conn;
 
   protected DatabaseConnection(Database database) {
-     this.database = database;
+    this.database = database;
   }
 
   public Database getDatabase() {
@@ -518,64 +518,64 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
     if (param == null) {
       pstmt.setNull           (pos, Types.VARCHAR);
     } else if (param instanceof Null) {
-      pstmt.setNull           (pos, ((Null)param).getType());
+      pstmt.setNull           (pos, ((Null) param).getType());
     } else if (param instanceof Array) {
-      pstmt.setArray          (pos, (Array)param);
+      pstmt.setArray          (pos, (Array) param);
     } else if (param instanceof BigDecimal) {
-      pstmt.setBigDecimal     (pos, (BigDecimal)param);
+      pstmt.setBigDecimal     (pos, (BigDecimal) param);
     } else if (param instanceof BigInteger) {
-      pstmt.setBigDecimal     (pos, new BigDecimal((BigInteger)param));
+      pstmt.setBigDecimal     (pos, new BigDecimal((BigInteger) param));
     } else if (param instanceof Blob) {
-      pstmt.setBlob           (pos, (Blob)param);
+      pstmt.setBlob           (pos, (Blob) param);
     } else if (param instanceof Boolean) {
-      pstmt.setBoolean        (pos, (Boolean)param);
+      pstmt.setBoolean        (pos, (Boolean) param);
     } else if (param instanceof Byte) {
-      pstmt.setByte           (pos, (Byte)param);
+      pstmt.setByte           (pos, (Byte) param);
     } else if (param instanceof byte[]) {
-      pstmt.setBytes          (pos, (byte[])param);
+      pstmt.setBytes          (pos, (byte[]) param);
     } else if (param instanceof Clob) {
-      pstmt.setClob           (pos, (Clob)param);
+      pstmt.setClob           (pos, (Clob) param);
     } else if (param instanceof Date) {
-      pstmt.setDate           (pos, (Date)param);
+      pstmt.setDate           (pos, (Date) param);
     } else if (param instanceof Double) {
-      pstmt.setDouble         (pos, (Double)param);
+      pstmt.setDouble         (pos, (Double) param);
     } else if (param instanceof Float) {
-      pstmt.setFloat          (pos, (Float)param);
+      pstmt.setFloat          (pos, (Float) param);
     } else if (param instanceof Integer) {
-      pstmt.setInt            (pos, (Integer)param);
+      pstmt.setInt            (pos, (Integer) param);
     } else if (param instanceof InputStream) {
-      pstmt.setBinaryStream   (pos, (InputStream)param);
+      pstmt.setBinaryStream   (pos, (InputStream) param);
     } else if (param instanceof Long) {
-      pstmt.setLong           (pos, (Long)param);
+      pstmt.setLong           (pos, (Long) param);
     } else if (param instanceof NClob) {
-      pstmt.setNClob          (pos, (NClob)param);
+      pstmt.setNClob          (pos, (NClob) param);
     } else if (param instanceof Reader) {
-      pstmt.setCharacterStream(pos, (Reader)param);
+      pstmt.setCharacterStream(pos, (Reader) param);
     } else if (param instanceof Ref) {
-      pstmt.setRef            (pos, (Ref)param);
+      pstmt.setRef            (pos, (Ref) param);
     } else if (param instanceof RowId) {
-      pstmt.setRowId          (pos, (RowId)param);
+      pstmt.setRowId          (pos, (RowId) param);
     } else if (param instanceof Short) {
-      pstmt.setShort          (pos, (Short)param);
+      pstmt.setShort          (pos, (Short) param);
     } else if (param instanceof SQLXML) {
-      pstmt.setSQLXML         (pos, (SQLXML)param);
+      pstmt.setSQLXML         (pos, (SQLXML) param);
     } else if (param instanceof String) {
-      pstmt.setString         (pos, (String)param);
+      pstmt.setString         (pos, (String) param);
     } else if (param instanceof Time) {
-      pstmt.setTime           (pos, (Time)param);
+      pstmt.setTime           (pos, (Time) param);
     } else if (param instanceof Timestamp) {
-      pstmt.setTimestamp      (pos, (Timestamp)param);
+      pstmt.setTimestamp      (pos, (Timestamp) param);
     } else if (param instanceof URL) {
-      pstmt.setURL            (pos, (URL)param);
+      pstmt.setURL            (pos, (URL) param);
     } else if (param instanceof Enum) {
-      pstmt.setString         (pos, ((Enum)param).name());
+      pstmt.setString         (pos, ((Enum) param).name());
     } else if (
-      (param instanceof SQLData)
-      || (param instanceof Struct)
+        (param instanceof SQLData)
+            || (param instanceof Struct)
     ) {
       pstmt.setObject(pos, param);
     } else if (param instanceof String[]) {
-      pstmt.setArray(pos, conn.createArrayOf("text", (Object[])param));
+      pstmt.setArray(pos, conn.createArrayOf("text", (Object[]) param));
     } else {
       // Defaults to string with object.toString only when the class has a valueOf(String) method that will reconstitute it in AutoObjectFactory
       Class<?> clazz = param.getClass();
@@ -798,50 +798,50 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
         ResultSet results = pstmt.executeQuery();
         try {
           return StreamSupport.doubleStream(
-            Spliterators.spliteratorUnknownSize(
-              new PrimitiveIterator.OfDouble() {
-                private double next;
-                private boolean nextSet; // next may be null, so extra flag
+              Spliterators.spliteratorUnknownSize(
+                  new PrimitiveIterator.OfDouble() {
+                    private double next;
+                    private boolean nextSet; // next may be null, so extra flag
 
-                @Override
-                public boolean hasNext() {
-                  try {
-                    if (!nextSet && results.next()) {
-                      next = results.getDouble(1);
-                      if (results.wasNull()) {
-                        throw new NullDataException(results);
+                    @Override
+                    public boolean hasNext() {
+                      try {
+                        if (!nextSet && results.next()) {
+                          next = results.getDouble(1);
+                          if (results.wasNull()) {
+                            throw new NullDataException(results);
+                          }
+                          nextSet = true;
+                        }
+                        return nextSet;
+                      } catch (Throwable t) {
+                        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
                       }
-                      nextSet = true;
                     }
-                    return nextSet;
-                  } catch (Throwable t) {
-                    throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-                  }
-                }
 
-                @Override
-                public double nextDouble() {
-                  try {
-                    if (nextSet) {
-                      nextSet = false;
-                      return next;
-                    } else if (results.next()) {
-                      double d = results.getDouble(1);
-                      if (results.wasNull()) {
-                        throw new NullDataException(results);
+                    @Override
+                    public double nextDouble() {
+                      try {
+                        if (nextSet) {
+                          nextSet = false;
+                          return next;
+                        } else if (results.next()) {
+                          double d = results.getDouble(1);
+                          if (results.wasNull()) {
+                            throw new NullDataException(results);
+                          }
+                          return d;
+                        } else {
+                          throw new NoSuchElementException();
+                        }
+                      } catch (Throwable t) {
+                        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
                       }
-                      return d;
-                    } else {
-                      throw new NoSuchElementException();
                     }
-                  } catch (Throwable t) {
-                    throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-                  }
-                }
-              },
-              Spliterator.ORDERED | Spliterator.NONNULL
-            ),
-            false
+                  },
+                  Spliterator.ORDERED | Spliterator.NONNULL
+              ),
+              false
           ).onClose(new StreamCloser(pstmt, results));
         } catch (Throwable t) {
           throw AutoCloseables.closeAndCatch(t, results);
@@ -867,50 +867,50 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
         ResultSet results = pstmt.executeQuery();
         try {
           return StreamSupport.intStream(
-            Spliterators.spliteratorUnknownSize(
-              new PrimitiveIterator.OfInt() {
-                private int next;
-                private boolean nextSet; // next may be null, so extra flag
+              Spliterators.spliteratorUnknownSize(
+                  new PrimitiveIterator.OfInt() {
+                    private int next;
+                    private boolean nextSet; // next may be null, so extra flag
 
-                @Override
-                public boolean hasNext() {
-                  try {
-                    if (!nextSet && results.next()) {
-                      next = results.getInt(1);
-                      if (results.wasNull()) {
-                        throw new NullDataException(results);
+                    @Override
+                    public boolean hasNext() {
+                      try {
+                        if (!nextSet && results.next()) {
+                          next = results.getInt(1);
+                          if (results.wasNull()) {
+                            throw new NullDataException(results);
+                          }
+                          nextSet = true;
+                        }
+                        return nextSet;
+                      } catch (Throwable t) {
+                        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
                       }
-                      nextSet = true;
                     }
-                    return nextSet;
-                  } catch (Throwable t) {
-                    throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-                  }
-                }
 
-                @Override
-                public int nextInt() {
-                  try {
-                    if (nextSet) {
-                      nextSet = false;
-                      return next;
-                    } else if (results.next()) {
-                      int i = results.getInt(1);
-                      if (results.wasNull()) {
-                        throw new NullDataException(results);
+                    @Override
+                    public int nextInt() {
+                      try {
+                        if (nextSet) {
+                          nextSet = false;
+                          return next;
+                        } else if (results.next()) {
+                          int i = results.getInt(1);
+                          if (results.wasNull()) {
+                            throw new NullDataException(results);
+                          }
+                          return i;
+                        } else {
+                          throw new NoSuchElementException();
+                        }
+                      } catch (Throwable t) {
+                        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
                       }
-                      return i;
-                    } else {
-                      throw new NoSuchElementException();
                     }
-                  } catch (Throwable t) {
-                    throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-                  }
-                }
-              },
-              Spliterator.ORDERED | Spliterator.NONNULL
-            ),
-            false
+                  },
+                  Spliterator.ORDERED | Spliterator.NONNULL
+              ),
+              false
           ).onClose(new StreamCloser(pstmt, results));
         } catch (Throwable t) {
           throw AutoCloseables.closeAndCatch(t, results);
@@ -936,50 +936,50 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
         ResultSet results = pstmt.executeQuery();
         try {
           return StreamSupport.longStream(
-            Spliterators.spliteratorUnknownSize(
-              new PrimitiveIterator.OfLong() {
-                private long next;
-                private boolean nextSet; // next may be null, so extra flag
+              Spliterators.spliteratorUnknownSize(
+                  new PrimitiveIterator.OfLong() {
+                    private long next;
+                    private boolean nextSet; // next may be null, so extra flag
 
-                @Override
-                public boolean hasNext() {
-                  try {
-                    if (!nextSet && results.next()) {
-                      next = results.getLong(1);
-                      if (results.wasNull()) {
-                        throw new NullDataException(results);
+                    @Override
+                    public boolean hasNext() {
+                      try {
+                        if (!nextSet && results.next()) {
+                          next = results.getLong(1);
+                          if (results.wasNull()) {
+                            throw new NullDataException(results);
+                          }
+                          nextSet = true;
+                        }
+                        return nextSet;
+                      } catch (Throwable t) {
+                        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
                       }
-                      nextSet = true;
                     }
-                    return nextSet;
-                  } catch (Throwable t) {
-                    throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-                  }
-                }
 
-                @Override
-                public long nextLong() {
-                  try {
-                    if (nextSet) {
-                      nextSet = false;
-                      return next;
-                    } else if (results.next()) {
-                      long l = results.getLong(1);
-                      if (results.wasNull()) {
-                        throw new NullDataException(results);
+                    @Override
+                    public long nextLong() {
+                      try {
+                        if (nextSet) {
+                          nextSet = false;
+                          return next;
+                        } else if (results.next()) {
+                          long l = results.getLong(1);
+                          if (results.wasNull()) {
+                            throw new NullDataException(results);
+                          }
+                          return l;
+                        } else {
+                          throw new NoSuchElementException();
+                        }
+                      } catch (Throwable t) {
+                        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
                       }
-                      return l;
-                    } else {
-                      throw new NoSuchElementException();
                     }
-                  } catch (Throwable t) {
-                    throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-                  }
-                }
-              },
-              Spliterator.ORDERED | Spliterator.NONNULL
-            ),
-            false
+                  },
+                  Spliterator.ORDERED | Spliterator.NONNULL
+              ),
+              false
           ).onClose(new StreamCloser(pstmt, results));
         } catch (Throwable t) {
           throw AutoCloseables.closeAndCatch(t, results);
@@ -1079,13 +1079,13 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
             switch (resultType) {
               case ResultSet.TYPE_FORWARD_ONLY :
                 spliterator = Spliterators.spliteratorUnknownSize(
-                  new ResultSetIterator<>(objectFactory, isNullable, results),
-                  characteristics
+                    new ResultSetIterator<>(objectFactory, isNullable, results),
+                    characteristics
                 );
                 break;
               case ResultSet.TYPE_SCROLL_INSENSITIVE :
                 characteristics |= Spliterator.SIZED;
-                // Fall-through
+              // Fall-through
               case ResultSet.TYPE_SCROLL_SENSITIVE :
                 int rowCount = 0;
                 if (results.last()) {
@@ -1093,9 +1093,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
                   results.beforeFirst();
                 }
                 spliterator = Spliterators.spliterator(
-                  new ResultSetIterator<>(objectFactory, isNullable, results),
-                  rowCount,
-                  characteristics
+                    new ResultSetIterator<>(objectFactory, isNullable, results),
+                    rowCount,
+                    characteristics
                 );
                 break;
               default :

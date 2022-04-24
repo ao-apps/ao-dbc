@@ -63,10 +63,10 @@ public class Schema {
     if (!(obj instanceof Schema)) {
       return false;
     }
-    Schema other = (Schema)obj;
+    Schema other = (Schema) obj;
     return
-      hashCode == other.hashCode
-      && name.equals(other.name)
+        hashCode == other.hashCode
+            && name.equals(other.name)
     ;
   }
 
@@ -83,7 +83,9 @@ public class Schema {
     return name;
   }
 
-  private static class GetTablesLock {/* Empty lock class to help heap profile */}
+  private static class GetTablesLock {
+    // Empty lock class to help heap profile
+  }
   private final GetTablesLock getTablesLock = new GetTablesLock();
   private SortedMap<String, Table> getTablesCache;
 
@@ -101,7 +103,7 @@ public class Schema {
           while (results.next()) {
             Table newTable = new Table(this, results.getString("TABLE_NAME"), results.getString("TABLE_TYPE"));
             if (newTables.put(newTable.getName(), newTable) != null) {
-              throw new AssertionError("Duplicate table: "+newTable);
+              throw new AssertionError("Duplicate table: " + newTable);
             }
           }
         }

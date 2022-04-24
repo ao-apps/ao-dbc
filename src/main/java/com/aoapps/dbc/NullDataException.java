@@ -67,7 +67,7 @@ public class NullDataException extends SQLDataException implements LocalizedExce
   }
 
   public NullDataException(Resources resources, String key, Serializable... args) {
-    super(resources.getMessage(key, (Object[])args), "22004");
+    super(resources.getMessage(key, (Object[]) args), "22004");
     this.resources = resources;
     this.key = key;
     this.args = args;
@@ -96,7 +96,7 @@ public class NullDataException extends SQLDataException implements LocalizedExce
   }
 
   public NullDataException(Throwable cause, Resources resources, String key, Serializable... args) {
-    super(resources.getMessage(key, (Object[])args), "22004", cause);
+    super(resources.getMessage(key, (Object[]) args), "22004", cause);
     this.resources = resources;
     this.key = key;
     this.args = args;
@@ -104,7 +104,7 @@ public class NullDataException extends SQLDataException implements LocalizedExce
 
   @Override
   public String getLocalizedMessage() {
-    return (resources == null) ? super.getLocalizedMessage() : resources.getMessage(key, (Object[])args);
+    return (resources == null) ? super.getLocalizedMessage() : resources.getMessage(key, (Object[]) args);
   }
 
   @Override
@@ -128,9 +128,9 @@ public class NullDataException extends SQLDataException implements LocalizedExce
 
   static {
     Throwables.registerSurrogateFactory(NullDataException.class, (template, cause) ->
-      (template.resources == null)
-        ? new NullDataException(template.getMessage(), cause)
-        : new NullDataException(cause, template.resources, template.key, template.args)
+        (template.resources == null)
+            ? new NullDataException(template.getMessage(), cause)
+            : new NullDataException(cause, template.resources, template.key, template.args)
     );
   }
 }

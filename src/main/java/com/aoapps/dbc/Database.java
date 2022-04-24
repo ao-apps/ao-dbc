@@ -541,7 +541,7 @@ public class Database implements DatabaseAccess {
   }
 
   private static class PooledConnection extends FailFastConnectionImpl
-    implements IPooledConnection {
+      implements IPooledConnection {
 
     private final Database database;
     private final boolean allowClose;
@@ -601,7 +601,7 @@ public class Database implements DatabaseAccess {
   private Connection unwrap(FailFastConnection conn) throws SQLException {
     IPooledConnection wrapper;
     if (conn instanceof IPooledConnection) {
-      wrapper = (IPooledConnection)conn;
+      wrapper = (IPooledConnection) conn;
     } else {
       wrapper = conn.unwrap(IPooledConnection.class);
     }
@@ -621,7 +621,7 @@ public class Database implements DatabaseAccess {
   public final void releaseConnection(Connection conn) throws SQLException {
     FailFastConnection failFastConnection;
     if (conn instanceof FailFastConnection) {
-      failFastConnection = (FailFastConnection)conn;
+      failFastConnection = (FailFastConnection) conn;
     } else {
       failFastConnection = conn.unwrap(FailFastConnection.class);
     }
@@ -1014,11 +1014,11 @@ public class Database implements DatabaseAccess {
    */
   public <Ex extends Throwable> void transactionRun(Class<? extends Ex> eClass, DatabaseRunnableE<? extends Ex> runnable) throws SQLException, Ex {
     transactionCall(
-      eClass,
-      db -> {
-        runnable.run(db);
-        return null;
-      }
+        eClass,
+        db -> {
+          runnable.run(db);
+          return null;
+        }
     );
   }
 
@@ -1034,7 +1034,7 @@ public class Database implements DatabaseAccess {
 
   @Override
   public String toString() {
-    return "Database("+(pool != null ? pool.toString() : dataSource.toString())+")";
+    return "Database(" + (pool != null ? pool.toString() : dataSource.toString()) + ")";
   }
 
   @Override
@@ -1058,8 +1058,8 @@ public class Database implements DatabaseAccess {
   @Override
   public <T, Ex extends Throwable> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
     return transactionCall(
-      eClass,
-      db -> db.stream(isolationLevel, readOnly, eClass, objectFactory, sql, params)
+        eClass,
+        db -> db.stream(isolationLevel, readOnly, eClass, objectFactory, sql, params)
     );
   }
 
@@ -1069,8 +1069,8 @@ public class Database implements DatabaseAccess {
   @Override
   public <T, Ex extends Throwable> T queryCall(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable, String sql, Object ... params) throws SQLException, Ex {
     return transactionCall(
-      eClass,
-      db -> db.queryCall(isolationLevel, readOnly, eClass, resultSetCallable, sql, params)
+        eClass,
+        db -> db.queryCall(isolationLevel, readOnly, eClass, resultSetCallable, sql, params)
     );
   }
 

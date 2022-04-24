@@ -45,18 +45,18 @@ public class Column {
   private final int hashCode;
 
   protected Column(
-    Table table,
-    String name,
-    int dataType,
-    String typeName,
-    Integer columnSize,
-    Integer decimalDigits,
-    int nullable,
-    String columnDef,
-    Integer charOctetLength,
-    int ordinalPosition,
-    String isNullable,
-    String isAutoincrement
+      Table table,
+      String name,
+      int dataType,
+      String typeName,
+      Integer columnSize,
+      Integer decimalDigits,
+      int nullable,
+      String columnDef,
+      Integer charOctetLength,
+      int ordinalPosition,
+      String isNullable,
+      String isAutoincrement
   ) {
     this.table = table;
     if (name.indexOf('"') != -1) {
@@ -89,11 +89,11 @@ public class Column {
     if (!(obj instanceof Column)) {
       return false;
     }
-    Column other = (Column)obj;
+    Column other = (Column) obj;
     return
-      hashCode == other.hashCode
-      && name.equals(other.name)
-      && table.equals(other.table)
+        hashCode == other.hashCode
+            && name.equals(other.name)
+            && table.equals(other.table)
     ;
   }
 

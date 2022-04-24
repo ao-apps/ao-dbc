@@ -63,7 +63,9 @@ public class Catalog {
     return name;
   }
 
-  private static class GetSchemasLock {/* Empty lock class to help heap profile */}
+  private static class GetSchemasLock {
+    // Empty lock class to help heap profile
+  }
   private final GetSchemasLock getSchemasLock = new GetSchemasLock();
   private SortedMap<String, Schema> getSchemasCache;
 
@@ -89,13 +91,13 @@ public class Catalog {
             //System.err.println("DEBUG: Catalog: getSchemas(): results.getString(\"table_catalog\")=" + results.getString("table_catalog"));
             //System.err.println("DEBUG: Catalog: getSchemas(): results.getString(\"TABLE_CATALOG\")=" + results.getString("TABLE_CATALOG"));
             if (
-              colCount == 1 // PostgreSQL 8.3 only returns one column
-              || results.getString("TABLE_CATALOG") == null // PostgreSQL 9.4 driver returns null
-              || name.equals(results.getString("TABLE_CATALOG")) // Other driver
+                colCount == 1 // PostgreSQL 8.3 only returns one column
+                    || results.getString("TABLE_CATALOG") == null // PostgreSQL 9.4 driver returns null
+                    || name.equals(results.getString("TABLE_CATALOG")) // Other driver
             ) {
               Schema newSchema = new Schema(this, results.getString("TABLE_SCHEM"));
               if (newSchemas.put(newSchema.getName(), newSchema) != null) {
-                throw new AssertionError("Duplicate schema: "+newSchema);
+                throw new AssertionError("Duplicate schema: " + newSchema);
               }
             }
           }
@@ -155,9 +157,9 @@ public class Catalog {
         Set<Edge<Table>> edges = AoCollections.newLinkedHashSet(tos.size());
         for (Table to : tos) {
           if (
-            tableTypes == null
-            || tableTypes.contains(from.getTableType())
-            || tableTypes.contains(to.getTableType())
+              tableTypes == null
+                  || tableTypes.contains(from.getTableType())
+                  || tableTypes.contains(to.getTableType())
           ) {
             edges.add(new Edge<>(from, to));
           }
@@ -171,9 +173,9 @@ public class Catalog {
         Set<Edge<Table>> edges = AoCollections.newLinkedHashSet(froms.size());
         for (Table from : froms) {
           if (
-            tableTypes == null
-            || tableTypes.contains(from.getTableType())
-            || tableTypes.contains(to.getTableType())
+              tableTypes == null
+                  || tableTypes.contains(from.getTableType())
+                  || tableTypes.contains(to.getTableType())
           ) {
             edges.add(new Edge<>(from, to));
           }

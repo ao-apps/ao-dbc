@@ -87,7 +87,7 @@ public final class ObjectFactories {
       try {
         this.constructor = clazz.getConstructor(ResultSet.class);
       } catch (NoSuchMethodException err) {
-        throw new SQLException("Unable to find constructor: "+clazz.getName()+"(java.sql.ResultSet)", err);
+        throw new SQLException("Unable to find constructor: " + clazz.getName() + "(java.sql.ResultSet)", err);
       }
     }
 
@@ -104,9 +104,9 @@ public final class ObjectFactories {
         }
       } catch (Throwable t) {
         throw Throwables.wrap(
-          t,
-          SQLException.class,
-          cause -> new SQLException(clazz.getName() + "(java.sql.ResultSet)", cause)
+            t,
+            SQLException.class,
+            cause -> new SQLException(clazz.getName() + "(java.sql.ResultSet)", cause)
         );
       }
     }

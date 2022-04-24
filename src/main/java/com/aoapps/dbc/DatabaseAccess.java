@@ -235,12 +235,12 @@ public interface DatabaseAccess {
    */
   default Boolean queryBoolean(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(
-      isolationLevel,
-      readOnly,
-      rowRequired,
-      ObjectFactories.notNull(ObjectFactories.Boolean),
-      sql,
-      params
+        isolationLevel,
+        readOnly,
+        rowRequired,
+        ObjectFactories.notNull(ObjectFactories.Boolean),
+        sql,
+        params
     );
   }
 
@@ -419,12 +419,12 @@ public interface DatabaseAccess {
    */
   default Double queryDouble(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(
-      isolationLevel,
-      readOnly,
-      rowRequired,
-      ObjectFactories.notNull(ObjectFactories.Double),
-      sql,
-      params
+        isolationLevel,
+        readOnly,
+        rowRequired,
+        ObjectFactories.notNull(ObjectFactories.Double),
+        sql,
+        params
     );
   }
 
@@ -496,12 +496,12 @@ public interface DatabaseAccess {
    */
   default Float queryFloat(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(
-      isolationLevel,
-      readOnly,
-      rowRequired,
-      ObjectFactories.notNull(ObjectFactories.Float),
-      sql,
-      params
+        isolationLevel,
+        readOnly,
+        rowRequired,
+        ObjectFactories.notNull(ObjectFactories.Float),
+        sql,
+        params
     );
   }
 
@@ -558,12 +558,12 @@ public interface DatabaseAccess {
    */
   default Integer queryInt(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(
-      isolationLevel,
-      readOnly,
-      rowRequired,
-      ObjectFactories.notNull(ObjectFactories.Integer),
-      sql,
-      params
+        isolationLevel,
+        readOnly,
+        rowRequired,
+        ObjectFactories.notNull(ObjectFactories.Integer),
+        sql,
+        params
     );
   }
 
@@ -622,21 +622,21 @@ public interface DatabaseAccess {
    */
   default IntList queryIntList(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
     return queryCall(
-      isolationLevel,
-      readOnly,
-      results -> {
-        IntList list = AoCollections.newIntArrayList(DatabaseUtils.getRowCount(results));
-        while (results.next()) {
-          int i = results.getInt(1);
-          if (results.wasNull()) {
-            throw new NullDataException(results);
+        isolationLevel,
+        readOnly,
+        results -> {
+          IntList list = AoCollections.newIntArrayList(DatabaseUtils.getRowCount(results));
+          while (results.next()) {
+            int i = results.getInt(1);
+            if (results.wasNull()) {
+              throw new NullDataException(results);
+            }
+            list.add(i);
           }
-          list.add(i);
-        }
-        return list;
-      },
-      sql,
-      params
+          return list;
+        },
+        sql,
+        params
     );
   }
 
@@ -732,12 +732,12 @@ public interface DatabaseAccess {
    */
   default Long queryLong(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(
-      isolationLevel,
-      readOnly,
-      rowRequired,
-      ObjectFactories.notNull(ObjectFactories.Long),
-      sql,
-      params
+        isolationLevel,
+        readOnly,
+        rowRequired,
+        ObjectFactories.notNull(ObjectFactories.Long),
+        sql,
+        params
     );
   }
 
@@ -796,21 +796,21 @@ public interface DatabaseAccess {
    */
   default LongList queryLongList(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
     return queryCall(
-      isolationLevel,
-      readOnly,
-      results -> {
-        LongList list = AoCollections.newLongArrayList(DatabaseUtils.getRowCount(results));
-        while (results.next()) {
-          long l = results.getLong(1);
-          if (results.wasNull()) {
-            throw new NullDataException(results);
+        isolationLevel,
+        readOnly,
+        results -> {
+          LongList list = AoCollections.newLongArrayList(DatabaseUtils.getRowCount(results));
+          while (results.next()) {
+            long l = results.getLong(1);
+            if (results.wasNull()) {
+              throw new NullDataException(results);
+            }
+            list.add(l);
           }
-          list.add(l);
-        }
-        return list;
-      },
-      sql,
-      params
+          return list;
+        },
+        sql,
+        params
     );
   }
 
@@ -1036,24 +1036,24 @@ public interface DatabaseAccess {
    */
   default <T, Ex extends Throwable> T queryObject(int isolationLevel, boolean readOnly, boolean rowRequired, Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws NoRowException, ExtraRowException, SQLException, Ex {
     return queryCall(
-      isolationLevel,
-      readOnly,
-      eClass,
-      results -> {
-        if (results.next()) {
-          T object = objectFactory.createObject(results);
+        isolationLevel,
+        readOnly,
+        eClass,
+        results -> {
           if (results.next()) {
-            throw new ExtraRowException(results);
+            T object = objectFactory.createObject(results);
+            if (results.next()) {
+              throw new ExtraRowException(results);
+            }
+            return object;
           }
-          return object;
-        }
-        if (rowRequired) {
-          throw new NoRowException();
-        }
-        return null;
-      },
-      sql,
-      params
+          if (rowRequired) {
+            throw new NoRowException();
+          }
+          return null;
+        },
+        sql,
+        params
     );
   }
 
@@ -1243,7 +1243,7 @@ public interface DatabaseAccess {
    * @return  An unmodifiable list
    */
   default <T, Ex extends Throwable> List<T> queryList(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
-    List<T> list = queryNewCollection(isolationLevel, readOnly, (Function<Integer, List<T>>)AoCollections::newArrayList, eClass, objectFactory, sql, params);
+    List<T> list = queryNewCollection(isolationLevel, readOnly, (Function<Integer, List<T>>) AoCollections::newArrayList, eClass, objectFactory, sql, params);
     return AoCollections.optimalUnmodifiableList(list);
   }
 
@@ -1440,29 +1440,29 @@ public interface DatabaseAccess {
   default <T, Ex extends Throwable> Stream<Optional<T>> streamOptional(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
     boolean isNullable = objectFactory.isNullable();
     return stream(
-      isolationLevel,
-      readOnly,
-      eClass,
-      new ObjectFactoryE<Optional<T>, Ex>() {
-        @Override
-        public Optional<T> createObject(ResultSet result) throws SQLException, Ex {
-          T t = objectFactory.createObject(result);
-          if (isNullable) {
-            return Optional.ofNullable(t);
-          } else {
-            if (t == null) {
-              throw new NullDataException(result);
+        isolationLevel,
+        readOnly,
+        eClass,
+        new ObjectFactoryE<Optional<T>, Ex>() {
+          @Override
+          public Optional<T> createObject(ResultSet result) throws SQLException, Ex {
+            T t = objectFactory.createObject(result);
+            if (isNullable) {
+              return Optional.ofNullable(t);
+            } else {
+              if (t == null) {
+                throw new NullDataException(result);
+              }
+              return Optional.of(t);
             }
-            return Optional.of(t);
           }
-        }
-        @Override
-        public boolean isNullable() {
-          return false;
-        }
-      },
-      sql,
-      params
+          @Override
+          public boolean isNullable() {
+            return false;
+          }
+        },
+        sql,
+        params
     );
   }
 
@@ -1625,20 +1625,20 @@ public interface DatabaseAccess {
    */
   default <T, C extends Collection<? super T>, Ex extends Throwable> C queryCollection(int isolationLevel, boolean readOnly, C collection, Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
     return queryCall(
-      isolationLevel,
-      readOnly,
-      eClass,
-      results -> {
-        while (results.next()) {
-          T newObj = objectFactory.createObject(results);
-          if (!collection.add(newObj)) {
-            throw new SQLException("Duplicate row in results: " + DatabaseUtils.getRow(results));
+        isolationLevel,
+        readOnly,
+        eClass,
+        results -> {
+          while (results.next()) {
+            T newObj = objectFactory.createObject(results);
+            if (!collection.add(newObj)) {
+              throw new SQLException("Duplicate row in results: " + DatabaseUtils.getRow(results));
+            }
           }
-        }
-        return collection;
-      },
-      sql,
-      params
+          return collection;
+        },
+        sql,
+        params
     );
   }
 
@@ -1665,8 +1665,8 @@ public interface DatabaseAccess {
    */
   @SuppressWarnings("overloads")
   default <T, C extends Collection<? super T>> C queryNewCollection(
-    Function<? super Integer, ? extends C> newCollection,
-    ObjectFactory<? extends T> objectFactory, String sql, Object ... params
+      Function<? super Integer, ? extends C> newCollection,
+      ObjectFactory<? extends T> objectFactory, String sql, Object ... params
   ) throws SQLException {
     return queryNewCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, newCollection, objectFactory, sql, params);
   }
@@ -1684,8 +1684,8 @@ public interface DatabaseAccess {
    */
   @SuppressWarnings("overloads")
   default <T, C extends Collection<? super T>> C updateNewCollection(
-    Function<? super Integer, ? extends C> newCollection,
-    ObjectFactory<? extends T> objectFactory, String sql, Object ... params
+      Function<? super Integer, ? extends C> newCollection,
+      ObjectFactory<? extends T> objectFactory, String sql, Object ... params
   ) throws SQLException {
     return queryNewCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, newCollection, objectFactory, sql, params);
   }
@@ -1697,9 +1697,9 @@ public interface DatabaseAccess {
    */
   @SuppressWarnings("overloads")
   default <T, C extends Collection<? super T>> C queryNewCollection(
-    int isolationLevel, boolean readOnly,
-    Function<? super Integer, ? extends C> newCollection,
-    ObjectFactory<? extends T> objectFactory, String sql, Object ... params
+      int isolationLevel, boolean readOnly,
+      Function<? super Integer, ? extends C> newCollection,
+      ObjectFactory<? extends T> objectFactory, String sql, Object ... params
   ) throws SQLException {
     return queryNewCollection(isolationLevel, readOnly, newCollection, RuntimeException.class, objectFactory, sql, params);
   }
@@ -1718,8 +1718,8 @@ public interface DatabaseAccess {
    */
   @SuppressWarnings("overloads")
   default <T, C extends Collection<? super T>, Ex extends Throwable> C queryNewCollection(
-    Function<? super Integer, ? extends C> newCollection,
-    Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params
+      Function<? super Integer, ? extends C> newCollection,
+      Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params
   ) throws SQLException, Ex {
     return queryNewCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, newCollection, eClass, objectFactory, sql, params);
   }
@@ -1738,8 +1738,8 @@ public interface DatabaseAccess {
    */
   @SuppressWarnings("overloads")
   default <T, C extends Collection<? super T>, Ex extends Throwable> C updateNewCollection(
-    Function<? super Integer, ? extends C> newCollection,
-    Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params
+      Function<? super Integer, ? extends C> newCollection,
+      Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params
   ) throws SQLException, Ex {
     return queryNewCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, newCollection, eClass, objectFactory, sql, params);
   }
@@ -1752,27 +1752,27 @@ public interface DatabaseAccess {
    */
   @SuppressWarnings("overloads")
   default <T, C extends Collection<? super T>, Ex extends Throwable> C queryNewCollection(
-    int isolationLevel, boolean readOnly,
-    Function<? super Integer, ? extends C> newCollection,
-    Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params
+      int isolationLevel, boolean readOnly,
+      Function<? super Integer, ? extends C> newCollection,
+      Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params
   ) throws SQLException, Ex {
     return queryCall(
-      isolationLevel,
-      readOnly,
-      eClass,
-      results -> {
-        int rowCount = DatabaseUtils.getRowCount(results);
-        C collection = newCollection.apply(rowCount == -1 ? null : rowCount);
-        while (results.next()) {
-          T newObj = objectFactory.createObject(results);
-          if (!collection.add(newObj)) {
-            throw new SQLException("Duplicate row in results: " + DatabaseUtils.getRow(results));
+        isolationLevel,
+        readOnly,
+        eClass,
+        results -> {
+          int rowCount = DatabaseUtils.getRowCount(results);
+          C collection = newCollection.apply(rowCount == -1 ? null : rowCount);
+          while (results.next()) {
+            T newObj = objectFactory.createObject(results);
+            if (!collection.add(newObj)) {
+              throw new SQLException("Duplicate row in results: " + DatabaseUtils.getRow(results));
+            }
           }
-        }
-        return collection;
-      },
-      sql,
-      params
+          return collection;
+        },
+        sql,
+        params
     );
   }
 
@@ -1976,15 +1976,15 @@ public interface DatabaseAccess {
    */
   default <Ex extends Throwable> void queryRun(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ResultSetRunnableE<? extends Ex> resultSetRunnable, String sql, Object ... params) throws SQLException, Ex {
     queryCall(
-      isolationLevel,
-      readOnly,
-      eClass,
-      results -> {
-        resultSetRunnable.run(results);
-        return null;
-      },
-      sql,
-      params
+        isolationLevel,
+        readOnly,
+        eClass,
+        results -> {
+          resultSetRunnable.run(results);
+          return null;
+        },
+        sql,
+        params
     );
   }
 
@@ -2046,12 +2046,12 @@ public interface DatabaseAccess {
    */
   default Short queryShort(int isolationLevel, boolean readOnly, boolean rowRequired, String sql, Object ... params) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(
-      isolationLevel,
-      readOnly,
-      rowRequired,
-      ObjectFactories.notNull(ObjectFactories.Short),
-      sql,
-      params
+        isolationLevel,
+        readOnly,
+        rowRequired,
+        ObjectFactories.notNull(ObjectFactories.Short),
+        sql,
+        params
     );
   }
 
