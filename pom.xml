@@ -113,6 +113,23 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
   <build>
     <plugins>
       <plugin>
+        <groupId>org.openrewrite.maven</groupId><artifactId>rewrite-maven-plugin</artifactId>
+        <configuration>
+          <activeRecipes>
+            <recipe>org.openrewrite.java.format.AutoFormat</recipe>
+            <!--
+              TODO: Plugin version 4.22.2 is corrupting some Java sources:
+              1) Truncates module-info.java
+              2) Adds private constructors to private interfaces
+              3) Changes constructors to private when should not
+              4) Unreachable break statements within switch/case
+              5) Moves default case when not at end, despite middle position important (unusual, but can happen)
+            <recipe>org.openrewrite.java.cleanup.Cleanup</recipe>
+            -->
+          </activeRecipes>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId><artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
           <!-- TODO: Clean-up Checkstyle -->
