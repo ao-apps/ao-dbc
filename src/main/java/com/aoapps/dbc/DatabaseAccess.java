@@ -1039,7 +1039,7 @@ public interface DatabaseAccess {
         isolationLevel,
         readOnly,
         eClass,
-        results -> {
+        (ResultSet results) -> {
           if (results.next()) {
             T object = objectFactory.createObject(results);
             if (results.next()) {
@@ -1628,7 +1628,7 @@ public interface DatabaseAccess {
         isolationLevel,
         readOnly,
         eClass,
-        results -> {
+        (ResultSet results) -> {
           while (results.next()) {
             T newObj = objectFactory.createObject(results);
             if (!collection.add(newObj)) {
@@ -1760,7 +1760,7 @@ public interface DatabaseAccess {
         isolationLevel,
         readOnly,
         eClass,
-        results -> {
+        (ResultSet results) -> {
           int rowCount = DatabaseUtils.getRowCount(results);
           C collection = newCollection.apply(rowCount == -1 ? null : rowCount);
           while (results.next()) {
@@ -1979,7 +1979,7 @@ public interface DatabaseAccess {
         isolationLevel,
         readOnly,
         eClass,
-        results -> {
+        (ResultSet results) -> {
           resultSetRunnable.run(results);
           return null;
         },

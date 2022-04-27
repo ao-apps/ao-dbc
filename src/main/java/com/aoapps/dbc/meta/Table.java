@@ -215,7 +215,7 @@ public class Table {
     // Empty lock class to help heap profile
   }
   private final GetPrimaryKeyLock getPrimaryKeyLock = new GetPrimaryKeyLock();
-  private boolean getPrimaryKeyCached = false;
+  private boolean getPrimaryKeyCached;
   private Index getPrimaryKeyCache;
 
   /**

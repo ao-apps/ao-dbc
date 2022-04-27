@@ -43,7 +43,7 @@ public final class ObjectFactories {
 
   public static final ObjectFactory<java.math.BigDecimal> BigDecimal = result -> result.getBigDecimal(1);
 
-  public static final ObjectFactory<java.lang.Boolean> Boolean = result -> {
+  public static final ObjectFactory<java.lang.Boolean> Boolean = (ResultSet result) -> {
     boolean b = result.getBoolean(1);
     return result.wasNull() ? null : b;
   };
@@ -52,22 +52,22 @@ public final class ObjectFactories {
 
   public static final ObjectFactory<java.sql.Date> Date = result -> result.getDate(1);
 
-  public static final ObjectFactory<java.lang.Double> Double = result -> {
+  public static final ObjectFactory<java.lang.Double> Double = (ResultSet result) -> {
     double d = result.getDouble(1);
     return result.wasNull() ? null : d;
   };
 
-  public static final ObjectFactory<java.lang.Float> Float = result -> {
+  public static final ObjectFactory<java.lang.Float> Float = (ResultSet result) -> {
     float f = result.getFloat(1);
     return result.wasNull() ? null : f;
   };
 
-  public static final ObjectFactory<java.lang.Integer> Integer = result -> {
+  public static final ObjectFactory<java.lang.Integer> Integer = (ResultSet result) -> {
     int i = result.getInt(1);
     return result.wasNull() ? null : i;
   };
 
-  public static final ObjectFactory<java.lang.Long> Long = result -> {
+  public static final ObjectFactory<java.lang.Long> Long = (ResultSet result) -> {
     long l = result.getLong(1);
     return result.wasNull() ? null : l;
   };
@@ -120,7 +120,7 @@ public final class ObjectFactories {
     }
   }
 
-  public static final ObjectFactory<java.lang.Short> Short = result -> {
+  public static final ObjectFactory<java.lang.Short> Short = (ResultSet result) -> {
     short s = result.getShort(1);
     return result.wasNull() ? null : s;
   };
