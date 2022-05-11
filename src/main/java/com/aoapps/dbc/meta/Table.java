@@ -75,8 +75,7 @@ public class Table {
     return
         hashCode == other.hashCode
             && name.equals(other.name)
-            && schema.equals(other.schema)
-    ;
+            && schema.equals(other.schema);
   }
 
   @Override
@@ -99,6 +98,7 @@ public class Table {
   private static class GetColumnMapLock {
     // Empty lock class to help heap profile
   }
+
   private final GetColumnMapLock getColumnMapLock = new GetColumnMapLock();
   private SortedMap<String, Column> getColumnMapCache;
 
@@ -163,6 +163,7 @@ public class Table {
   private static class GetColumnsLock {
     // Empty lock class to help heap profile
   }
+
   private final GetColumnsLock getColumnsLock = new GetColumnsLock();
   private List<Column> getColumnsCache;
 
@@ -214,6 +215,7 @@ public class Table {
   private static class GetPrimaryKeyLock {
     // Empty lock class to help heap profile
   }
+
   private final GetPrimaryKeyLock getPrimaryKeyLock = new GetPrimaryKeyLock();
   private boolean getPrimaryKeyCached;
   private Index getPrimaryKeyCache;
@@ -264,13 +266,15 @@ public class Table {
   private static class GetImportedTablesLock {
     // Empty lock class to help heap profile
   }
+
   private final GetImportedTablesLock getImportedTablesLock = new GetImportedTablesLock();
   private Set<? extends Table> getImportedTablesCache;
 
   /**
    * Gets the set of tables that this table depends on.
-   *
-   * This is based on getImportedKeys
+   * <p>
+   * This is based on {@link java.sql.DatabaseMetaData#getImportedKeys(java.lang.String, java.lang.String, java.lang.String)}.
+   * </p>
    */
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
   public Set<? extends Table> getImportedTables() throws SQLException {
@@ -300,13 +304,15 @@ public class Table {
   private static class GetExportedTablesLock {
     // Empty lock class to help heap profile
   }
+
   private final GetExportedTablesLock getExportedTablesLock = new GetExportedTablesLock();
   private Set<? extends Table> getExportedTablesCache;
 
   /**
    * Gets the set of tables that depend on this table.
-   *
-   * This is based on getExportedKeys
+   * <p>
+   * This is based on {@link java.sql.DatabaseMetaData#getExportedKeys(java.lang.String, java.lang.String, java.lang.String)}.
+   * </p>
    */
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
   public Set<? extends Table> getExportedTables() throws SQLException {

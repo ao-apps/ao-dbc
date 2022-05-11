@@ -43,7 +43,7 @@ public interface ObjectFactoryE<T, Ex extends Throwable> {
   T createObject(ResultSet result) throws SQLException, Ex;
 
   /**
-   * Can this object factory return {@code null} from {@link #createObject(java.sql.ResultSet)}?
+   * Gets if this object factory can return {@code null} from {@link #createObject(java.sql.ResultSet)}.
    * <p>
    * Note: This is used to enable the {@link Spliterator#NONNULL} on streams.
    * </p>

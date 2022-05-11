@@ -93,7 +93,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
   private final Database database;
 
-  private FailFastConnection _conn;
+  private FailFastConnection conn;
 
   protected DatabaseConnection(Database database) {
     this.database = database;
@@ -482,14 +482,14 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   // Note: Matches Database.getConnection(int, boolean, int)
   // Note:      Is DatabaseConnection.getConnection(int, boolean)
   public Connection getConnection(int isolationLevel, boolean readOnly, int maxConnections) throws SQLException {
-    FailFastConnection c = _conn;
+    FailFastConnection c = conn;
     if (c == null) {
       // New connection
       c = database.getConnection(isolationLevel, readOnly, maxConnections, false);
       assert c.getAutoCommit();
       assert c.isReadOnly() == readOnly;
       assert c.getTransactionIsolation() == isolationLevel;
-      _conn = c;
+      conn = c;
     } else {
       // Existing connection
       if (c.isReadOnly() != readOnly) {
@@ -516,59 +516,59 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
   protected static void setParam(Connection conn, PreparedStatement pstmt, int pos, Object param) throws SQLException {
     if (param == null) {
-      pstmt.setNull           (pos, Types.VARCHAR);
+      pstmt.setNull(pos, Types.VARCHAR);
     } else if (param instanceof Null) {
-      pstmt.setNull           (pos, ((Null) param).getType());
+      pstmt.setNull(pos, ((Null) param).getType());
     } else if (param instanceof Array) {
-      pstmt.setArray          (pos, (Array) param);
+      pstmt.setArray(pos, (Array) param);
     } else if (param instanceof BigDecimal) {
-      pstmt.setBigDecimal     (pos, (BigDecimal) param);
+      pstmt.setBigDecimal(pos, (BigDecimal) param);
     } else if (param instanceof BigInteger) {
-      pstmt.setBigDecimal     (pos, new BigDecimal((BigInteger) param));
+      pstmt.setBigDecimal(pos, new BigDecimal((BigInteger) param));
     } else if (param instanceof Blob) {
-      pstmt.setBlob           (pos, (Blob) param);
+      pstmt.setBlob(pos, (Blob) param);
     } else if (param instanceof Boolean) {
-      pstmt.setBoolean        (pos, (Boolean) param);
+      pstmt.setBoolean(pos, (Boolean) param);
     } else if (param instanceof Byte) {
-      pstmt.setByte           (pos, (Byte) param);
+      pstmt.setByte(pos, (Byte) param);
     } else if (param instanceof byte[]) {
-      pstmt.setBytes          (pos, (byte[]) param);
+      pstmt.setBytes(pos, (byte[]) param);
     } else if (param instanceof Clob) {
-      pstmt.setClob           (pos, (Clob) param);
+      pstmt.setClob(pos, (Clob) param);
     } else if (param instanceof Date) {
-      pstmt.setDate           (pos, (Date) param);
+      pstmt.setDate(pos, (Date) param);
     } else if (param instanceof Double) {
-      pstmt.setDouble         (pos, (Double) param);
+      pstmt.setDouble(pos, (Double) param);
     } else if (param instanceof Float) {
-      pstmt.setFloat          (pos, (Float) param);
+      pstmt.setFloat(pos, (Float) param);
     } else if (param instanceof Integer) {
-      pstmt.setInt            (pos, (Integer) param);
+      pstmt.setInt(pos, (Integer) param);
     } else if (param instanceof InputStream) {
-      pstmt.setBinaryStream   (pos, (InputStream) param);
+      pstmt.setBinaryStream(pos, (InputStream) param);
     } else if (param instanceof Long) {
-      pstmt.setLong           (pos, (Long) param);
+      pstmt.setLong(pos, (Long) param);
     } else if (param instanceof NClob) {
-      pstmt.setNClob          (pos, (NClob) param);
+      pstmt.setNClob(pos, (NClob) param);
     } else if (param instanceof Reader) {
       pstmt.setCharacterStream(pos, (Reader) param);
     } else if (param instanceof Ref) {
-      pstmt.setRef            (pos, (Ref) param);
+      pstmt.setRef(pos, (Ref) param);
     } else if (param instanceof RowId) {
-      pstmt.setRowId          (pos, (RowId) param);
+      pstmt.setRowId(pos, (RowId) param);
     } else if (param instanceof Short) {
-      pstmt.setShort          (pos, (Short) param);
+      pstmt.setShort(pos, (Short) param);
     } else if (param instanceof SQLXML) {
-      pstmt.setSQLXML         (pos, (SQLXML) param);
+      pstmt.setSQLXML(pos, (SQLXML) param);
     } else if (param instanceof String) {
-      pstmt.setString         (pos, (String) param);
+      pstmt.setString(pos, (String) param);
     } else if (param instanceof Time) {
-      pstmt.setTime           (pos, (Time) param);
+      pstmt.setTime(pos, (Time) param);
     } else if (param instanceof Timestamp) {
-      pstmt.setTimestamp      (pos, (Timestamp) param);
+      pstmt.setTimestamp(pos, (Timestamp) param);
     } else if (param instanceof URL) {
-      pstmt.setURL            (pos, (URL) param);
+      pstmt.setURL(pos, (URL) param);
     } else if (param instanceof Enum) {
-      pstmt.setString         (pos, ((Enum) param).name());
+      pstmt.setString(pos, ((Enum) param).name());
     } else if (
         (param instanceof SQLData)
             || (param instanceof Struct)
@@ -589,7 +589,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
     }
   }
 
-  public static void setParams(Connection conn, PreparedStatement pstmt, Object ... params) throws SQLException {
+  public static void setParams(
+      Connection conn,
+      PreparedStatement pstmt,
+      Object ... params
+  ) throws SQLException {
     int pos = 1;
     for (Object param : params) {
       setParam(conn, pstmt, pos++, param);
@@ -598,14 +602,14 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
   // TODO: Restore default isolation levels and read-only state on commit and rollback?
   public void commit() throws SQLException {
-    FailFastConnection c = _conn;
+    FailFastConnection c = conn;
     if (c != null && !c.getAutoCommit()) {
       c.commit();
     }
   }
 
   public boolean isClosed() throws SQLException {
-    FailFastConnection c = _conn;
+    FailFastConnection c = conn;
     return c == null || c.isClosed();
   }
 
@@ -626,9 +630,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    */
   @Override
   public void close() throws SQLException {
-    FailFastConnection c = _conn;
+    FailFastConnection c = conn;
     if (c != null) {
-      _conn = null;
+      conn = null;
       database.release(c);
     }
   }
@@ -655,7 +659,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    */
   // TODO: Rollback to the savepoint of the current sub-transaction?
   public boolean rollback() throws SQLException {
-    FailFastConnection c = _conn;
+    FailFastConnection c = conn;
     if (c != null && !c.isClosed()) {
       if (!c.getAutoCommit()) {
         c.rollback();
@@ -703,9 +707,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   @Deprecated(forRemoval = true)
   @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
   public boolean rollbackAndClose() throws SQLException {
-    FailFastConnection c = _conn;
+    FailFastConnection c = conn;
     if (c != null) {
-      _conn = null;
+      conn = null;
       Throwable t0 = null;
       boolean rollback = false;
       try {
@@ -788,7 +792,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
   @Override
   @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
-  public DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+  public DoubleStream doubleStream(
+      int isolationLevel,
+      boolean readOnly,
+      String sql,
+      Object ... params
+  ) throws NullDataException, SQLException {
     Connection conn = getConnection(isolationLevel, readOnly);
     PreparedStatement pstmt = conn.prepareStatement(sql); // TODO: Use regular statements when there are no parameters?  Here and entire api?
     try {
@@ -847,7 +856,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
           throw AutoCloseables.closeAndCatch(t, results);
         }
       } catch (Error | RuntimeException | SQLException e) {
-        ErrorPrinter.addSQL(e, pstmt);
+        ErrorPrinter.addSql(e, pstmt);
         throw e;
       }
     } catch (Throwable t) {
@@ -857,7 +866,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
   @Override
   @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
-  public IntStream intStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+  public IntStream intStream(
+      int isolationLevel,
+      boolean readOnly,
+      String sql,
+      Object ... params
+  ) throws NullDataException, SQLException {
     Connection conn = getConnection(isolationLevel, readOnly);
     PreparedStatement pstmt = conn.prepareStatement(sql);
     try {
@@ -916,7 +930,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
           throw AutoCloseables.closeAndCatch(t, results);
         }
       } catch (Error | RuntimeException | SQLException e) {
-        ErrorPrinter.addSQL(e, pstmt);
+        ErrorPrinter.addSql(e, pstmt);
         throw e;
       }
     } catch (Throwable t) {
@@ -926,7 +940,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
   @Override
   @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
-  public LongStream longStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+  public LongStream longStream(
+      int isolationLevel,
+      boolean readOnly,
+      String sql,
+      Object ... params
+  ) throws NullDataException, SQLException {
     Connection conn = getConnection(isolationLevel, readOnly);
     PreparedStatement pstmt = conn.prepareStatement(sql);
     try {
@@ -985,7 +1004,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
           throw AutoCloseables.closeAndCatch(t, results);
         }
       } catch (Error | RuntimeException | SQLException e) {
-        ErrorPrinter.addSQL(e, pstmt);
+        ErrorPrinter.addSql(e, pstmt);
         throw e;
       }
     } catch (Throwable t) {
@@ -1054,12 +1073,21 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    */
   @Override
   @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter", "fallthrough"})
   // TODO: Take an optional int for additional characteristics?  Might be useful for DISTINCT and SORTED, in particular.
-  public <T, Ex extends Throwable> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
+  public <T, Ex extends Throwable> Stream<T> stream(
+      int isolationLevel,
+      boolean readOnly,
+      Class<? extends Ex> exClass,
+      ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
+      String sql,
+      Object ... params
+  ) throws SQLException, Ex {
     Connection conn = getConnection(isolationLevel, readOnly);
     PreparedStatement pstmt = conn.prepareStatement(sql);
     try {
@@ -1069,61 +1097,70 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
         ResultSet results = pstmt.executeQuery();
         try {
           Spliterator<T> spliterator;
-          {
-            int characteristics = Spliterator.ORDERED | Spliterator.IMMUTABLE;
-            boolean isNullable = objectFactory.isNullable();
-            if (!isNullable) {
-              characteristics |= Spliterator.NONNULL;
+            {
+              int characteristics = Spliterator.ORDERED | Spliterator.IMMUTABLE;
+              boolean isNullable = objectFactory.isNullable();
+              if (!isNullable) {
+                characteristics |= Spliterator.NONNULL;
+              }
+              int resultType = results.getType();
+              switch (resultType) {
+                case ResultSet.TYPE_FORWARD_ONLY:
+                  spliterator = Spliterators.spliteratorUnknownSize(
+                      new ResultSetIterator<>(objectFactory, isNullable, results),
+                      characteristics
+                  );
+                  break;
+                case ResultSet.TYPE_SCROLL_INSENSITIVE:
+                  characteristics |= Spliterator.SIZED;
+                // fall-through
+                case ResultSet.TYPE_SCROLL_SENSITIVE:
+                  int rowCount = 0;
+                  if (results.last()) {
+                    rowCount = results.getRow();
+                    results.beforeFirst();
+                  }
+                  spliterator = Spliterators.spliterator(
+                      new ResultSetIterator<>(objectFactory, isNullable, results),
+                      rowCount,
+                      characteristics
+                  );
+                  break;
+                default:
+                  throw new AssertionError(resultType);
+              }
             }
-            int resultType = results.getType();
-            switch (resultType) {
-              case ResultSet.TYPE_FORWARD_ONLY :
-                spliterator = Spliterators.spliteratorUnknownSize(
-                    new ResultSetIterator<>(objectFactory, isNullable, results),
-                    characteristics
-                );
-                break;
-              case ResultSet.TYPE_SCROLL_INSENSITIVE :
-                characteristics |= Spliterator.SIZED;
-              // Fall-through
-              case ResultSet.TYPE_SCROLL_SENSITIVE :
-                int rowCount = 0;
-                if (results.last()) {
-                  rowCount = results.getRow();
-                  results.beforeFirst();
-                }
-                spliterator = Spliterators.spliterator(
-                    new ResultSetIterator<>(objectFactory, isNullable, results),
-                    rowCount,
-                    characteristics
-                );
-                break;
-              default :
-                throw new AssertionError(resultType);
-            }
-          }
           return StreamSupport.stream(spliterator, false).onClose(new StreamCloser(pstmt, results));
         } catch (Throwable t) {
           throw AutoCloseables.closeAndCatch(t, results);
         }
       } catch (Error | RuntimeException | SQLException e) {
-        ErrorPrinter.addSQL(e, pstmt);
+        ErrorPrinter.addSql(e, pstmt);
         throw e;
       }
     } catch (Throwable t) {
       t = AutoCloseables.closeAndCatch(t, pstmt);
-      if (eClass.isInstance(t)) {
-        throw eClass.cast(t);
+      if (exClass.isInstance(t)) {
+        throw exClass.cast(t);
       }
       throw Throwables.wrap(t, SQLException.class, SQLException::new);
     }
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    */
   @Override
-  public <T, Ex extends Throwable> T queryCall(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable, String sql, Object ... params) throws SQLException, Ex {
+  public <T, Ex extends Throwable> T queryCall(
+      int isolationLevel,
+      boolean readOnly,
+      Class<? extends Ex> exClass,
+      ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable,
+      String sql,
+      Object ... params
+  ) throws SQLException, Ex {
     Connection conn = getConnection(isolationLevel, readOnly);
     // TODO: Use regular Statement when there are no params?  Interaction with PostgreSQL prepared statement caching?
     try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -1134,35 +1171,41 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
           return resultSetCallable.call(results);
         }
       } catch (Error | RuntimeException | SQLException e) {
-        ErrorPrinter.addSQL(e, pstmt);
+        ErrorPrinter.addSql(e, pstmt);
         throw e;
       }
     }
   }
 
   @Override
-  public int update(String sql, Object ... params) throws SQLException {
+  public int update(
+      String sql,
+      Object ... params
+  ) throws SQLException {
     Connection conn = getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false);
     try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
       try {
         setParams(conn, pstmt, params);
         return pstmt.executeUpdate();
       } catch (Error | RuntimeException | SQLException e) {
-        ErrorPrinter.addSQL(e, pstmt);
+        ErrorPrinter.addSql(e, pstmt);
         throw e;
       }
     }
   }
 
   @Override
-  public long largeUpdate(String sql, Object ... params) throws SQLException {
+  public long largeUpdate(
+      String sql,
+      Object ... params
+  ) throws SQLException {
     Connection conn = getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false);
     try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
       try {
         setParams(conn, pstmt, params);
         return pstmt.executeLargeUpdate();
       } catch (Error | RuntimeException | SQLException e) {
-        ErrorPrinter.addSQL(e, pstmt);
+        ErrorPrinter.addSql(e, pstmt);
         throw e;
       }
     }

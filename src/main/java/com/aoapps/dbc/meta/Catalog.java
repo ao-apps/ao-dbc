@@ -66,6 +66,7 @@ public class Catalog {
   private static class GetSchemasLock {
     // Empty lock class to help heap profile
   }
+
   private final GetSchemasLock getSchemasLock = new GetSchemasLock();
   private SortedMap<String, Schema> getSchemasCache;
 
@@ -130,8 +131,9 @@ public class Catalog {
 
   /**
    * Gets a graph view of the imported/exported table relationships within this catalog.
-   *
+   * <p>
    * TODO: Check is symmetric in JUnit test
+   * </p>
    *
    * @param tableTypes  the set of tables types or {@code null} for all types
    */

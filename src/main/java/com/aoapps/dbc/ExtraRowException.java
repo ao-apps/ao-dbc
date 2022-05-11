@@ -117,6 +117,8 @@ public class ExtraRowException extends SQLNonTransientException implements Local
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @return  No defensive copy
    */
   @Override

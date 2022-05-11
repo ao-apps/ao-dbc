@@ -112,6 +112,8 @@ public final class ObjectFactories {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @return  {@code false}
      */
     @Override
@@ -152,6 +154,8 @@ public final class ObjectFactories {
     }
 
     /**
+   * {@inheritDoc}
+   *
      * @return  {@code false}
      */
     @Override

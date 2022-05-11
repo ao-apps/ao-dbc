@@ -107,6 +107,8 @@ public class NoRowException extends SQLNonTransientException implements Localize
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @return  No defensive copy
    */
   @Override

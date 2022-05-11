@@ -66,8 +66,7 @@ public class Schema {
     Schema other = (Schema) obj;
     return
         hashCode == other.hashCode
-            && name.equals(other.name)
-    ;
+            && name.equals(other.name);
   }
 
   @Override
@@ -86,6 +85,7 @@ public class Schema {
   private static class GetTablesLock {
     // Empty lock class to help heap profile
   }
+
   private final GetTablesLock getTablesLock = new GetTablesLock();
   private SortedMap<String, Table> getTablesCache;
 

@@ -118,6 +118,8 @@ public class NullDataException extends SQLDataException implements LocalizedExce
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @return  No defensive copy
    */
   @Override

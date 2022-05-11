@@ -145,7 +145,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
         // Find the candidate constructor
         List<String> warnings = null;
         Constructor<?>[] constructors = clazz.getConstructors();
-        CONSTRUCTORS :
+        CONSTRUCTORS:
         for (Constructor<?> constructor : constructors) {
           Class<?>[] paramTypes = constructor.getParameterTypes();
           if (paramTypes.length == numParams) {
@@ -266,6 +266,8 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @return  {@code false}
    */
   @Override

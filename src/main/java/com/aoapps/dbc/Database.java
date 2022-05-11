@@ -533,20 +533,20 @@ public class Database implements DatabaseAccess {
         throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, conn);
       }
     }
-    return new PooledConnection(this, conn, allowClose);
+    return new PooledConnectionImpl(this, conn, allowClose);
   }
 
-  private static interface IPooledConnection extends FailFastConnection {
+  private static interface PooledConnection extends FailFastConnection {
     Database getDatabase();
   }
 
-  private static class PooledConnection extends FailFastConnectionImpl
-      implements IPooledConnection {
+  private static class PooledConnectionImpl extends FailFastConnectionImpl
+      implements PooledConnection {
 
     private final Database database;
     private final boolean allowClose;
 
-    private PooledConnection(Database database, Connection wrapped, boolean allowClose) {
+    private PooledConnectionImpl(Database database, Connection wrapped, boolean allowClose) {
       super(wrapped);
       this.database = database;
       this.allowClose = allowClose;
@@ -599,11 +599,11 @@ public class Database implements DatabaseAccess {
 
   @SuppressWarnings("null")
   private Connection unwrap(FailFastConnection conn) throws SQLException {
-    IPooledConnection wrapper;
-    if (conn instanceof IPooledConnection) {
-      wrapper = (IPooledConnection) conn;
+    PooledConnection wrapper;
+    if (conn instanceof PooledConnection) {
+      wrapper = (PooledConnection) conn;
     } else {
-      wrapper = conn.unwrap(IPooledConnection.class);
+      wrapper = conn.unwrap(PooledConnection.class);
     }
     if (wrapper.getDatabase() == this) {
       return wrapper.getWrapped();
@@ -811,8 +811,8 @@ public class Database implements DatabaseAccess {
    *
    * @see #isInTransaction()
    */
-  public <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> eClass, CallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex {
-    return transactionCall(eClass, db -> callable.call());
+  public <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> exClass, CallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex {
+    return transactionCall(exClass, db -> callable.call());
   }
 
   /**
@@ -867,7 +867,7 @@ public class Database implements DatabaseAccess {
    * @see #isInTransaction()
    */
   @SuppressWarnings("UseSpecificCatch")
-  public <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> eClass, DatabaseCallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex {
+  public <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> exClass, DatabaseCallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex {
     Throwable t0 = null;
     DatabaseConnection db = transactionConnection.get();
     if (db != null) {
@@ -899,8 +899,8 @@ public class Database implements DatabaseAccess {
       }
     }
     assert t0 != null;
-    if (eClass.isInstance(t0)) {
-      throw eClass.cast(t0);
+    if (exClass.isInstance(t0)) {
+      throw exClass.cast(t0);
     }
     throw Throwables.wrap(t0, SQLException.class, SQLException::new);
   }
@@ -911,8 +911,8 @@ public class Database implements DatabaseAccess {
    * @deprecated  Please use {@link #transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)}
    */
   @Deprecated(forRemoval = true)
-  public final <V, Ex extends Exception> V executeTransaction(Class<Ex> eClass, DatabaseCallableE<V, Ex> callable) throws SQLException, Ex {
-    return transactionCall(eClass, callable);
+  public final <V, Ex extends Exception> V executeTransaction(Class<Ex> exClass, DatabaseCallableE<V, Ex> callable) throws SQLException, Ex {
+    return transactionCall(exClass, callable);
   }
 
   /**
@@ -957,8 +957,8 @@ public class Database implements DatabaseAccess {
    *
    * @see #isInTransaction()
    */
-  public <Ex extends Throwable> void transactionRun(Class<? extends Ex> eClass, RunnableE<? extends Ex> runnable) throws SQLException, Ex {
-    transactionRun(eClass, db -> runnable.run());
+  public <Ex extends Throwable> void transactionRun(Class<? extends Ex> exClass, RunnableE<? extends Ex> runnable) throws SQLException, Ex {
+    transactionRun(exClass, db -> runnable.run());
   }
 
   /**
@@ -1012,9 +1012,9 @@ public class Database implements DatabaseAccess {
    *
    * @see #isInTransaction()
    */
-  public <Ex extends Throwable> void transactionRun(Class<? extends Ex> eClass, DatabaseRunnableE<? extends Ex> runnable) throws SQLException, Ex {
+  public <Ex extends Throwable> void transactionRun(Class<? extends Ex> exClass, DatabaseRunnableE<? extends Ex> runnable) throws SQLException, Ex {
     transactionCall(
-        eClass,
+        exClass,
         db -> {
           runnable.run(db);
           return null;
@@ -1028,8 +1028,8 @@ public class Database implements DatabaseAccess {
    * @deprecated  Please use {@link #transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)}
    */
   @Deprecated(forRemoval = true)
-  public final <Ex extends Exception> void executeTransaction(Class<Ex> eClass, DatabaseRunnableE<Ex> runnable) throws SQLException, Ex {
-    transactionRun(eClass, runnable);
+  public final <Ex extends Exception> void executeTransaction(Class<Ex> exClass, DatabaseRunnableE<Ex> runnable) throws SQLException, Ex {
+    transactionRun(exClass, runnable);
   }
 
   @Override
@@ -1038,49 +1038,88 @@ public class Database implements DatabaseAccess {
   }
 
   @Override
-  public DoubleStream doubleStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+  public DoubleStream doubleStream(
+      int isolationLevel,
+      boolean readOnly,
+      String sql,
+      Object ... params
+  ) throws NullDataException, SQLException {
     return transactionCall(db -> db.doubleStream(isolationLevel, readOnly, sql, params));
   }
 
   @Override
-  public IntStream intStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+  public IntStream intStream(
+      int isolationLevel,
+      boolean readOnly,
+      String sql,
+      Object ... params
+  ) throws NullDataException, SQLException {
     return transactionCall(db -> db.intStream(isolationLevel, readOnly, sql, params));
   }
 
   @Override
-  public LongStream longStream(int isolationLevel, boolean readOnly, String sql, Object ... params) throws NullDataException, SQLException {
+  public LongStream longStream(
+      int isolationLevel,
+      boolean readOnly,
+      String sql,
+      Object ... params
+  ) throws NullDataException, SQLException {
     return transactionCall(db -> db.longStream(isolationLevel, readOnly, sql, params));
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    */
   @Override
-  public <T, Ex extends Throwable> Stream<T> stream(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ObjectFactoryE<? extends T, ? extends Ex> objectFactory, String sql, Object ... params) throws SQLException, Ex {
+  public <T, Ex extends Throwable> Stream<T> stream(
+      int isolationLevel,
+      boolean readOnly,
+      Class<? extends Ex> exClass,
+      ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
+      String sql,
+      Object ... params
+  ) throws SQLException, Ex {
     return transactionCall(
-        eClass,
-        db -> db.stream(isolationLevel, readOnly, eClass, objectFactory, sql, params)
+        exClass,
+        db -> db.stream(isolationLevel, readOnly, exClass, objectFactory, sql, params)
     );
   }
 
   /**
+   * {@inheritDoc}
+   *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    */
   @Override
-  public <T, Ex extends Throwable> T queryCall(int isolationLevel, boolean readOnly, Class<? extends Ex> eClass, ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable, String sql, Object ... params) throws SQLException, Ex {
+  public <T, Ex extends Throwable> T queryCall(
+      int isolationLevel,
+      boolean readOnly,
+      Class<? extends Ex> exClass,
+      ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable,
+      String sql,
+      Object ... params
+  ) throws SQLException, Ex {
     return transactionCall(
-        eClass,
-        db -> db.queryCall(isolationLevel, readOnly, eClass, resultSetCallable, sql, params)
+        exClass,
+        db -> db.queryCall(isolationLevel, readOnly, exClass, resultSetCallable, sql, params)
     );
   }
 
   @Override
-  public int update(String sql, Object ... params) throws SQLException {
+  public int update(
+      String sql,
+      Object ... params
+  ) throws SQLException {
     return transactionCall(db -> db.update(sql, params));
   }
 
   @Override
-  public long largeUpdate(String sql, Object ... params) throws SQLException {
+  public long largeUpdate(
+      String sql,
+      Object ... params
+  ) throws SQLException {
     return transactionCall(db -> db.largeUpdate(sql, params));
   }
 }

@@ -93,8 +93,7 @@ public class Column {
     return
         hashCode == other.hashCode
             && name.equals(other.name)
-            && table.equals(other.table)
-    ;
+            && table.equals(other.table);
   }
 
   @Override

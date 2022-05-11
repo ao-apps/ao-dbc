@@ -24,6 +24,7 @@
 package com.aoapps.dbc;
 
 import static com.aoapps.encoding.TextInPsqlEncoder.textInPsqlEncoder;
+
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -68,46 +69,45 @@ public final class DatabaseUtils {
       switch (colType) {
         // Types without quotes
         // Note: Matches JdbcResourceSynchronizer
-        case Types.BIGINT :
-        case Types.BIT :
-        case Types.BOOLEAN :
-        case Types.DECIMAL :
-        case Types.DOUBLE :
-        case Types.FLOAT :
-        case Types.INTEGER :
-        case Types.NULL :
-        case Types.NUMERIC :
-        case Types.REAL :
-        case Types.SMALLINT :
-        case Types.TINYINT :
+        case Types.BIGINT:
+        case Types.BIT:
+        case Types.BOOLEAN:
+        case Types.DECIMAL:
+        case Types.DOUBLE:
+        case Types.FLOAT:
+        case Types.INTEGER:
+        case Types.NULL:
+        case Types.NUMERIC:
+        case Types.REAL:
+        case Types.SMALLINT:
+        case Types.TINYINT:
           sb.append(Objects.toString(result.getObject(c), "NULL"));
           break;
-        default :
+        default:
           if (logger.isLoggable(Level.WARNING)) {
             logger.log(Level.WARNING, "Unexpected column type: {0}", colType);
           }
-        // Fall-through to quoted
-        case Types.CHAR :
-        case Types.DATE :
-        case Types.LONGNVARCHAR : // JDBC 4.0 Types
-        case Types.LONGVARCHAR :
-        case Types.NCHAR : // JDBC 4.0 Types
-        case Types.NVARCHAR : // JDBC 4.0 Types
-        case Types.TIME :
-        case Types.TIME_WITH_TIMEZONE : // JDBC 4.2 Types
-        case Types.TIMESTAMP :
-        case Types.TIMESTAMP_WITH_TIMEZONE : // JDBC 4.2 Types
-        case Types.VARCHAR :
+        // fall-through to quoted
+        case Types.CHAR:
+        case Types.DATE:
+        case Types.LONGNVARCHAR: // JDBC 4.0 Types
+        case Types.LONGVARCHAR:
+        case Types.NCHAR: // JDBC 4.0 Types
+        case Types.NVARCHAR: // JDBC 4.0 Types
+        case Types.TIME:
+        case Types.TIME_WITH_TIMEZONE: // JDBC 4.2 Types
+        case Types.TIMESTAMP:
+        case Types.TIMESTAMP_WITH_TIMEZONE: // JDBC 4.2 Types
+        case Types.VARCHAR:
           String value = result.getString(c);
           if (value == null) {
             sb.append("NULL");
           } else {
             try {
               textInPsqlEncoder.writePrefixTo(sb);
-              for (
-                int i = 0, chars = 0, len = value.length(), codePoint, charCount;
-                i < len;
-                i += charCount, chars++
+              for (int i = 0, chars = 0, len = value.length(), codePoint, charCount;
+                  i < len;
+                  i += charCount, chars++
               ) {
                 codePoint = value.codePointAt(i);
                 charCount = Character.charCount(codePoint);
@@ -149,17 +149,17 @@ public final class DatabaseUtils {
   public static int getRowCount(ResultSet results) throws SQLException {
     int resultType = results.getType();
     switch (resultType) {
-      case ResultSet.TYPE_FORWARD_ONLY :
+      case ResultSet.TYPE_FORWARD_ONLY:
         return -1;
-      case ResultSet.TYPE_SCROLL_INSENSITIVE :
-      case ResultSet.TYPE_SCROLL_SENSITIVE :
+      case ResultSet.TYPE_SCROLL_INSENSITIVE:
+      case ResultSet.TYPE_SCROLL_SENSITIVE:
         int rowCount = 0;
         if (results.last()) {
           rowCount = results.getRow();
           results.beforeFirst();
         }
         return rowCount;
-      default :
+      default:
         throw new AssertionError(resultType);
     }
   }
