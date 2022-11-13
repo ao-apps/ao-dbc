@@ -16,8 +16,6 @@ bf7bc56cd092fbf50d49ef4874de02b50568d3ab
 
 # Removed extraneous space at end of line.
 41840e1054e9a938d27db332ac683da222b2232e
-
-# Removed extraneous space at end of line.
 60733397883c116616b36ab65ee7aa73656b9005
 
 # Performed automatic source code clean-up with rewrite-maven-plugin
