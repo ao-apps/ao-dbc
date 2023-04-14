@@ -22,7 +22,7 @@ Simplified JDBC access for simplified code.
 * [Project Home](https://oss.aoapps.com/dbc/)
 * [Changelog](https://oss.aoapps.com/dbc/changelog)
 * [API Docs](https://oss.aoapps.com/dbc/apidocs/)
-* [Maven Central Repository](https://central.sonatype.com/search?namespace=com.aoapps&q=a%3Aao-dbc)
+* [Maven Central Repository](https://central.sonatype.com/artifact/com.aoapps/ao-dbc)
 * [GitHub](https://github.com/ao-apps/ao-dbc)
 
 ## Contact Us
