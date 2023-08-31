@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ao-dbc - Simplified JDBC access for simplified code.
-Copyright (C) 2022  AO Industries, Inc.
+Copyright (C) 2022, 2023  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -30,7 +30,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
   <!-- TODO: Complete Javadocs -->
   <suppress checks="(MissingJavadocMethod|SummaryJavadoc)" />
 
-  <!-- Using "Ex" for generic exceptions, since "E" if often "Element" -->
+  <!-- Using "Ex" for generic exceptions, since "E" is often "Element" -->
   <suppress
     checks="(ClassTypeParameterName|InterfaceTypeParameterName|MethodTypeParameterName)"
     message="'Ex'"
