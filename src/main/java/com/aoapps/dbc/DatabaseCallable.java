@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2010, 2011, 2014, 2015, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2010, 2011, 2014, 2015, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -36,9 +36,5 @@ import java.sql.SQLException;
 public interface DatabaseCallable<V> extends DatabaseCallableE<V, RuntimeException> {
 
   @Override
-  // TODO: Should these take DatabaseAccess instead?
-  //       This would support non-transactional, auto-commit, direct usage through Database,
-  //       which might be more optimal for one-off actions.
-  //       DatabaseAccess might have to gain some methods, though, such as close()/rollback()/commit(), which would be no-ops?
   V call(DatabaseConnection db) throws SQLException;
 }
