@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2013, 2015, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2013, 2015, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -39,16 +39,26 @@ public class ExtraRowException extends SQLNonTransientException implements Local
 
   private static final long serialVersionUID = 1L;
 
+  /**
+   * See <a href="https://en.wikipedia.org/wiki/SQLSTATE">SQLState - Wikipedia</a>.
+   */
+  private static final String SQLSTATE = "0100D";
+
+  /**
+   * See <a href="https://en.wikipedia.org/wiki/SQLSTATE">SQLState - Wikipedia</a>.
+   */
+  private static final String DEFAULT_REASON = "additional result sets returned";
+
   protected final Resources resources;
   protected final String key;
   protected final Serializable[] args;
 
   public ExtraRowException() {
-    this("additional result sets returned");
+    this(DEFAULT_REASON);
   }
 
   public ExtraRowException(String reason) {
-    super(reason, "0100D");
+    super(reason, SQLSTATE);
     resources = null;
     key = null;
     args = null;
@@ -59,25 +69,25 @@ public class ExtraRowException extends SQLNonTransientException implements Local
   }
 
   public ExtraRowException(Resources resources, String key) {
-    super(resources.getMessage(key), "0100D");
+    super(resources.getMessage(key), SQLSTATE);
     this.resources = resources;
     this.key = key;
     this.args = EmptyArrays.EMPTY_SERIALIZABLE_ARRAY;
   }
 
   public ExtraRowException(Resources resources, String key, Serializable... args) {
-    super(resources.getMessage(key, (Object[]) args), "0100D");
+    super(resources.getMessage(key, (Object[]) args), SQLSTATE);
     this.resources = resources;
     this.key = key;
     this.args = args;
   }
 
   public ExtraRowException(Throwable cause) {
-    this("additional result sets returned", cause);
+    this(DEFAULT_REASON, cause);
   }
 
   public ExtraRowException(String reason, Throwable cause) {
-    super(reason, "0100D", cause);
+    super(reason, SQLSTATE, cause);
     resources = null;
     key = null;
     args = null;
@@ -88,14 +98,14 @@ public class ExtraRowException extends SQLNonTransientException implements Local
   }
 
   public ExtraRowException(Throwable cause, Resources resources, String key) {
-    super(resources.getMessage(key), "0100D", cause);
+    super(resources.getMessage(key), SQLSTATE, cause);
     this.resources = resources;
     this.key = key;
     this.args = EmptyArrays.EMPTY_SERIALIZABLE_ARRAY;
   }
 
   public ExtraRowException(Throwable cause, Resources resources, String key, Serializable... args) {
-    super(resources.getMessage(key, (Object[]) args), "0100D", cause);
+    super(resources.getMessage(key, (Object[]) args), SQLSTATE, cause);
     this.resources = resources;
     this.key = key;
     this.args = args;

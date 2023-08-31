@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2010, 2011, 2015, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2010, 2011, 2015, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -37,55 +37,65 @@ public class NoRowException extends SQLNonTransientException implements Localize
 
   private static final long serialVersionUID = 5397878995581459678L;
 
+  /**
+   * See <a href="https://en.wikipedia.org/wiki/SQLSTATE">SQLState - Wikipedia</a>.
+   */
+  private static final String SQLSTATE = "02000";
+
+  /**
+   * See <a href="https://en.wikipedia.org/wiki/SQLSTATE">SQLState - Wikipedia</a>.
+   */
+  private static final String DEFAULT_REASON = "no data";
+
   protected final Resources resources;
   protected final String key;
   protected final Serializable[] args;
 
   public NoRowException() {
-    this("no data");
+    this(DEFAULT_REASON);
   }
 
   public NoRowException(String reason) {
-    super(reason, "02000");
+    super(reason, SQLSTATE);
     resources = null;
     key = null;
     args = null;
   }
 
   public NoRowException(Resources resources, String key) {
-    super(resources.getMessage(key), "02000");
+    super(resources.getMessage(key), SQLSTATE);
     this.resources = resources;
     this.key = key;
     this.args = EmptyArrays.EMPTY_SERIALIZABLE_ARRAY;
   }
 
   public NoRowException(Resources resources, String key, Serializable... args) {
-    super(resources.getMessage(key, (Object[]) args), "02000");
+    super(resources.getMessage(key, (Object[]) args), SQLSTATE);
     this.resources = resources;
     this.key = key;
     this.args = args;
   }
 
   public NoRowException(Throwable cause) {
-    this("no data", cause);
+    this(DEFAULT_REASON, cause);
   }
 
   public NoRowException(String reason, Throwable cause) {
-    super(reason, "02000", cause);
+    super(reason, SQLSTATE, cause);
     resources = null;
     key = null;
     args = null;
   }
 
   public NoRowException(Throwable cause, Resources resources, String key) {
-    super(resources.getMessage(key), "02000", cause);
+    super(resources.getMessage(key), SQLSTATE, cause);
     this.resources = resources;
     this.key = key;
     this.args = EmptyArrays.EMPTY_SERIALIZABLE_ARRAY;
   }
 
   public NoRowException(Throwable cause, Resources resources, String key, Serializable... args) {
-    super(resources.getMessage(key, (Object[]) args), "02000", cause);
+    super(resources.getMessage(key, (Object[]) args), SQLSTATE, cause);
     this.resources = resources;
     this.key = key;
     this.args = args;

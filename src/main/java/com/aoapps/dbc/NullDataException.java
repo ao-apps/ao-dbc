@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -40,16 +40,26 @@ public class NullDataException extends SQLDataException implements LocalizedExce
 
   private static final long serialVersionUID = 1L;
 
+  /**
+   * See <a href="https://en.wikipedia.org/wiki/SQLSTATE">SQLState - Wikipedia</a>.
+   */
+  private static final String SQLSTATE = "22004";
+
+  /**
+   * See <a href="https://en.wikipedia.org/wiki/SQLSTATE">SQLState - Wikipedia</a>.
+   */
+  private static final String DEFAULT_REASON = "null value not allowed";
+
   protected final Resources resources;
   protected final String key;
   protected final Serializable[] args;
 
   public NullDataException() {
-    this("null value not allowed");
+    this(DEFAULT_REASON);
   }
 
   public NullDataException(String reason) {
-    super(reason, "22004");
+    super(reason, SQLSTATE);
     resources = null;
     key = null;
     args = null;
@@ -60,25 +70,25 @@ public class NullDataException extends SQLDataException implements LocalizedExce
   }
 
   public NullDataException(Resources resources, String key) {
-    super(resources.getMessage(key), "22004");
+    super(resources.getMessage(key), SQLSTATE);
     this.resources = resources;
     this.key = key;
     this.args = EmptyArrays.EMPTY_SERIALIZABLE_ARRAY;
   }
 
   public NullDataException(Resources resources, String key, Serializable... args) {
-    super(resources.getMessage(key, (Object[]) args), "22004");
+    super(resources.getMessage(key, (Object[]) args), SQLSTATE);
     this.resources = resources;
     this.key = key;
     this.args = args;
   }
 
   public NullDataException(Throwable cause) {
-    this("null value not allowed", cause);
+    this(DEFAULT_REASON, cause);
   }
 
   public NullDataException(String reason, Throwable cause) {
-    super(reason, "22004", cause);
+    super(reason, SQLSTATE, cause);
     resources = null;
     key = null;
     args = null;
@@ -89,14 +99,14 @@ public class NullDataException extends SQLDataException implements LocalizedExce
   }
 
   public NullDataException(Throwable cause, Resources resources, String key) {
-    super(resources.getMessage(key), "22004", cause);
+    super(resources.getMessage(key), SQLSTATE, cause);
     this.resources = resources;
     this.key = key;
     this.args = EmptyArrays.EMPTY_SERIALIZABLE_ARRAY;
   }
 
   public NullDataException(Throwable cause, Resources resources, String key, Serializable... args) {
-    super(resources.getMessage(key, (Object[]) args), "22004", cause);
+    super(resources.getMessage(key, (Object[]) args), SQLSTATE, cause);
     this.resources = resources;
     this.key = key;
     this.args = args;
