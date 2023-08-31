@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ao-dbc - Simplified JDBC access for simplified code.
-Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T19:31:26-05:00"
-    dateModified="2022-05-15T00:19:47-05:00"
+    dateModified="2023-08-31T01:35:37Z"
   >
     <c:if test="${fn:endsWith('@{project.version}', '-SNAPSHOT') and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')}">
       <changelog:release
@@ -50,6 +50,21 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
       >
         <!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
         <!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
+        <ul>
+          <li>
+            <p>
+              <code>DatabaseAccess</code> now implements transactional methods instead of them only being on
+              <code>Database</code>.  This allows code to accept <code>DatabaseAccess</code> while still being able to
+              efficiently have its own transactional block.  Previously, <code>DatabaseAccess</code> was typically used
+              only for one-off database calls.
+            </p>
+            <p>
+              When transactional methods are via a <code>Database</code> instance, the implementation is the same as
+              before.  When the transactional methods are via a <code>DatabaseConnection</code>, they are directly
+              implemented on the connection.
+            </p>
+          </li>
+        </ul>
       </changelog:release>
     </c:if>
 

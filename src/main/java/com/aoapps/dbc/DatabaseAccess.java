@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2018, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2018, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -26,6 +26,8 @@ package com.aoapps.dbc;
 import com.aoapps.collections.AoCollections;
 import com.aoapps.collections.IntList;
 import com.aoapps.collections.LongList;
+import com.aoapps.lang.RunnableE;
+import com.aoapps.lang.concurrent.CallableE;
 import com.aoapps.sql.Connections;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -115,6 +117,208 @@ public interface DatabaseAccess {
     public int getType() {
       return type;
     }
+  }
+
+  /**
+   * Checks if the current thread is in a transaction.
+   *
+   * @see #transactionCall(com.aoapps.lang.concurrent.CallableE)
+   * @see #transactionCall(java.lang.Class, com.aoapps.lang.concurrent.CallableE)
+   * @see #transactionCall(com.aoapps.dbc.DatabaseCallable)
+   * @see #transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)
+   * @see #transactionRun(com.aoapps.lang.RunnableE)
+   * @see #transactionRun(java.lang.Class, com.aoapps.lang.RunnableE)
+   * @see #transactionRun(com.aoapps.dbc.DatabaseRunnable)
+   * @see #transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)
+   */
+  boolean isInTransaction();
+
+  /**
+   * <p>
+   * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+   * </p>
+   * <ol>
+   * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+   *     {@link ExtraRowException} on the outer-most transaction only.</li>
+   * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+   * </ol>
+   * <p>
+   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   * another transaction is performed within this transaction.  Any nested transaction will automatically
+   * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+   * entire transaction on any exception.
+   * </p>
+   *
+   * @see #isInTransaction()
+   */
+  default <V> V transactionCall(CallableE<? extends V, ? extends SQLException> callable) throws SQLException {
+    return transactionCall(SQLException.class, callable);
+  }
+
+  /**
+   * <p>
+   * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+   * </p>
+   * <ol>
+   * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+   *     {@link ExtraRowException} on the outer-most transaction only.</li>
+   * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+   * </ol>
+   * <p>
+   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   * another transaction is performed within this transaction.  Any nested transaction will automatically
+   * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+   * entire transaction on any exception.
+   * </p>
+   *
+   * @param  <Ex>  An arbitrary exception type that may be thrown
+   *
+   * @see #isInTransaction()
+   */
+  default <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> exClass, CallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex {
+    return transactionCall(exClass, db -> callable.call());
+  }
+
+  /**
+   * <p>
+   * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+   * </p>
+   * <ol>
+   * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+   *     {@link ExtraRowException} on the outer-most transaction only.</li>
+   * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+   * </ol>
+   * <p>
+   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   * another transaction is performed within this transaction.  Any nested transaction will automatically
+   * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+   * entire transaction on any exception.
+   * </p>
+   *
+   * @see #isInTransaction()
+   */
+  default <V> V transactionCall(DatabaseCallable<? extends V> callable) throws SQLException {
+    return transactionCall(RuntimeException.class, callable::call);
+  }
+
+  /**
+   * <p>
+   * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+   * </p>
+   * <ol>
+   * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+   *     {@link ExtraRowException} on the outer-most transaction only.</li>
+   * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+   * </ol>
+   * <p>
+   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   * another transaction is performed within this transaction.  Any nested transaction will automatically
+   * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+   * entire transaction on any exception.
+   * </p>
+   *
+   * @param  <Ex>  An arbitrary exception type that may be thrown
+   *
+   * @see #isInTransaction()
+   */
+  <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> exClass, DatabaseCallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex;
+
+  /**
+   * <p>
+   * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+   * </p>
+   * <ol>
+   * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+   *     {@link ExtraRowException} on the outer-most transaction only.</li>
+   * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+   * </ol>
+   * <p>
+   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   * another transaction is performed within this transaction.  Any nested transaction will automatically
+   * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+   * entire transaction on any exception.
+   * </p>
+   *
+   * @see #isInTransaction()
+   */
+  default void transactionRun(RunnableE<? extends SQLException> runnable) throws SQLException {
+    transactionRun(SQLException.class, runnable);
+  }
+
+  /**
+   * <p>
+   * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+   * </p>
+   * <ol>
+   * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+   *     {@link ExtraRowException} on the outer-most transaction only.</li>
+   * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+   * </ol>
+   * <p>
+   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   * another transaction is performed within this transaction.  Any nested transaction will automatically
+   * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+   * entire transaction on any exception.
+   * </p>
+   *
+   * @param  <Ex>  An arbitrary exception type that may be thrown
+   *
+   * @see #isInTransaction()
+   */
+  default <Ex extends Throwable> void transactionRun(Class<? extends Ex> exClass, RunnableE<? extends Ex> runnable) throws SQLException, Ex {
+    transactionRun(exClass, db -> runnable.run());
+  }
+
+  /**
+   * <p>
+   * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+   * </p>
+   * <ol>
+   * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+   *     {@link ExtraRowException} on the outer-most transaction only.</li>
+   * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+   * </ol>
+   * <p>
+   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   * another transaction is performed within this transaction.  Any nested transaction will automatically
+   * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+   * entire transaction on any exception.
+   * </p>
+   *
+   * @see #isInTransaction()
+   */
+  default void transactionRun(DatabaseRunnable runnable) throws SQLException {
+    transactionRun(RuntimeException.class, runnable::run);
+  }
+
+  /**
+   * <p>
+   * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
+   * </p>
+   * <ol>
+   * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
+   *     {@link ExtraRowException} on the outer-most transaction only.</li>
+   * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
+   * </ol>
+   * <p>
+   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   * another transaction is performed within this transaction.  Any nested transaction will automatically
+   * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
+   * entire transaction on any exception.
+   * </p>
+   *
+   * @param  <Ex>  An arbitrary exception type that may be thrown
+   *
+   * @see #isInTransaction()
+   */
+  default <Ex extends Throwable> void transactionRun(Class<? extends Ex> exClass, DatabaseRunnableE<? extends Ex> runnable) throws SQLException, Ex {
+    transactionCall(
+        exClass,
+        db -> {
+          runnable.run(db);
+          return null;
+        }
+    );
   }
 
   /**

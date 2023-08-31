@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -24,7 +24,9 @@
 package com.aoapps.dbc;
 
 import com.aoapps.lang.AutoCloseables;
+import com.aoapps.lang.RunnableE;
 import com.aoapps.lang.Throwables;
+import com.aoapps.lang.concurrent.CallableE;
 import com.aoapps.lang.exception.WrappedException;
 import com.aoapps.lang.util.ErrorPrinter;
 import com.aoapps.sql.Connections;
@@ -101,6 +103,103 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
   public Database getDatabase() {
     return database;
+  }
+
+  /**
+   * @return {@code true} since {@link DatabaseConnection} is already within a transaction.
+   *
+   * @deprecated {@link DatabaseConnection} is already within a transaction.
+   */
+  @Override
+  @Deprecated
+  public boolean isInTransaction() {
+    return true;
+  }
+
+  /**
+   * @deprecated {@link DatabaseConnection} is already within a transaction.
+   */
+  @Override
+  @Deprecated
+  public <V> V transactionCall(CallableE<? extends V, ? extends SQLException> callable) throws SQLException {
+    return DatabaseAccess.super.transactionCall(callable);
+  }
+
+  /**
+   * @deprecated {@link DatabaseConnection} is already within a transaction.
+   */
+  @Override
+  @Deprecated
+  public <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> exClass, CallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex {
+    return DatabaseAccess.super.transactionCall(exClass, callable);
+  }
+
+  /**
+   * @deprecated {@link DatabaseConnection} is already within a transaction.
+   */
+  @Override
+  @Deprecated
+  public <V> V transactionCall(DatabaseCallable<? extends V> callable) throws SQLException {
+    return DatabaseAccess.super.transactionCall(callable);
+  }
+
+  /**
+   * @deprecated {@link DatabaseConnection} is already within a transaction.
+   */
+  @Override
+  @Deprecated
+  @SuppressWarnings("UseSpecificCatch")
+  public <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> exClass, DatabaseCallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex {
+    Throwable t0 = null;
+    try {
+      return callable.call(this);
+    } catch (NoRowException | NullDataException | ExtraRowException e) {
+      throw e;
+    } catch (Throwable t) {
+      t0 = Throwables.addSuppressed(t0, t);
+      t0 = rollback(t0);
+    }
+    assert t0 != null;
+    if (exClass.isInstance(t0)) {
+      throw exClass.cast(t0);
+    }
+    throw Throwables.wrap(t0, SQLException.class, SQLException::new);
+  }
+
+  /**
+   * @deprecated {@link DatabaseConnection} is already within a transaction.
+   */
+  @Override
+  @Deprecated
+  public void transactionRun(RunnableE<? extends SQLException> runnable) throws SQLException {
+    DatabaseAccess.super.transactionRun(runnable);
+  }
+
+  /**
+   * @deprecated {@link DatabaseConnection} is already within a transaction.
+   */
+  @Override
+  @Deprecated
+  public <Ex extends Throwable> void transactionRun(Class<? extends Ex> exClass, RunnableE<? extends Ex> runnable) throws SQLException, Ex {
+    DatabaseAccess.super.transactionRun(exClass, runnable);
+  }
+
+  /**
+   * @deprecated {@link DatabaseConnection} is already within a transaction.
+   */
+  @Override
+  @Deprecated
+  public void transactionRun(DatabaseRunnable runnable) throws SQLException {
+    DatabaseAccess.super.transactionRun(runnable);
+  }
+
+  /**
+   * @deprecated {@link DatabaseConnection} is already within a transaction.
+   */
+  @Override
+  @Deprecated
+  public <Ex extends Throwable> void transactionRun(Class<? extends Ex> exClass, DatabaseRunnableE<? extends Ex> runnable) throws SQLException, Ex {
+    DatabaseAccess.super.transactionRun(exClass, runnable);
   }
 
   /**
