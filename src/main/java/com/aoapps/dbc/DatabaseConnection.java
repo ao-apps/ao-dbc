@@ -55,7 +55,9 @@ import java.sql.Struct;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.PrimitiveIterator;
 import java.util.Spliterator;
@@ -213,15 +215,18 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * thereof) of the database is unknown.
    * </p>
    * <p>
-   * The default auto-commit state depends on the read-only and isolation levels.  Upon initial connection,
-   * auto-commit is enabled.  It then remains unchanged while is read-only and at an isolation level of
-   * {@link Connection#TRANSACTION_READ_COMMITTED} or below.  This means, conversely, that auto-commit is disabled
-   * when is either read-write or at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ} or above.
+   * The default auto-commit state depends on the read-only, isolation levels, and the presence of any
+   * {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit} or
+   * {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
+   * auto-commit is enabled.  It then remains unchanged while is read-only, at an isolation level of
+   * {@link Connection#TRANSACTION_READ_COMMITTED} or below, and has no event listeners.  This means, conversely, that
+   * auto-commit is disabled when is read-write, at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
+   * or above, or has any event listeners.
    * </p>
    * <p>
    * When a connection already exists, its read-only mode may be changed, but may not be changed on a connection that
-   * has auto-commit disabled (which typically means it was either already read-write or at an isolation level of
-   * {@link Connection#TRANSACTION_REPEATABLE_READ} or above).
+   * has auto-commit disabled (which typically means it was already read-write, at an isolation level of
+   * {@link Connection#TRANSACTION_REPEATABLE_READ} or above, or had event listeners).
    * </p>
    * <p>
    * With the default auto-commit behavior (auto-commit not disabled by application), <strong>it is an error to try to
@@ -258,6 +263,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
    *          {@linkplain #close() closed}.
    *          </p>
+   *          <p>
+   *          {@link Connection#commit()} and {@link Connection#rollback()} should not be used directly, since they will
+   *          not fire any {@link #onCommit(com.aoapps.lang.RunnableE)} or {@link #onRollback(com.aoapps.lang.RunnableE)}
+   *          events.  Instead, please use {@link #commit()} and {@link #rollback()}.
+   *          </p>
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
@@ -283,15 +293,18 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * thereof) of the database is unknown.
    * </p>
    * <p>
-   * The default auto-commit state depends on the read-only and isolation levels.  Upon initial connection,
-   * auto-commit is enabled.  It then remains unchanged while is read-only and at an isolation level of
-   * {@link Connection#TRANSACTION_READ_COMMITTED} or below.  This means, conversely, that auto-commit is disabled
-   * when is either read-write or at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ} or above.
+   * The default auto-commit state depends on the read-only, isolation levels, and the presence of any
+   * {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit} or
+   * {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
+   * auto-commit is enabled.  It then remains unchanged while is read-only, at an isolation level of
+   * {@link Connection#TRANSACTION_READ_COMMITTED} or below, and has no event listeners.  This means, conversely, that
+   * auto-commit is disabled when is read-write, at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
+   * or above, or has any event listeners.
    * </p>
    * <p>
    * When a connection already exists, its read-only mode may be changed, but may not be changed on a connection that
-   * has auto-commit disabled (which typically means it was either already read-write or at an isolation level of
-   * {@link Connection#TRANSACTION_REPEATABLE_READ} or above).
+   * has auto-commit disabled (which typically means it was already read-write, at an isolation level of
+   * {@link Connection#TRANSACTION_REPEATABLE_READ} or above, or had event listeners).
    * </p>
    * <p>
    * With the default auto-commit behavior (auto-commit not disabled by application), <strong>it is an error to try to
@@ -336,6 +349,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
    *          {@linkplain #close() closed}.
    *          </p>
+   *          <p>
+   *          {@link Connection#commit()} and {@link Connection#rollback()} should not be used directly, since they will
+   *          not fire any {@link #onCommit(com.aoapps.lang.RunnableE)} or {@link #onRollback(com.aoapps.lang.RunnableE)}
+   *          events.  Instead, please use {@link #commit()} and {@link #rollback()}.
+   *          </p>
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
@@ -362,15 +380,18 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * thereof) of the database is unknown.
    * </p>
    * <p>
-   * The default auto-commit state depends on the read-only and isolation levels.  Upon initial connection,
-   * auto-commit is enabled.  It then remains unchanged while is read-only and at an isolation level of
-   * {@link Connection#TRANSACTION_READ_COMMITTED} or below.  This means, conversely, that auto-commit is disabled
-   * when is either read-write or at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ} or above.
+   * The default auto-commit state depends on the read-only, isolation levels, and the presence of any
+   * {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit} or
+   * {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
+   * auto-commit is enabled.  It then remains unchanged while is read-only, at an isolation level of
+   * {@link Connection#TRANSACTION_READ_COMMITTED} or below, and has no event listeners.  This means, conversely, that
+   * auto-commit is disabled when is read-write, at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
+   * or above, or has any event listeners.
    * </p>
    * <p>
    * When a connection already exists, its read-only mode may be changed, but may not be changed on a connection that
-   * has auto-commit disabled (which typically means it was either already read-write or at an isolation level of
-   * {@link Connection#TRANSACTION_REPEATABLE_READ} or above).
+   * has auto-commit disabled (which typically means it was already read-write, at an isolation level of
+   * {@link Connection#TRANSACTION_REPEATABLE_READ} or above, or had event listeners).
    * </p>
    * <p>
    * With the default auto-commit behavior (auto-commit not disabled by application), <strong>it is an error to try to
@@ -410,6 +431,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
    *          {@linkplain #close() closed}.
    *          </p>
+   *          <p>
+   *          {@link Connection#commit()} and {@link Connection#rollback()} should not be used directly, since they will
+   *          not fire any {@link #onCommit(com.aoapps.lang.RunnableE)} or {@link #onRollback(com.aoapps.lang.RunnableE)}
+   *          events.  Instead, please use {@link #commit()} and {@link #rollback()}.
+   *          </p>
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
@@ -434,15 +460,18 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * thereof) of the database is unknown.
    * </p>
    * <p>
-   * The default auto-commit state depends on the read-only and isolation levels.  Upon initial connection,
-   * auto-commit is enabled.  It then remains unchanged while is read-only and at an isolation level of
-   * {@link Connection#TRANSACTION_READ_COMMITTED} or below.  This means, conversely, that auto-commit is disabled
-   * when is either read-write or at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ} or above.
+   * The default auto-commit state depends on the read-only, isolation levels, and the presence of any
+   * {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit} or
+   * {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
+   * auto-commit is enabled.  It then remains unchanged while is read-only, at an isolation level of
+   * {@link Connection#TRANSACTION_READ_COMMITTED} or below, and has no event listeners.  This means, conversely, that
+   * auto-commit is disabled when is read-write, at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
+   * or above, or has any event listeners.
    * </p>
    * <p>
    * When a connection already exists, its read-only mode may be changed, but may not be changed on a connection that
-   * has auto-commit disabled (which typically means it was either already read-write or at an isolation level of
-   * {@link Connection#TRANSACTION_REPEATABLE_READ} or above).
+   * has auto-commit disabled (which typically means it was already read-write, at an isolation level of
+   * {@link Connection#TRANSACTION_REPEATABLE_READ} or above, or had event listeners).
    * </p>
    * <p>
    * With the default auto-commit behavior (auto-commit not disabled by application), <strong>it is an error to try to
@@ -487,6 +516,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
    *          {@linkplain #close() closed}.
    *          </p>
+   *          <p>
+   *          {@link Connection#commit()} and {@link Connection#rollback()} should not be used directly, since they will
+   *          not fire any {@link #onCommit(com.aoapps.lang.RunnableE)} or {@link #onRollback(com.aoapps.lang.RunnableE)}
+   *          events.  Instead, please use {@link #commit()} and {@link #rollback()}.
+   *          </p>
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
@@ -510,15 +544,18 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * thereof) of the database is unknown.
    * </p>
    * <p>
-   * The default auto-commit state depends on the read-only and isolation levels.  Upon initial connection,
-   * auto-commit is enabled.  It then remains unchanged while is read-only and at an isolation level of
-   * {@link Connection#TRANSACTION_READ_COMMITTED} or below.  This means, conversely, that auto-commit is disabled
-   * when is either read-write or at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ} or above.
+   * The default auto-commit state depends on the read-only, isolation levels, and the presence of any
+   * {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit} or
+   * {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
+   * auto-commit is enabled.  It then remains unchanged while is read-only, at an isolation level of
+   * {@link Connection#TRANSACTION_READ_COMMITTED} or below, and has no event listeners.  This means, conversely, that
+   * auto-commit is disabled when is read-write, at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
+   * or above, or has any event listeners.
    * </p>
    * <p>
    * When a connection already exists, its read-only mode may be changed, but may not be changed on a connection that
-   * has auto-commit disabled (which typically means it was either already read-write or at an isolation level of
-   * {@link Connection#TRANSACTION_REPEATABLE_READ} or above).
+   * has auto-commit disabled (which typically means it was already read-write, at an isolation level of
+   * {@link Connection#TRANSACTION_REPEATABLE_READ} or above, or had event listeners).
    * </p>
    * <p>
    * With the default auto-commit behavior (auto-commit not disabled by application), <strong>it is an error to try to
@@ -571,6 +608,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
    *          {@linkplain #close() closed}.
    *          </p>
+   *          <p>
+   *          {@link Connection#commit()} and {@link Connection#rollback()} should not be used directly, since they will
+   *          not fire any {@link #onCommit(com.aoapps.lang.RunnableE)} or {@link #onRollback(com.aoapps.lang.RunnableE)}
+   *          events.  Instead, please use {@link #commit()} and {@link #rollback()}.
+   *          </p>
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
@@ -603,11 +645,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
         }
       }
       if (c.getTransactionIsolation() < isolationLevel) {
-        // Let driver try to set isolation level (which may fail if already in transaction)
+        // Let driver try to increase isolation level (which may fail if already in transaction)
         c.setTransactionIsolation(isolationLevel);
       }
     }
-    if (!readOnly || isolationLevel >= Connection.TRANSACTION_REPEATABLE_READ) {
+    if (!readOnly || isolationLevel >= Connection.TRANSACTION_REPEATABLE_READ
+        || !onCommits.isEmpty() || !onRollbacks.isEmpty()) {
       c.setAutoCommit(false);
     }
     return c;
@@ -699,12 +742,162 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
     }
   }
 
+  private final List<RunnableE<Throwable>> onCommits = new ArrayList<>();
+
+  private final List<RunnableE<Throwable>> onRollbacks = new ArrayList<>();
+
+  /**
+   * Adds an on-commit event handler, which are called in order just after the transaction has been
+   * successfully committed.
+   * <p>
+   * Exceptions of any on-commit event handler will be propagated.
+   * When handler throws {@link Error}, {@link RuntimeException}, or {@link SQLException}, the exception is
+   * propagated directly.  Any other {@link Throwable} is wrapped in {@link EventException}.
+   * </p>
+   * <p>
+   * When an on-commit event handler throws any exception, remaining on-commit event handlers registered after the
+   * failed one will not be fired.
+   * </p>
+   * <p>
+   * When adding the first non-null event handler (either of {@link #onCommit(com.aoapps.lang.RunnableE)} or
+   * {@link #onRollback(com.aoapps.lang.RunnableE)}), if the connection exists and currently has
+   * {@linkplain Connection#getAutoCommit() auto-commit} enabled, auto-commit will be disabled.  This is so the event
+   * scope can match the transaction scope of the underlying database.
+   * </p>
+   *
+   * @param onCommit The event handler, may be {@code null} which will simply be ignored.
+   *
+   * @see EventException
+   * @see #commit()
+   * @see #onRollback(com.aoapps.lang.RunnableE)
+   */
+  @SuppressWarnings("unchecked")
+  public DatabaseConnection onCommit(RunnableE<?> onCommit) throws SQLException {
+    if (onCommit != null) {
+      FailFastConnection c = conn;
+      if (c != null && onCommits.isEmpty() && onRollbacks.isEmpty() && c.getAutoCommit()) {
+        c.setAutoCommit(false);
+      }
+      onCommits.add((RunnableE) onCommit);
+    }
+    return this;
+  }
+
+  /**
+   * Adds an on-rollback event handler, which are called in reverse order just before the transaction will be
+   * rolled-back.
+   * <p>
+   * Exceptions of any on-rollback event handler will be propagated.
+   * When handler throws {@link Error}, {@link RuntimeException}, or {@link SQLException}, the exception is
+   * propagated directly.  Any other {@link Throwable} is wrapped in {@link EventException}.
+   * </p>
+   * <p>
+   * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
+   * failed one will not be fired.
+   * </p>
+   * <p>
+   * When adding the first non-null event handler (either of {@link #onCommit(com.aoapps.lang.RunnableE)} or
+   * {@link #onRollback(com.aoapps.lang.RunnableE)}), if the connection exists and currently has
+   * {@linkplain Connection#getAutoCommit() auto-commit} enabled, auto-commit will be disabled.  This is so the event
+   * scope can match the transaction scope of the underlying database.
+   * </p>
+   *
+   * @param onRollback The event handler, may be {@code null} which will simply be ignored.
+   *
+   * @see EventException
+   * @see #rollback()
+   * @see #rollback(java.lang.Throwable)
+   * @see #close()
+   * @see #close(java.lang.Throwable)
+   * @see #onCommit(com.aoapps.lang.RunnableE)
+   */
+  @SuppressWarnings("unchecked")
+  public DatabaseConnection onRollback(RunnableE<?> onRollback) throws SQLException {
+    if (onRollback != null) {
+      FailFastConnection c = conn;
+      if (c != null && onCommits.isEmpty() && onRollbacks.isEmpty() && c.getAutoCommit()) {
+        c.setAutoCommit(false);
+      }
+      onRollbacks.add((RunnableE) onRollback);
+    }
+    return this;
+  }
+
+  /**
+   * Clears {@link #onRollbacks}, copies then clears {@link #onCommits}, then calls each on-commit handler
+   * in order.
+   *
+   * @throws SQLException   Any {@link SQLException} thrown by the event handler is propagated
+   *
+   * @throws EventException When an {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handler} fails,
+   *                        any {@link Throwable} other than {@link Error}, {@link RuntimeException},
+   *                        or {@link SQLException} will be wrapped in an {@link EventException}.
+   *
+   * @see #fireOnRollbacks()
+   */
+  @SuppressWarnings("UseSpecificCatch")
+  private void fireOnCommits() throws SQLException, EventException {
+    onRollbacks.clear();
+    @SuppressWarnings("unchecked")
+    RunnableE<Throwable>[] copy = onCommits.toArray(RunnableE[]::new);
+    onCommits.clear();
+    try {
+      for (RunnableE<Throwable> onCommit : copy) {
+        onCommit.run();
+      }
+    } catch (Error | RuntimeException | SQLException e) {
+      throw e;
+    } catch (Throwable t) {
+      throw new EventException(t);
+    }
+  }
+
+  /**
+   * Clears {@link #onCommits}, copies then clears {@link #onRollbacks}, then calls each on-rollback handler
+   * in reverse order.
+   *
+   * @throws SQLException   Any {@link SQLException} thrown by the event handler is propagated
+   *
+   * @throws EventException When an {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handler} fails,
+   *                        any {@link Throwable} other than {@link Error}, {@link RuntimeException},
+   *                        or {@link SQLException} will be wrapped in an {@link EventException}.
+   *
+   * @see #fireOnCommits()
+   */
+  @SuppressWarnings("UseSpecificCatch")
+  private void fireOnRollbacks() throws SQLException, EventException {
+    onCommits.clear();
+    @SuppressWarnings("unchecked")
+    RunnableE<Throwable>[] copy = onRollbacks.toArray(RunnableE[]::new);
+    onRollbacks.clear();
+    try {
+      for (int i = copy.length - 1; i >= 0; i--) {
+        copy[i].run();
+      }
+    } catch (Error | RuntimeException | SQLException e) {
+      throw e;
+    } catch (Throwable t) {
+      throw new EventException(t);
+    }
+  }
+
+  /**
+   * Commits the current transaction.
+   * <p>
+   * Once the underlying transaction (if any) is successfully committed, any
+   * {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are discarded, then all
+   * {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are fired in order.
+   * When an on-commit event handler throws any exception, remaining on-commit event handlers registered after the
+   * failed one will not be fired.
+   * </p>
+   */
   // TODO: Restore default isolation levels and read-only state on commit and rollback?
   public void commit() throws SQLException {
     FailFastConnection c = conn;
     if (c != null && !c.getAutoCommit()) {
       c.commit();
     }
+    fireOnCommits();
   }
 
   public boolean isClosed() throws SQLException {
@@ -722,23 +915,59 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
   /**
    * Closes and/or releases the current connection back to the pool.
+   * <p>
+   * Any {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.
+   * </p>
+   * <p>
+   * All {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
+   * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
+   * failed one will not be fired.
+   * </p>
+   * <p>
    * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
+   * This will still be done even when an on-rollback event handler has thrown an exception.
+   * </p>
    *
    * @see  Database#release(com.aoapps.sql.failfast.FailFastConnection)
    * @see  #close(java.lang.Throwable)
    */
   @Override
+  @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
   public void close() throws SQLException {
-    FailFastConnection c = conn;
-    if (c != null) {
-      conn = null;
-      database.release(c);
+    Throwable t0 = null;
+    try {
+      fireOnRollbacks();
+    } catch (Throwable t) {
+      t0 = Throwables.addSuppressed(t0, t);
+    }
+    try {
+      FailFastConnection c = conn;
+      if (c != null) {
+        conn = null;
+        database.release(c);
+      }
+    } catch (Throwable t) {
+      t0 = Throwables.addSuppressed(t0, t);
+    }
+    if (t0 != null) {
+      throw Throwables.wrap(t0, SQLException.class, SQLException::new);
     }
   }
 
   /**
    * Closes and/or releases the current connection back to the pool.
+   * <p>
+   * Any {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.
+   * </p>
+   * <p>
+   * All {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
+   * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
+   * failed one will not be fired.
+   * </p>
+   * <p>
    * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
+   * This will still be done even when an on-rollback event handler has thrown an exception.
+   * </p>
    *
    * @param  t0  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
    *
@@ -753,24 +982,63 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
 
   /**
    * Rolls back the current connection, if have connection and is not auto-commit.
+   * <p>
+   * Any {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.
+   * </p>
+   * <p>
+   * All {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
+   * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
+   * failed one will not be fired.
+   * </p>
+   * <p>
+   * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
+   * This will still be done even when an on-rollback event handler has thrown an exception.
+   * </p>
    *
    * @return  {@code true} when connected and rolled-back (or is auto-commit)
    */
   // TODO: Rollback to the savepoint of the current sub-transaction?
+  @SuppressWarnings({"UseSpecificCatch", "BroadCatchBlock", "TooBroadCatch"})
   public boolean rollback() throws SQLException {
-    FailFastConnection c = conn;
-    if (c != null && !c.isClosed()) {
-      if (!c.getAutoCommit()) {
-        c.rollback();
+    Throwable t0 = null;
+    try {
+      fireOnRollbacks();
+    } catch (Throwable t) {
+      t0 = Throwables.addSuppressed(t0, t);
+    }
+    boolean rollback = false;
+    try {
+      FailFastConnection c = conn;
+      if (c != null && !c.isClosed()) {
+        rollback = true;
+        if (!c.getAutoCommit()) {
+          c.rollback();
+        }
       }
-      return true;
+    } catch (Throwable t) {
+      t0 = Throwables.addSuppressed(t0, t);
+    }
+    if (t0 != null) {
+      throw Throwables.wrap(t0, SQLException.class, SQLException::new);
     } else {
-      return false;
+      return rollback;
     }
   }
 
   /**
    * Rolls back the current connection, if have connection and is not auto-commit.
+   * <p>
+   * Any {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.
+   * </p>
+   * <p>
+   * All {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
+   * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
+   * failed one will not be fired.
+   * </p>
+   * <p>
+   * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
+   * This will still be done even when an on-rollback event handler has thrown an exception.
+   * </p>
    *
    * @param  t0  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
    *
@@ -794,6 +1062,18 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * Rolls back the current connection, if have connection and is not auto-commit, and forces the underlying
    * connection closed via {@link Connection#abort(java.util.concurrent.Executor)}.  This close is distinct
    * from {@link #close()}, which is intended for releasing to the underlying pool via {@link Connection#close()}.
+   * <p>
+   * Any {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.
+   * </p>
+   * <p>
+   * All {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
+   * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
+   * failed one will not be fired.
+   * </p>
+   * <p>
+   * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
+   * This will still be done even when an on-rollback event handler has thrown an exception.
+   * </p>
    *
    * @return  {@code true} when connected and rolled-back (or is auto-commit)
    *
@@ -806,43 +1086,45 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   @Deprecated(forRemoval = true)
   @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
   public boolean rollbackAndClose() throws SQLException {
+    Throwable t0 = null;
+    try {
+      fireOnRollbacks();
+    } catch (Throwable t) {
+      t0 = Throwables.addSuppressed(t0, t);
+    }
+    boolean rollback = false;
     FailFastConnection c = conn;
     if (c != null) {
       conn = null;
-      Throwable t0 = null;
-      boolean rollback = false;
+      // Rollback
       try {
-        rollback = !c.isClosed();
-        if (rollback) {
-          try {
-            if (!c.getAutoCommit()) {
-              c.rollback();
-            }
-          } catch (Throwable t) {
-            t0 = Throwables.addSuppressed(t0, t);
+        if (!c.isClosed()) {
+          rollback = true;
+          if (!c.getAutoCommit()) {
+            c.rollback();
           }
         }
-      } finally {
+      } catch (Throwable t) {
+        t0 = Throwables.addSuppressed(t0, t);
+      }
+      // Abort/close
+      try {
+        c.abort(database.getExecutors().getUnbounded());
+      } catch (Throwable t) {
+        t0 = Throwables.addSuppressed(t0, t);
+        // Abort failed, try to close the wrapped connection directly
+        t0 = AutoCloseables.closeAndCatch(t0, c.getWrapped());
         try {
-          c.abort(database.getExecutors().getUnbounded());
-        } catch (Throwable t) {
-          t0 = Throwables.addSuppressed(t0, t);
-          // Abort failed, try to close the wrapped connection directly
-          t0 = AutoCloseables.closeAndCatch(t0, c.getWrapped());
-          try {
-            database.release(c);
-          } catch (Throwable t2) {
-            t0 = Throwables.addSuppressed(t0, t2);
-          }
+          database.release(c);
+        } catch (Throwable t2) {
+          t0 = Throwables.addSuppressed(t0, t2);
         }
       }
-      if (t0 != null) {
-        throw Throwables.wrap(t0, SQLException.class, SQLException::new);
-      } else {
-        return rollback;
-      }
+    }
+    if (t0 != null) {
+      throw Throwables.wrap(t0, SQLException.class, SQLException::new);
     } else {
-      return false;
+      return rollback;
     }
   }
 
@@ -850,6 +1132,18 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * Rolls back the current connection, if have connection and is not auto-commit, and forces the underlying
    * connection closed via {@link Connection#abort(java.util.concurrent.Executor)}.  This close is distinct
    * from {@link #close()}, which is intended for releasing to the underlying pool via {@link Connection#close()}.
+   * <p>
+   * Any {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.
+   * </p>
+   * <p>
+   * All {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
+   * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
+   * failed one will not be fired.
+   * </p>
+   * <p>
+   * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
+   * This will still be done even when an on-rollback event handler has thrown an exception.
+   * </p>
    *
    * @param  t0  Any exceptions will be added here via {@link Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)}
    *
