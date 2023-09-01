@@ -1191,12 +1191,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       String sql,
       Object ... params
   ) throws NullDataException, SQLException {
-    Connection conn = getConnection(isolationLevel, readOnly);
-    PreparedStatement pstmt = conn.prepareStatement(sql); // TODO: Use regular statements when there are no parameters?  Here and entire api?
+    Connection c = getConnection(isolationLevel, readOnly);
+    PreparedStatement pstmt = c.prepareStatement(sql); // TODO: Use regular statements when there are no parameters?  Here and entire api?
     try {
       try {
         pstmt.setFetchSize(FETCH_SIZE);
-        setParams(conn, pstmt, params);
+        setParams(c, pstmt, params);
         ResultSet results = pstmt.executeQuery();
         try {
           return StreamSupport.doubleStream(
@@ -1265,12 +1265,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       String sql,
       Object ... params
   ) throws NullDataException, SQLException {
-    Connection conn = getConnection(isolationLevel, readOnly);
-    PreparedStatement pstmt = conn.prepareStatement(sql);
+    Connection c = getConnection(isolationLevel, readOnly);
+    PreparedStatement pstmt = c.prepareStatement(sql);
     try {
       try {
         pstmt.setFetchSize(FETCH_SIZE);
-        setParams(conn, pstmt, params);
+        setParams(c, pstmt, params);
         ResultSet results = pstmt.executeQuery();
         try {
           return StreamSupport.intStream(
@@ -1339,12 +1339,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       String sql,
       Object ... params
   ) throws NullDataException, SQLException {
-    Connection conn = getConnection(isolationLevel, readOnly);
-    PreparedStatement pstmt = conn.prepareStatement(sql);
+    Connection c = getConnection(isolationLevel, readOnly);
+    PreparedStatement pstmt = c.prepareStatement(sql);
     try {
       try {
         pstmt.setFetchSize(FETCH_SIZE);
-        setParams(conn, pstmt, params);
+        setParams(c, pstmt, params);
         ResultSet results = pstmt.executeQuery();
         try {
           return StreamSupport.longStream(
@@ -1481,12 +1481,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       String sql,
       Object ... params
   ) throws SQLException, Ex {
-    Connection conn = getConnection(isolationLevel, readOnly);
-    PreparedStatement pstmt = conn.prepareStatement(sql);
+    Connection c = getConnection(isolationLevel, readOnly);
+    PreparedStatement pstmt = c.prepareStatement(sql);
     try {
       try {
         pstmt.setFetchSize(FETCH_SIZE);
-        setParams(conn, pstmt, params);
+        setParams(c, pstmt, params);
         ResultSet results = pstmt.executeQuery();
         try {
           Spliterator<T> spliterator;
@@ -1554,12 +1554,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       String sql,
       Object ... params
   ) throws SQLException, Ex {
-    Connection conn = getConnection(isolationLevel, readOnly);
+    Connection c = getConnection(isolationLevel, readOnly);
     // TODO: Use regular Statement when there are no params?  Interaction with PostgreSQL prepared statement caching?
-    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    try (PreparedStatement pstmt = c.prepareStatement(sql)) {
       try {
         pstmt.setFetchSize(FETCH_SIZE);
-        setParams(conn, pstmt, params);
+        setParams(c, pstmt, params);
         try (ResultSet results = pstmt.executeQuery()) {
           return resultSetCallable.call(results);
         }
@@ -1575,10 +1575,10 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       String sql,
       Object ... params
   ) throws SQLException {
-    Connection conn = getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false);
-    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    Connection c = getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false);
+    try (PreparedStatement pstmt = c.prepareStatement(sql)) {
       try {
-        setParams(conn, pstmt, params);
+        setParams(c, pstmt, params);
         return pstmt.executeUpdate();
       } catch (Error | RuntimeException | SQLException e) {
         ErrorPrinter.addSql(e, pstmt);
@@ -1592,10 +1592,10 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       String sql,
       Object ... params
   ) throws SQLException {
-    Connection conn = getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false);
-    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    Connection c = getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false);
+    try (PreparedStatement pstmt = c.prepareStatement(sql)) {
       try {
-        setParams(conn, pstmt, params);
+        setParams(c, pstmt, params);
         return pstmt.executeLargeUpdate();
       } catch (Error | RuntimeException | SQLException e) {
         ErrorPrinter.addSql(e, pstmt);
