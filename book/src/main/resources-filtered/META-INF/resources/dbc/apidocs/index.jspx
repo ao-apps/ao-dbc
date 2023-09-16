@@ -39,5 +39,6 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="API Docs"
     datePublished="2016-10-16T21:59:00-05:00"
     dateModified="${ao:getLastModified('index.html')}"
+    allowRobots="false"
   />
 </jsp:root>
