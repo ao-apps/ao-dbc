@@ -36,6 +36,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
     <!-- Must be set to ${git.commit.time} for snapshots or ISO 8601 timestamp for releases. -->
     <project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp>
     <module.name>com.aoapps.dbc.book</module.name>
+    <subproject.subpath>devel/</subproject.subpath>
     <!-- These values are copied from the project being documented -->
     <documented.artifactId>ao-dbc</documented.artifactId>
     <documented.name>AO Database Connectivity</documented.name>
