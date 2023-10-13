@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015, 2016, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,6 +32,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -149,15 +150,18 @@ public class Table {
 
   /**
    * Gets the column of the provided name.
+   */
+  public Optional<Column> getColumnOptional(String name) throws SQLException {
+    return Optional.ofNullable(getColumnMap().get(name));
+  }
+
+  /**
+   * Gets the column of the provided name.
    *
    * @throws  NoRowException if the column doesn't exist
    */
   public Column getColumn(String name) throws NoRowException, SQLException {
-    Column column = getColumnMap().get(name);
-    if (column == null) {
-      throw new NoRowException();
-    }
-    return column;
+    return getColumnOptional(name).orElseThrow(() -> new NoRowException("name=" + name));
   }
 
   private static class GetColumnsLock {
@@ -201,6 +205,17 @@ public class Table {
 
   /**
    * Gets the column of the provided ordinal position, where positions start at one.
+   */
+  public Optional<Column> getColumnOptional(int ordinalPosition) throws SQLException {
+    try {
+      return Optional.ofNullable(getColumns().get(ordinalPosition - 1));
+    } catch (IndexOutOfBoundsException exc) {
+      return Optional.empty();
+    }
+  }
+
+  /**
+   * Gets the column of the provided ordinal position, where positions start at one.
    *
    * @throws  NoRowException if the column doesn't exist
    */
@@ -208,7 +223,7 @@ public class Table {
     try {
       return getColumns().get(ordinalPosition - 1);
     } catch (IndexOutOfBoundsException exc) {
-      throw new NoRowException(exc);
+      throw new NoRowException("ordinalPosition=" + ordinalPosition, exc);
     }
   }
 

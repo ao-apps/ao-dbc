@@ -32,6 +32,10 @@ import java.sql.SQLNonTransientException;
 
 /**
  * Thrown when no row available and a row is required.
+ * <p>
+ * Rather than catching this exception as part of normal operation, prefer the
+ * <code>*Optional(…)</code> method variants.
+ * </p>
  */
 public class NoRowException extends SQLNonTransientException implements LocalizedException {
 

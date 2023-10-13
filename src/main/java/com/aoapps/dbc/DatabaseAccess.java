@@ -329,15 +329,38 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
+   * @see  #queryBigDecimalOptional(java.lang.String, java.lang.Object...)
    * @see  #updateBigDecimal(java.lang.String, java.lang.Object...)
+   * @see  #updateBigDecimalOptional(java.lang.String, java.lang.Object...)
    */
   default BigDecimal queryBigDecimal(
       String sql,
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a {@link BigDecimal} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryBigDecimal(java.lang.String, java.lang.Object...)
+   * @see  #updateBigDecimal(java.lang.String, java.lang.Object...)
+   * @see  #updateBigDecimalOptional(java.lang.String, java.lang.Object...)
+   */
+  default Optional<BigDecimal> queryBigDecimalOptional(
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException {
+    return Optional.ofNullable(queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, sql, params));
   }
 
   /**
@@ -359,15 +382,38 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
    * @see  #queryBigDecimal(java.lang.String, java.lang.Object...)
+   * @see  #queryBigDecimalOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateBigDecimalOptional(java.lang.String, java.lang.Object...)
    */
   default BigDecimal updateBigDecimal(
       String sql,
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
+  }
+
+  /**
+   * Read-write query the database with a {@link BigDecimal} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryBigDecimal(java.lang.String, java.lang.Object...)
+   * @see  #queryBigDecimalOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateBigDecimal(java.lang.String, java.lang.Object...)
+   */
+  default Optional<BigDecimal> updateBigDecimalOptional(
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException {
+    return Optional.ofNullable(queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, sql, params));
   }
 
   /**
@@ -384,7 +430,7 @@ public interface DatabaseAccess {
   /**
    * Query the database with a {@link BigDecimal} return type.
    *
-   * @return  The value or {@code null} when no row and row not required, or when row with null value.
+   * @return  The value or {@code null} when no row and row not required, or when row with {@code null} value.
    */
   default BigDecimal queryBigDecimal(
       int isolationLevel,
@@ -418,13 +464,40 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryBooleanOptional(java.lang.String, java.lang.Object...)
    * @see  #updateBoolean(java.lang.String, java.lang.Object...)
+   * @see  #updateBooleanOptional(java.lang.String, java.lang.Object...)
    */
   default boolean queryBoolean(
       String sql,
       Object ... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a {@code boolean} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@code Optional#empty()} when no row.
+   *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryBoolean(java.lang.String, java.lang.Object...)
+   * @see  #updateBoolean(java.lang.String, java.lang.Object...)
+   * @see  #updateBooleanOptional(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Boolean> queryBooleanOptional(
+      String sql,
+      Object ... params
+  ) throws NullDataException, ExtraRowException, SQLException {
+    return Optional.ofNullable(queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, sql, params));
   }
 
   /**
@@ -446,13 +519,40 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
    * @see  #queryBoolean(java.lang.String, java.lang.Object...)
+   * @see  #queryBooleanOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateBooleanOptional(java.lang.String, java.lang.Object...)
    */
   default boolean updateBoolean(
       String sql,
       Object ... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
+  }
+
+  /**
+   * Read-write query the database with a {@code boolean} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@code Optional#empty()} when no row.
+   *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryBoolean(java.lang.String, java.lang.Object...)
+   * @see  #queryBooleanOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateBoolean(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Boolean> updateBooleanOptional(
+      String sql,
+      Object ... params
+  ) throws NullDataException, ExtraRowException, SQLException {
+    return Optional.ofNullable(queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, sql, params));
   }
 
   /**
@@ -471,7 +571,7 @@ public interface DatabaseAccess {
    *
    * @return  The value or {@code null} when no row and row not required.
    *
-   * @throws  NullDataException  When has a row, but with NULL value.
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
    */
   default Boolean queryBoolean(
       int isolationLevel,
@@ -512,15 +612,38 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
+   * @see  #queryByteArrayOptional(java.lang.String, java.lang.Object...)
    * @see  #updateByteArray(java.lang.String, java.lang.Object...)
+   * @see  #updateByteArrayOptional(java.lang.String, java.lang.Object...)
    */
   default byte[] queryByteArray(
       String sql,
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a {@code byte[]} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryByteArray(java.lang.String, java.lang.Object...)
+   * @see  #updateByteArray(java.lang.String, java.lang.Object...)
+   * @see  #updateByteArrayOptional(java.lang.String, java.lang.Object...)
+   */
+  default Optional<byte[]> queryByteArrayOptional(
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException {
+    return Optional.ofNullable(queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, sql, params));
   }
 
   /**
@@ -542,15 +665,38 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
    * @see  #queryByteArray(java.lang.String, java.lang.Object...)
+   * @see  #queryByteArrayOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateByteArrayOptional(java.lang.String, java.lang.Object...)
    */
   default byte[] updateByteArray(
       String sql,
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
+  }
+
+  /**
+   * Read-write query the database with a {@code byte[]} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryByteArray(java.lang.String, java.lang.Object...)
+   * @see  #queryByteArrayOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateByteArray(java.lang.String, java.lang.Object...)
+   */
+  default Optional<byte[]> updateByteArrayOptional(
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException {
+    return Optional.ofNullable(queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, sql, params));
   }
 
   /**
@@ -567,7 +713,7 @@ public interface DatabaseAccess {
   /**
    * Query the database with a {@code byte[]} return type.
    *
-   * @return  The value or {@code null} when no row and row not required, or when row with null value.
+   * @return  The value or {@code null} when no row and row not required, or when row with {@code null} value.
    */
   default byte[] queryByteArray(
       int isolationLevel,
@@ -601,15 +747,38 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
+   * @see  #queryDateOptional(java.lang.String, java.lang.Object...)
    * @see  #updateDate(java.lang.String, java.lang.Object...)
+   * @see  #updateDateOptional(java.lang.String, java.lang.Object...)
    */
   default Date queryDate(
       String sql,
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a {@link Date} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryDate(java.lang.String, java.lang.Object...)
+   * @see  #updateDate(java.lang.String, java.lang.Object...)
+   * @see  #updateDateOptional(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Date> queryDateOptional(
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException {
+    return Optional.ofNullable(queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, sql, params));
   }
 
   /**
@@ -631,15 +800,38 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
    * @see  #queryDate(java.lang.String, java.lang.Object...)
+   * @see  #queryDateOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateDateOptional(java.lang.String, java.lang.Object...)
    */
   default Date updateDate(
       String sql,
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
+  }
+
+  /**
+   * Read-write query the database with a {@link Date} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryDate(java.lang.String, java.lang.Object...)
+   * @see  #queryDateOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateDate(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Date> updateDateOptional(
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException {
+    return Optional.ofNullable(queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, sql, params));
   }
 
   /**
@@ -656,7 +848,7 @@ public interface DatabaseAccess {
   /**
    * Query the database with a {@link Date} return type.
    *
-   * @return  The value or {@code null} when no row and row not required, or when row with null value.
+   * @return  The value or {@code null} when no row and row not required, or when row with {@code null} value.
    */
   default Date queryDate(
       int isolationLevel,
@@ -690,13 +882,40 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryDoubleOptional(java.lang.String, java.lang.Object...)
    * @see  #updateDouble(java.lang.String, java.lang.Object...)
+   * @see  #updateDoubleOptional(java.lang.String, java.lang.Object...)
    */
   default double queryDouble(
       String sql,
       Object ... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a {@code double} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryDouble(java.lang.String, java.lang.Object...)
+   * @see  #updateDouble(java.lang.String, java.lang.Object...)
+   * @see  #updateDoubleOptional(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Double> queryDoubleOptional(
+      String sql,
+      Object ... params
+  ) throws NullDataException, ExtraRowException, SQLException {
+    return Optional.ofNullable(queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, sql, params));
   }
 
   /**
@@ -707,7 +926,11 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
    * @see  #queryDouble(java.lang.String, java.lang.Object...)
+   * @see  #queryDoubleOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateDoubleOptional(java.lang.String, java.lang.Object...)
    */
   default double updateDouble(
       String sql,
@@ -717,11 +940,34 @@ public interface DatabaseAccess {
   }
 
   /**
+   * Read-write query the database with a {@code double} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryDouble(java.lang.String, java.lang.Object...)
+   * @see  #queryDoubleOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateDouble(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Double> updateDoubleOptional(
+      String sql,
+      Object ... params
+  ) throws NullDataException, ExtraRowException, SQLException {
+    return Optional.ofNullable(queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, sql, params));
+  }
+
+  /**
    * Query the database with a {@link Double} return type.
    *
    * @return  The value or {@code null} when no row and row not required.
    *
-   * @throws  NullDataException  When has a row, but with NULL value.
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
    */
   default Double queryDouble(
       int isolationLevel,
@@ -747,6 +993,8 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a SQL NULL value.
+   *
    * @see  #doubleStreamUpdate(java.lang.String, java.lang.Object...)
    */
   default DoubleStream doubleStream(
@@ -763,6 +1011,8 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a SQL NULL value.
+   *
    * @see  #doubleStream(java.lang.String, java.lang.Object...)
    */
   default DoubleStream doubleStreamUpdate(
@@ -774,6 +1024,8 @@ public interface DatabaseAccess {
 
   /**
    * Query the database with a {@link DoubleStream} return type.
+   *
+   * @throws  NullDataException  When has a SQL NULL value.
    */
   DoubleStream doubleStream(
       int isolationLevel,
@@ -790,13 +1042,40 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryFloatOptional(java.lang.String, java.lang.Object...)
    * @see  #updateFloat(java.lang.String, java.lang.Object...)
+   * @see  #updateFloatOptional(java.lang.String, java.lang.Object...)
    */
   default float queryFloat(
       String sql,
       Object ... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a {@code float} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryFloat(java.lang.String, java.lang.Object...)
+   * @see  #updateFloat(java.lang.String, java.lang.Object...)
+   * @see  #updateFloatOptional(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Float> queryFloatOptional(
+      String sql,
+      Object ... params
+  ) throws NullDataException, ExtraRowException, SQLException {
+    return Optional.ofNullable(queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, sql, params));
   }
 
   /**
@@ -807,7 +1086,11 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
    * @see  #queryFloat(java.lang.String, java.lang.Object...)
+   * @see  #queryFloatOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateFloatOptional(java.lang.String, java.lang.Object...)
    */
   default float updateFloat(
       String sql,
@@ -817,11 +1100,34 @@ public interface DatabaseAccess {
   }
 
   /**
+   * Read-write query the database with a {@code float} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryFloat(java.lang.String, java.lang.Object...)
+   * @see  #queryFloatOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateFloat(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Float> updateFloatOptional(
+      String sql,
+      Object ... params
+  ) throws NullDataException, ExtraRowException, SQLException {
+    return Optional.ofNullable(queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, sql, params));
+  }
+
+  /**
    * Query the database with a {@link Float} return type.
    *
    * @return  The value or {@code null} when no row and row not required.
    *
-   * @throws  NullDataException  When has a row, but with NULL value.
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
    */
   default Float queryFloat(
       int isolationLevel,
@@ -848,13 +1154,40 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryIntOptional(java.lang.String, java.lang.Object...)
    * @see  #updateInt(java.lang.String, java.lang.Object...)
+   * @see  #updateIntOptional(java.lang.String, java.lang.Object...)
    */
   default int queryInt(
       String sql,
       Object ... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
+  }
+
+  /**
+   * Read-only query the database with an {@code int} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryInt(java.lang.String, java.lang.Object...)
+   * @see  #updateInt(java.lang.String, java.lang.Object...)
+   * @see  #updateIntOptional(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Integer> queryIntOptional(
+      String sql,
+      Object ... params
+  ) throws NullDataException, ExtraRowException, SQLException {
+    return Optional.ofNullable(queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, sql, params));
   }
 
   /**
@@ -876,13 +1209,40 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
    * @see  #queryInt(java.lang.String, java.lang.Object...)
+   * @see  #queryIntOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateIntOptional(java.lang.String, java.lang.Object...)
    */
   default int updateInt(
       String sql,
       Object ... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
+  }
+
+  /**
+   * Read-write query the database with an {@code int} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryInt(java.lang.String, java.lang.Object...)
+   * @see  #queryIntOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateInt(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Integer> updateIntOptional(
+      String sql,
+      Object ... params
+  ) throws NullDataException, ExtraRowException, SQLException {
+    return Optional.ofNullable(queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, sql, params));
   }
 
   /**
@@ -901,7 +1261,7 @@ public interface DatabaseAccess {
    *
    * @return  The value or {@code null} when no row and row not required.
    *
-   * @throws  NullDataException  When has a row, but with NULL value.
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
    */
   default Integer queryInt(
       int isolationLevel,
@@ -941,6 +1301,8 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a SQL NULL value.
+   *
    * @see  #updateIntList(java.lang.String, java.lang.Object...)
    */
   default IntList queryIntList(
@@ -968,6 +1330,8 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a SQL NULL value.
+   *
    * @see  #queryIntList(java.lang.String, java.lang.Object...)
    */
   default IntList updateIntList(
@@ -990,6 +1354,8 @@ public interface DatabaseAccess {
 
   /**
    * Query the database with an {@link IntList} return type.
+   *
+   * @throws  NullDataException  When has a SQL NULL value.
    */
   default IntList queryIntList(
       int isolationLevel,
@@ -1036,6 +1402,8 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a SQL NULL value.
+   *
    * @see  #intStreamUpdate(java.lang.String, java.lang.Object...)
    */
   default IntStream intStream(
@@ -1052,6 +1420,8 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a SQL NULL value.
+   *
    * @see  #intStream(java.lang.String, java.lang.Object...)
    */
   default IntStream intStreamUpdate(
@@ -1063,6 +1433,8 @@ public interface DatabaseAccess {
 
   /**
    * Query the database with an {@link IntStream} return type.
+   *
+   * @throws  NullDataException  When has a SQL NULL value.
    */
   IntStream intStream(
       int isolationLevel,
@@ -1079,13 +1451,40 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryLongOptional(java.lang.String, java.lang.Object...)
    * @see  #updateLong(java.lang.String, java.lang.Object...)
+   * @see  #updateLongOptional(java.lang.String, java.lang.Object...)
    */
   default long queryLong(
       String sql,
       Object ... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a {@code long} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryLong(java.lang.String, java.lang.Object...)
+   * @see  #updateLong(java.lang.String, java.lang.Object...)
+   * @see  #updateLongOptional(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Long> queryLongOptional(
+      String sql,
+      Object ... params
+  ) throws NullDataException, ExtraRowException, SQLException {
+    return Optional.ofNullable(queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, sql, params));
   }
 
   /**
@@ -1107,13 +1506,40 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
    * @see  #queryLong(java.lang.String, java.lang.Object...)
+   * @see  #queryLongOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateLongOptional(java.lang.String, java.lang.Object...)
    */
   default long updateLong(
       String sql,
       Object ... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
+  }
+
+  /**
+   * Read-write query the database with a {@code long} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryLong(java.lang.String, java.lang.Object...)
+   * @see  #queryLongOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateLong(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Long> updateLongOptional(
+      String sql,
+      Object ... params
+  ) throws NullDataException, ExtraRowException, SQLException {
+    return Optional.ofNullable(queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, sql, params));
   }
 
   /**
@@ -1132,7 +1558,7 @@ public interface DatabaseAccess {
    *
    * @return  The value or {@code null} when no row and row not required.
    *
-   * @throws  NullDataException  When has a row, but with NULL value.
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
    */
   default Long queryLong(
       int isolationLevel,
@@ -1172,6 +1598,8 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a SQL NULL value.
+   *
    * @see  #updateLongList(java.lang.String, java.lang.Object...)
    */
   default LongList queryLongList(
@@ -1199,6 +1627,8 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a SQL NULL value.
+   *
    * @see  #queryLongList(java.lang.String, java.lang.Object...)
    */
   default LongList updateLongList(
@@ -1221,6 +1651,8 @@ public interface DatabaseAccess {
 
   /**
    * Query the database with a {@link LongList} return type.
+   *
+   * @throws  NullDataException  When has a SQL NULL value.
    */
   default LongList queryLongList(
       int isolationLevel,
@@ -1267,6 +1699,8 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a SQL NULL value.
+   *
    * @see  #longStreamUpdate(java.lang.String, java.lang.Object...)
    */
   default LongStream longStream(
@@ -1283,6 +1717,8 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a SQL NULL value.
+   *
    * @see  #longStream(java.lang.String, java.lang.Object...)
    */
   default LongStream longStreamUpdate(
@@ -1294,6 +1730,8 @@ public interface DatabaseAccess {
 
   /**
    * Query the database with a {@link LongStream} return type.
+   *
+   * @throws  NullDataException  When has a SQL NULL value.
    */
   LongStream longStream(
       int isolationLevel,
@@ -1310,7 +1748,7 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
    * @see  #executeObjectUpdate(java.lang.Class, java.lang.String, java.lang.Object...)
    *
@@ -1334,7 +1772,7 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
    * @see  #executeObjectQuery(java.lang.Class, java.lang.String, java.lang.Object...)
    *
@@ -1353,7 +1791,7 @@ public interface DatabaseAccess {
   /**
    * Query the database with a {@code <T>} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
    *
-   * @return  The value or {@code null} when no row and row not required, or when row with null value.
+   * @return  The value or {@code null} when no row and row not required, or when row with {@code null} value.
    *
    * @deprecated  Please use {@link #queryObject(int, boolean, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with a constructor lambda {@code Class::new}.
@@ -1378,9 +1816,11 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
+   * @see  #queryObjectOptional(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
    * @see  #updateObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  #updateObjectOptional(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
    */
   default <T> T queryObject(
       ObjectFactory<? extends T> objectFactory,
@@ -1388,6 +1828,28 @@ public interface DatabaseAccess {
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, objectFactory, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a {@code <T>} return type, objects are created with the provided factory.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  #updateObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  #updateObjectOptional(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   */
+  default <T> Optional<T> queryObjectOptional(
+      ObjectFactory<? extends T> objectFactory,
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException {
+    return Optional.ofNullable(queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, objectFactory, sql, params));
   }
 
   /**
@@ -1410,9 +1872,11 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
    * @see  #queryObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  #queryObjectOptional(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  #updateObjectOptional(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
    */
   default <T> T updateObject(
       ObjectFactory<? extends T> objectFactory,
@@ -1420,6 +1884,28 @@ public interface DatabaseAccess {
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, objectFactory, sql, params);
+  }
+
+  /**
+   * Read-write query the database with a {@code <T>} return type, objects are created with the provided factory.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  #queryObjectOptional(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  #updateObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   */
+  default <T> Optional<T> updateObjectOptional(
+      ObjectFactory<? extends T> objectFactory,
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException {
+    return Optional.ofNullable(queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, objectFactory, sql, params));
   }
 
   /**
@@ -1437,7 +1923,7 @@ public interface DatabaseAccess {
   /**
    * Query the database with a {@code <T>} return type, objects are created with the provided factory.
    *
-   * @return  The value or {@code null} when no row and row not required, or when row with null value.
+   * @return  The value or {@code null} when no row and row not required, or when row with {@code null} value.
    */
   default <T> T queryObject(
       int isolationLevel,
@@ -1475,9 +1961,11 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
+   * @see  #queryObjectOptional(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
    * @see  #updateObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  #updateObjectOptional(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
    */
   default <T, Ex extends Throwable> T queryObject(
       Class<? extends Ex> exClass,
@@ -1486,6 +1974,31 @@ public interface DatabaseAccess {
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException, Ex {
     return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, exClass, objectFactory, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a {@code <T>} return type, objects are created with the provided factory.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @param  <Ex>  An arbitrary exception type that may be thrown
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  #updateObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  #updateObjectOptional(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   */
+  default <T, Ex extends Throwable> Optional<T> queryObjectOptional(
+      Class<? extends Ex> exClass,
+      ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException, Ex {
+    return Optional.ofNullable(queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, exClass, objectFactory, sql, params));
   }
 
   /**
@@ -1513,9 +2026,11 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
    * @see  #queryObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  #queryObjectOptional(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  #updateObjectOptional(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
    */
   default <T, Ex extends Throwable> T updateObject(
       Class<? extends Ex> exClass,
@@ -1524,6 +2039,31 @@ public interface DatabaseAccess {
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException, Ex {
     return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, exClass, objectFactory, sql, params);
+  }
+
+  /**
+   * Read-write query the database with a {@code <T>} return type, objects are created with the provided factory.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @param  <Ex>  An arbitrary exception type that may be thrown
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  #queryObjectOptional(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  #updateObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   */
+  default <T, Ex extends Throwable> Optional<T> updateObjectOptional(
+      Class<? extends Ex> exClass,
+      ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException, Ex {
+    return Optional.ofNullable(queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, exClass, objectFactory, sql, params));
   }
 
   /**
@@ -1546,7 +2086,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @return  The value or {@code null} when no row and row not required, or when row with null value.
+   * @return  The value or {@code null} when no row and row not required, or when row with {@code null} value.
    */
   default <T, Ex extends Throwable> T queryObject(
       int isolationLevel,
@@ -2870,13 +3410,40 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryShortOptional(java.lang.String, java.lang.Object...)
    * @see  #updateShort(java.lang.String, java.lang.Object...)
+   * @see  #updateShortOptional(java.lang.String, java.lang.Object...)
    */
   default short queryShort(
       String sql,
       Object ... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a {@code short} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryShort(java.lang.String, java.lang.Object...)
+   * @see  #updateShort(java.lang.String, java.lang.Object...)
+   * @see  #updateShortOptional(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Short> queryShortOptional(
+      String sql,
+      Object ... params
+  ) throws NullDataException, ExtraRowException, SQLException {
+    return Optional.ofNullable(queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, sql, params));
   }
 
   /**
@@ -2898,13 +3465,40 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
    * @see  #queryShort(java.lang.String, java.lang.Object...)
+   * @see  #queryShortOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateShortOptional(java.lang.String, java.lang.Object...)
    */
   default short updateShort(
       String sql,
       Object ... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
+  }
+
+  /**
+   * Read-write query the database with a {@code short} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
+   *
+   * @see  #queryShort(java.lang.String, java.lang.Object...)
+   * @see  #queryShortOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateShort(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Short> updateShortOptional(
+      String sql,
+      Object ... params
+  ) throws NullDataException, ExtraRowException, SQLException {
+    return Optional.ofNullable(queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, sql, params));
   }
 
   /**
@@ -2923,7 +3517,7 @@ public interface DatabaseAccess {
    *
    * @return  The value or {@code null} when no row and row not required.
    *
-   * @throws  NullDataException  When has a row, but with NULL value.
+   * @throws  NullDataException  When has a row, but with SQL NULL value.
    */
   default Short queryShort(
       int isolationLevel,
@@ -3020,15 +3614,38 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
+   * @see  #queryStringOptional(java.lang.String, java.lang.Object...)
    * @see  #updateString(java.lang.String, java.lang.Object...)
+   * @see  #updateStringOptional(java.lang.String, java.lang.Object...)
    */
   default String queryString(
       String sql,
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a {@link String} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryString(java.lang.String, java.lang.Object...)
+   * @see  #updateString(java.lang.String, java.lang.Object...)
+   * @see  #updateStringOptional(java.lang.String, java.lang.Object...)
+   */
+  default Optional<String> queryStringOptional(
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException {
+    return Optional.ofNullable(queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, sql, params));
   }
 
   /**
@@ -3050,15 +3667,38 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
    * @see  #queryString(java.lang.String, java.lang.Object...)
+   * @see  #queryStringOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateStringOptional(java.lang.String, java.lang.Object...)
    */
   default String updateString(
       String sql,
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
+  }
+
+  /**
+   * Read-write query the database with a {@link String} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryString(java.lang.String, java.lang.Object...)
+   * @see  #queryStringOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateString(java.lang.String, java.lang.Object...)
+   */
+  default Optional<String> updateStringOptional(
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException {
+    return Optional.ofNullable(queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, sql, params));
   }
 
   /**
@@ -3075,7 +3715,7 @@ public interface DatabaseAccess {
   /**
    * Query the database with a {@link String} return type.
    *
-   * @return  The value or {@code null} when no row and row not required, or when row with null value.
+   * @return  The value or {@code null} when no row and row not required, or when row with {@code null} value.
    */
   default String queryString(
       int isolationLevel,
@@ -3232,15 +3872,38 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
+   * @see  #queryTimestampOptional(java.lang.String, java.lang.Object...)
    * @see  #updateTimestamp(java.lang.String, java.lang.Object...)
+   * @see  #updateTimestampOptional(java.lang.String, java.lang.Object...)
    */
   default Timestamp queryTimestamp(
       String sql,
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a {@link Timestamp} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryTimestamp(java.lang.String, java.lang.Object...)
+   * @see  #updateTimestamp(java.lang.String, java.lang.Object...)
+   * @see  #updateTimestampOptional(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Timestamp> queryTimestampOptional(
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException {
+    return Optional.ofNullable(queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, sql, params));
   }
 
   /**
@@ -3262,15 +3925,38 @@ public interface DatabaseAccess {
    *   <li>rowRequired = {@code true}</li>
    * </ul>
    *
-   * @return  The value or {@code null} when row with null value.
+   * @return  The value or {@code null} when row with {@code null} value.
    *
    * @see  #queryTimestamp(java.lang.String, java.lang.Object...)
+   * @see  #queryTimestampOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateTimestampOptional(java.lang.String, java.lang.Object...)
    */
   default Timestamp updateTimestamp(
       String sql,
       Object ... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, sql, params);
+  }
+
+  /**
+   * Read-write query the database with a {@link Timestamp} return type.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   * </ul>
+   *
+   * @return  The value or {@link Optional#empty()} when either no row or row with {@code null} value.
+   *
+   * @see  #queryTimestamp(java.lang.String, java.lang.Object...)
+   * @see  #queryTimestampOptional(java.lang.String, java.lang.Object...)
+   * @see  #updateTimestamp(java.lang.String, java.lang.Object...)
+   */
+  default Optional<Timestamp> updateTimestampOptional(
+      String sql,
+      Object ... params
+  ) throws ExtraRowException, SQLException {
+    return Optional.ofNullable(queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, sql, params));
   }
 
   /**
@@ -3287,7 +3973,7 @@ public interface DatabaseAccess {
   /**
    * Query the database with a {@link Timestamp} return type.
    *
-   * @return  The value or {@code null} when no row and row not required, or when row with null value.
+   * @return  The value or {@code null} when no row and row not required, or when row with {@code null} value.
    */
   default Timestamp queryTimestamp(
       int isolationLevel,

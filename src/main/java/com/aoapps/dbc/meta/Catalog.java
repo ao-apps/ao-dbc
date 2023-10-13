@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015, 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -31,6 +31,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -111,15 +112,18 @@ public class Catalog {
 
   /**
    * Gets the schema of the provided name.
+   */
+  public Optional<Schema> getSchemaOptional(String name) throws SQLException {
+    return Optional.ofNullable(getSchemas().get(name));
+  }
+
+  /**
+   * Gets the schema of the provided name.
    *
    * @throws  NoRowException if the schema doesn't exist
    */
   public Schema getSchema(String name) throws NoRowException, SQLException {
-    Schema schema = getSchemas().get(name);
-    if (schema == null) {
-      throw new NoRowException("name=" + name);
-    }
-    return schema;
+    return getSchemaOptional(name).orElseThrow(() -> new NoRowException("name=" + name));
   }
 
   /**

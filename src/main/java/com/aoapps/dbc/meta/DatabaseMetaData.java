@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015, 2016, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,6 +30,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.Collator;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -117,14 +118,17 @@ public class DatabaseMetaData {
 
   /**
    * Gets the catalog of the provided name.
+   */
+  public Optional<Catalog> getCatalogOptional(String name) throws SQLException {
+    return Optional.ofNullable(getCatalogs().get(name));
+  }
+
+  /**
+   * Gets the catalog of the provided name.
    *
    * @throws  NoRowException if the catalog doesn't exist
    */
   public Catalog getCatalog(String name) throws NoRowException, SQLException {
-    Catalog catalog = getCatalogs().get(name);
-    if (catalog == null) {
-      throw new NoRowException();
-    }
-    return catalog;
+    return getCatalogOptional(name).orElseThrow(() -> new NoRowException("name=" + name));
   }
 }

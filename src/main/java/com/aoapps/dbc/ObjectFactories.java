@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -179,7 +179,7 @@ public final class ObjectFactories {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @return  If {@linkplain ObjectFactory#isNullable() nullable}, trusts the given object factory to not return
+   * @return  If {@linkplain NotNull not nullable}, trusts the given object factory to not return
    *          {@code null}, otherwise wraps.  Also wraps when assertions are enabled.
    */
   @SuppressWarnings({"AssertWithSideEffects", "overloads"})
@@ -203,7 +203,7 @@ public final class ObjectFactories {
   /**
    * Wraps an object factory, unless it is already not {@linkplain ObjectFactory#isNullable() nullable}.
    *
-   * @return  If {@linkplain ObjectFactory#isNullable() nullable}, trusts the given object factory to not return
+   * @return  If {@linkplain NotNull not nullable}, trusts the given object factory to not return
    *          {@code null}, otherwise wraps.  Also wraps when assertions are enabled.
    */
   @SuppressWarnings({"AssertWithSideEffects", "overloads"})

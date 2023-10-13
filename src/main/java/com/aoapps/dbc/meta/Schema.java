@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015, 2016, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,6 +27,7 @@ import com.aoapps.collections.AoCollections;
 import com.aoapps.dbc.NoRowException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -115,14 +116,17 @@ public class Schema {
 
   /**
    * Gets the table of the provided name.
+   */
+  public Optional<Table> getTableOptional(String name) throws SQLException {
+    return Optional.ofNullable(getTables().get(name));
+  }
+
+  /**
+   * Gets the table of the provided name.
    *
    * @throws  NoRowException if the table doesn't exist
    */
   public Table getTable(String name) throws NoRowException, SQLException {
-    Table table = getTables().get(name);
-    if (table == null) {
-      throw new NoRowException();
-    }
-    return table;
+    return getTableOptional(name).orElseThrow(() -> new NoRowException("name=" + name));
   }
 }
