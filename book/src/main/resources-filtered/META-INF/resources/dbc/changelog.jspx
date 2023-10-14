@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T19:31:26-05:00"
-    dateModified="2023-10-13T19:19:26Z"
+    dateModified="2023-10-14T00:49:25Z"
   >
     <c:set var="latestRelease" value="3.1.1" />
     <c:if test="${
@@ -75,6 +75,20 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
           <li>
             New set of methods that return <code><ao:a rel="nofollow" href="@{javadoc.link.javase}java.base/java/util/Optional.html">Optional</ao:a></code>
             instead of throwing <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/NoRowException.html">NoRowException</ao:a></code>.
+          </li>
+          <li>
+            <p>
+              <strong>Breaking change:</strong> Single-row <code>DatabaseAccess.queryObject(…)</code>,
+              <code>DatabaseAccess.updateObject(…)</code>, and all related more specific type methods will no longer
+              return <code>null</code> when there is a row with a SQL NULL value, instead will throw
+              <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/NullDataException.html">NullDataException</ao:a></code>.
+              This was already the behavior for primitive types (and related wrappers).  This aligns the behavior across
+              all types.
+            </p>
+            <p>
+              When SQL NULL values are expected, use one of the new <code>DatabaseAccess.queryObjectNullable(…)</code>,
+              <code>DatabaseAccess.queryObjectOptionalNullable(…)</code>, or related more specific type methods.
+            </p>
           </li>
         </ul>
       </changelog:release>
