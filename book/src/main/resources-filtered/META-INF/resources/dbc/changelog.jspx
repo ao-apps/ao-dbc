@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T19:31:26-05:00"
-    dateModified="2023-10-14T00:49:25Z"
+    dateModified="2023-10-17T12:25:38Z"
   >
     <c:set var="latestRelease" value="3.1.1" />
     <c:if test="${
@@ -90,6 +90,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
               <code>DatabaseAccess.queryObjectOptionalNullable(…)</code>, or related more specific type methods.
             </p>
           </li>
+          <li>Implemented remaining SQL types for formatted result set exceptions/logging.</li>
         </ul>
       </changelog:release>
     </c:if>
