@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ao-dbc - Simplified JDBC access for simplified code.
-Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
+Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -37,9 +37,9 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T19:31:26-05:00"
-    dateModified="2023-10-17T12:25:38Z"
+    dateModified="2024-05-11T16:20:52Z"
   >
-    <c:set var="latestRelease" value="3.1.1" />
+    <c:set var="latestRelease" value="4.0.0" />
     <c:if test="${
       fn:endsWith('@{project.version}', '-SNAPSHOT')
       and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')
@@ -55,45 +55,55 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
       >
         <!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
         <!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
-        <ul>
-          <li>
-            <p>
-              <code>DatabaseAccess</code> now implements transactional methods instead of them only being on
-              <code>Database</code>.  This allows code to accept <code>DatabaseAccess</code> while still being able to
-              efficiently have its own transactional block.  Previously, <code>DatabaseAccess</code> was typically used
-              only for one-off database calls.
-            </p>
-            <p>
-              When transactional methods are via a <code>Database</code> instance, the implementation is the same as
-              before.  When the transactional methods are via a <code>DatabaseConnection</code>, they are directly
-              implemented on the connection.
-            </p>
-          </li>
-          <li>
-            New <code>DatabaseConnection.onCommit(…)</code> and <code>DatabaseConnection.onRollback(…)</code> events.
-          </li>
-          <li>
-            New set of methods that return <code><ao:a rel="nofollow" href="@{javadoc.link.javase}java.base/java/util/Optional.html">Optional</ao:a></code>
-            instead of throwing <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/NoRowException.html">NoRowException</ao:a></code>.
-          </li>
-          <li>
-            <p>
-              <strong>Breaking change:</strong> Single-row <code>DatabaseAccess.queryObject(…)</code>,
-              <code>DatabaseAccess.updateObject(…)</code>, and all related more specific type methods will no longer
-              return <code>null</code> when there is a row with a SQL NULL value, instead will throw
-              <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/NullDataException.html">NullDataException</ao:a></code>.
-              This was already the behavior for primitive types (and related wrappers).  This aligns the behavior across
-              all types.
-            </p>
-            <p>
-              When SQL NULL values are expected, use one of the new <code>DatabaseAccess.queryObjectNullable(…)</code>,
-              <code>DatabaseAccess.queryObjectOptionalNullable(…)</code>, or related more specific type methods.
-            </p>
-          </li>
-          <li>Implemented remaining SQL types for formatted result set exceptions/logging.</li>
-        </ul>
       </changelog:release>
     </c:if>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="4.0.0"
+      datePublished="2024-05-11T16:20:52Z"
+      groupId="@{project.groupId}"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>
+          <p>
+            <code>DatabaseAccess</code> now implements transactional methods instead of them only being on
+            <code>Database</code>.  This allows code to accept <code>DatabaseAccess</code> while still being able to
+            efficiently have its own transactional block.  Previously, <code>DatabaseAccess</code> was typically used
+            only for one-off database calls.
+          </p>
+          <p>
+            When transactional methods are via a <code>Database</code> instance, the implementation is the same as
+            before.  When the transactional methods are via a <code>DatabaseConnection</code>, they are directly
+            implemented on the connection.
+          </p>
+        </li>
+        <li>
+          New <code>DatabaseConnection.onCommit(…)</code> and <code>DatabaseConnection.onRollback(…)</code> events.
+        </li>
+        <li>
+          New set of methods that return <code><ao:a rel="nofollow" href="@{javadoc.link.javase}java.base/java/util/Optional.html">Optional</ao:a></code>
+          instead of throwing <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/NoRowException.html">NoRowException</ao:a></code>.
+        </li>
+        <li>
+          <p>
+            <strong>Breaking change:</strong> Single-row <code>DatabaseAccess.queryObject(…)</code>,
+            <code>DatabaseAccess.updateObject(…)</code>, and all related more specific type methods will no longer
+            return <code>null</code> when there is a row with a SQL NULL value, instead will throw
+            <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/NullDataException.html">NullDataException</ao:a></code>.
+            This was already the behavior for primitive types (and related wrappers).  This aligns the behavior across
+            all types.
+          </p>
+          <p>
+            When SQL NULL values are expected, use one of the new <code>DatabaseAccess.queryObjectNullable(…)</code>,
+            <code>DatabaseAccess.queryObjectOptionalNullable(…)</code>, or related more specific type methods.
+          </p>
+        </li>
+        <li>Implemented remaining SQL types for formatted result set exceptions/logging.</li>
+      </ul>
+    </changelog:release>
 
     <changelog:release
       projectName="@{documented.name}"
