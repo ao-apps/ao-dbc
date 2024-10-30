@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2011, 2013, 2015, 2016, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2011, 2013, 2015, 2016, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -287,9 +287,8 @@ public class Table {
 
   /**
    * Gets the set of tables that this table depends on.
-   * <p>
-   * This is based on {@link java.sql.DatabaseMetaData#getImportedKeys(java.lang.String, java.lang.String, java.lang.String)}.
-   * </p>
+   *
+   * <p>This is based on {@link java.sql.DatabaseMetaData#getImportedKeys(java.lang.String, java.lang.String, java.lang.String)}.</p>
    */
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
   public Set<? extends Table> getImportedTables() throws SQLException {
@@ -325,9 +324,8 @@ public class Table {
 
   /**
    * Gets the set of tables that depend on this table.
-   * <p>
-   * This is based on {@link java.sql.DatabaseMetaData#getExportedKeys(java.lang.String, java.lang.String, java.lang.String)}.
-   * </p>
+   *
+   * <p>This is based on {@link java.sql.DatabaseMetaData#getExportedKeys(java.lang.String, java.lang.String, java.lang.String)}.</p>
    */
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
   public Set<? extends Table> getExportedTables() throws SQLException {

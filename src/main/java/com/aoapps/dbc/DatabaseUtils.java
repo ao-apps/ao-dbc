@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2018, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2018, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -109,146 +109,162 @@ public final class DatabaseUtils {
       }
       int colType = metaData.getColumnType(c);
       switch (colType) {
-        case Types.BINARY: {
-          byte[] value = result.getBytes(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            sb.append("BINARY(length = ").append(value.length).append(')');
+        case Types.BINARY:
+          {
+            byte[] value = result.getBytes(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              sb.append("BINARY(length = ").append(value.length).append(')');
+            }
+            break;
           }
-          break;
-        }
-        case Types.VARBINARY: {
-          byte[] value = result.getBytes(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            sb.append("VARBINARY(length = ").append(value.length).append(')');
+        case Types.VARBINARY:
+          {
+            byte[] value = result.getBytes(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              sb.append("VARBINARY(length = ").append(value.length).append(')');
+            }
+            break;
           }
-          break;
-        }
-        case Types.LONGVARBINARY: {
-          byte[] value = result.getBytes(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            sb.append("LONGVARBINARY(length = ").append(value.length).append(')');
+        case Types.LONGVARBINARY:
+          {
+            byte[] value = result.getBytes(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              sb.append("LONGVARBINARY(length = ").append(value.length).append(')');
+            }
+            break;
           }
-          break;
-        }
-        case Types.OTHER: {
-          Object value = result.getObject(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            sb.append("OTHER(");
-            encodeWithEllipsis(sb, value.toString());
-            sb.append(')');
+        case Types.OTHER:
+          {
+            Object value = result.getObject(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              sb.append("OTHER(");
+              encodeWithEllipsis(sb, value.toString());
+              sb.append(')');
+            }
+            break;
           }
-          break;
-        }
-        case Types.JAVA_OBJECT: {
-          Object value = result.getObject(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            sb.append("JAVA_OBJECT(");
-            encodeWithEllipsis(sb, value.toString());
-            sb.append(')');
+        case Types.JAVA_OBJECT:
+          {
+            Object value = result.getObject(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              sb.append("JAVA_OBJECT(");
+              encodeWithEllipsis(sb, value.toString());
+              sb.append(')');
+            }
+            break;
           }
-          break;
-        }
-        case Types.DISTINCT: {
-          Object value = result.getObject(c);
-          sb.append((value == null) ? "NULL" : "DISTINCT");
-          break;
-        }
-        case Types.STRUCT: {
-          Object value = result.getObject(c);
-          sb.append((value == null) ? "NULL" : "STRUCT");
-          break;
-        }
-        case Types.ARRAY: {
-          Array value = result.getArray(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            sb.append("ARRAY");
-            value.free();
+        case Types.DISTINCT:
+          {
+            Object value = result.getObject(c);
+            sb.append((value == null) ? "NULL" : "DISTINCT");
+            break;
           }
-          break;
-        }
-        case Types.BLOB: {
-          Blob value = result.getBlob(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            sb.append("BLOB(length = ").append(value.length()).append(')');
-            value.free();
+        case Types.STRUCT:
+          {
+            Object value = result.getObject(c);
+            sb.append((value == null) ? "NULL" : "STRUCT");
+            break;
           }
-          break;
-        }
-        case Types.CLOB: {
-          Clob value = result.getClob(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            sb.append("CLOB(length = ").append(value.length()).append(')');
-            value.free();
+        case Types.ARRAY:
+          {
+            Array value = result.getArray(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              sb.append("ARRAY");
+              value.free();
+            }
+            break;
           }
-          break;
-        }
-        case Types.REF: {
-          Ref value = result.getRef(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            sb.append("REF(baseTypeName = ");
-            encodeWithEllipsis(sb, value.getBaseTypeName());
-            sb.append(')');
+        case Types.BLOB:
+          {
+            Blob value = result.getBlob(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              sb.append("BLOB(length = ").append(value.length()).append(')');
+              value.free();
+            }
+            break;
           }
-          break;
-        }
-        case Types.DATALINK: {
-          Object value = result.getObject(c);
-          sb.append((value == null) ? "NULL" : "DATALINK");
-          break;
-        }
-        case Types.ROWID: { // JDBC 4.0 Types
-          RowId value = result.getRowId(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            sb.append("ROWID(bytes.length = ").append(value.getBytes().length).append(')');
+        case Types.CLOB:
+          {
+            Clob value = result.getClob(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              sb.append("CLOB(length = ").append(value.length()).append(')');
+              value.free();
+            }
+            break;
           }
-          break;
-        }
-        case Types.NCLOB: { // JDBC 4.0 Types
-          NClob value = result.getNClob(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            sb.append("NCLOB(length = ").append(value.length()).append(')');
+        case Types.REF:
+          {
+            Ref value = result.getRef(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              sb.append("REF(baseTypeName = ");
+              encodeWithEllipsis(sb, value.getBaseTypeName());
+              sb.append(')');
+            }
+            break;
           }
-          break;
-        }
-        case Types.SQLXML: { // JDBC 4.0 Types
-          SQLXML value = result.getSQLXML(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            sb.append("SQLXML(");
-            encodeWithEllipsis(sb, value.getString());
-            sb.append(')');
-            value.free();
+        case Types.DATALINK:
+          {
+            Object value = result.getObject(c);
+            sb.append((value == null) ? "NULL" : "DATALINK");
+            break;
           }
-          break;
-        }
-        case Types.REF_CURSOR: { // JDBC 4.2 Types
-          Object value = result.getObject(c);
-          sb.append((value == null) ? "NULL" : "REF_CURSOR");
-          break;
-        }
+        case Types.ROWID: // JDBC 4.0 Types
+          {
+            RowId value = result.getRowId(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              sb.append("ROWID(bytes.length = ").append(value.getBytes().length).append(')');
+            }
+            break;
+          }
+        case Types.NCLOB: // JDBC 4.0 Types
+          {
+            NClob value = result.getNClob(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              sb.append("NCLOB(length = ").append(value.length()).append(')');
+            }
+            break;
+          }
+        case Types.SQLXML: // JDBC 4.0 Types
+          {
+            SQLXML value = result.getSQLXML(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              sb.append("SQLXML(");
+              encodeWithEllipsis(sb, value.getString());
+              sb.append(')');
+              value.free();
+            }
+            break;
+          }
+        case Types.REF_CURSOR: // JDBC 4.2 Types
+          {
+            Object value = result.getObject(c);
+            sb.append((value == null) ? "NULL" : "REF_CURSOR");
+            break;
+          }
         // Types without quotes
         // Note: Matches JdbcResourceSynchronizer
         case Types.BIGINT:
@@ -280,15 +296,16 @@ public final class DatabaseUtils {
         case Types.TIME_WITH_TIMEZONE: // JDBC 4.2 Types
         case Types.TIMESTAMP:
         case Types.TIMESTAMP_WITH_TIMEZONE: // JDBC 4.2 Types
-        case Types.VARCHAR: {
-          String value = result.getString(c);
-          if (value == null) {
-            sb.append("NULL");
-          } else {
-            encodeWithEllipsis(sb, value);
+        case Types.VARCHAR:
+          {
+            String value = result.getString(c);
+            if (value == null) {
+              sb.append("NULL");
+            } else {
+              encodeWithEllipsis(sb, value);
+            }
+            break;
           }
-          break;
-        }
       }
     }
     sb.append(')');

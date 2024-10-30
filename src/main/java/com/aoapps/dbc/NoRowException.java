@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2010, 2011, 2015, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2010, 2011, 2015, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -32,10 +32,9 @@ import java.sql.SQLNonTransientException;
 
 /**
  * Thrown when no row available and a row is required.
- * <p>
- * Rather than catching this exception as part of normal operation, prefer the
- * <code>*Optional(…)</code> method variants.
- * </p>
+ *
+ * <p>Rather than catching this exception as part of normal operation, prefer the
+ * <code>*Optional(…)</code> method variants.</p>
  */
 public class NoRowException extends SQLNonTransientException implements LocalizedException {
 

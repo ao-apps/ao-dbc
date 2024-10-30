@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -116,10 +116,9 @@ public class Database implements DatabaseAccess {
    * Creates a new {@link DatabaseConnection} instance.  The instance must be closed
    * via {@link DatabaseConnection#close()} or {@link DatabaseConnection#close(java.lang.Throwable)}, typically in a
    * try/catch or try-with-resources block.
-   * <p>
-   * Note that the close methods will rollback any transaction in progress, so it is up to the caller to
-   * perform any necessary {@link DatabaseConnection#commit()}.
-   * </p>
+   *
+   * <p>Note that the close methods will rollback any transaction in progress, so it is up to the caller to
+   * perform any necessary {@link DatabaseConnection#commit()}.</p>
    *
    * @see #transactionCall(com.aoapps.lang.concurrent.CallableE)
    * @see #transactionCall(java.lang.Class, com.aoapps.lang.concurrent.CallableE)
@@ -237,9 +236,8 @@ public class Database implements DatabaseAccess {
   /**
    * Whenever a new connection is obtained from the pool or the dataSource,
    * it is passed here for any custom initialization routine.
-   * <p>
-   * This default implementation does nothing.
-   * </p>
+   *
+   * <p>This default implementation does nothing.</p>
    *
    * @see  #deinitConnection(java.sql.Connection)
    * @see  #getConnection(int, boolean, int, boolean)
@@ -251,9 +249,8 @@ public class Database implements DatabaseAccess {
   /**
    * Before a connection is released back to the pool or the dataSource,
    * it is passed here for any custom de-initialization routine.
-   * <p>
-   * This default implementation does nothing.
-   * </p>
+   *
+   * <p>This default implementation does nothing.</p>
    *
    * @see  #initConnection(java.sql.Connection)
    * @see  #release(com.aoapps.sql.failfast.FailFastConnection)
@@ -266,28 +263,23 @@ public class Database implements DatabaseAccess {
    * Gets a read/write connection to the database with a transaction level of
    * {@link Connections#DEFAULT_TRANSACTION_ISOLATION},
    * warning when a connection is already used by this thread.
-   * <p>
-   * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
-   * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
-   * </p>
-   * <p>
-   * When obtaining a connection from a {@link DataSource}, if the connection is not in
+   *
+   * <p>The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
+   * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).</p>
+   *
+   * <p>When obtaining a connection from a {@link DataSource}, if the connection is not in
    * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
-   * be rolled-back and set to auto-commit.
-   * </p>
-   * <p>
-   * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
-   * available.
-   * </p>
-   * <p>
-   * The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+   * be rolled-back and set to auto-commit.</p>
+   *
+   * <p>If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+   * available.</p>
+   *
+   * <p>The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
    * The fail-fast connection is used to determine whether to {@linkplain Connection#rollback() roll-back} or
-   * {@linkplain Connection#commit() commit} during automatic transaction management.
-   * </p>
-   * <p>
-   * The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
-   * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.
-   * </p>
+   * {@linkplain Connection#commit() commit} during automatic transaction management.</p>
+   *
+   * <p>The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+   * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.</p>
    *
    * @return  The read/write connection to the database
    *
@@ -308,36 +300,30 @@ public class Database implements DatabaseAccess {
   /**
    * Gets a read/write connection to the database with a transaction level of
    * {@link Connections#DEFAULT_TRANSACTION_ISOLATION}.
-   * <p>
-   * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
-   * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
-   * </p>
-   * <p>
-   * When obtaining a connection from a {@link DataSource}, if the connection is not in
+   *
+   * <p>The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
+   * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).</p>
+   *
+   * <p>When obtaining a connection from a {@link DataSource}, if the connection is not in
    * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
-   * be rolled-back and set to auto-commit.
-   * </p>
-   * <p>
-   * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
-   * available.
-   * </p>
-   * <p>
-   * The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+   * be rolled-back and set to auto-commit.</p>
+   *
+   * <p>If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+   * available.</p>
+   *
+   * <p>The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
    * The fail-fast connection is used to determine whether to {@linkplain Connection#rollback() roll-back} or
-   * {@linkplain Connection#commit() commit} during automatic transaction management.
-   * </p>
-   * <p>
-   * The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
-   * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.
-   * </p>
+   * {@linkplain Connection#commit() commit} during automatic transaction management.</p>
+   *
+   * <p>The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+   * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.</p>
    *
    * @param  maxConnections  The maximum number of connections expected to be used by the current thread.
    *                         This should normally be one to avoid potential deadlock.
-   *                         <p>
-   *                         The connection will continue to be considered used by the allocating thread until
+   *
+   *                         <p>The connection will continue to be considered used by the allocating thread until
    *                         released (via {@link Connection#close()}, even if the connection is shared by another
-   *                         thread.
-   *                         </p>
+   *                         thread.</p>
    *
    * @return  The read/write connection to the database
    *
@@ -359,28 +345,23 @@ public class Database implements DatabaseAccess {
    * Gets a connection to the database with a transaction level of
    * {@link Connections#DEFAULT_TRANSACTION_ISOLATION},
    * warning when a connection is already used by this thread.
-   * <p>
-   * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
-   * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
-   * </p>
-   * <p>
-   * When obtaining a connection from a {@link DataSource}, if the connection is not in
+   *
+   * <p>The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
+   * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).</p>
+   *
+   * <p>When obtaining a connection from a {@link DataSource}, if the connection is not in
    * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
-   * be rolled-back and set to auto-commit.
-   * </p>
-   * <p>
-   * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
-   * available.
-   * </p>
-   * <p>
-   * The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+   * be rolled-back and set to auto-commit.</p>
+   *
+   * <p>If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+   * available.</p>
+   *
+   * <p>The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
    * The fail-fast connection is used to determine whether to {@linkplain Connection#rollback() roll-back} or
-   * {@linkplain Connection#commit() commit} during automatic transaction management.
-   * </p>
-   * <p>
-   * The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
-   * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.
-   * </p>
+   * {@linkplain Connection#commit() commit} during automatic transaction management.</p>
+   *
+   * <p>The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+   * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.</p>
    *
    * @param  readOnly  The {@link Connection#setReadOnly(boolean) read-only flag}
    *
@@ -402,28 +383,23 @@ public class Database implements DatabaseAccess {
   /**
    * Gets a connection to the database,
    * warning when a connection is already used by this thread.
-   * <p>
-   * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
-   * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
-   * </p>
-   * <p>
-   * When obtaining a connection from a {@link DataSource}, if the connection is not in
+   *
+   * <p>The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
+   * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).</p>
+   *
+   * <p>When obtaining a connection from a {@link DataSource}, if the connection is not in
    * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
-   * be rolled-back and set to auto-commit.
-   * </p>
-   * <p>
-   * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
-   * available.
-   * </p>
-   * <p>
-   * The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+   * be rolled-back and set to auto-commit.</p>
+   *
+   * <p>If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+   * available.</p>
+   *
+   * <p>The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
    * The fail-fast connection is used to determine whether to {@linkplain Connection#rollback() roll-back} or
-   * {@linkplain Connection#commit() commit} during automatic transaction management.
-   * </p>
-   * <p>
-   * The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
-   * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.
-   * </p>
+   * {@linkplain Connection#commit() commit} during automatic transaction management.</p>
+   *
+   * <p>The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+   * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.</p>
    *
    * @param  isolationLevel  The {@link Connection#setTransactionIsolation(int) transaction isolation level}
    *
@@ -446,28 +422,23 @@ public class Database implements DatabaseAccess {
 
   /**
    * Gets a connection to the database.
-   * <p>
-   * The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
-   * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).
-   * </p>
-   * <p>
-   * When obtaining a connection from a {@link DataSource}, if the connection is not in
+   *
+   * <p>The connection will be in auto-commit mode, as configured by {@link AOConnectionPool#resetConnection(java.sql.Connection)}
+   * (or compatible {@link DataSource} implementation via {@link AOConnectionPool#defaultResetConnection(java.sql.Connection)}).</p>
+   *
+   * <p>When obtaining a connection from a {@link DataSource}, if the connection is not in
    * {@linkplain Connection#getAutoCommit() auto-commit} mode, a warning will be logged, then the connection will
-   * be rolled-back and set to auto-commit.
-   * </p>
-   * <p>
-   * If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
-   * available.
-   * </p>
-   * <p>
-   * The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+   * be rolled-back and set to auto-commit.</p>
+   *
+   * <p>If all the connections in the pool are busy and the pool is at capacity, waits until a connection becomes
+   * available.</p>
+   *
+   * <p>The connection will be a {@link FailFastConnection}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
    * The fail-fast connection is used to determine whether to {@linkplain Connection#rollback() roll-back} or
-   * {@linkplain Connection#commit() commit} during automatic transaction management.
-   * </p>
-   * <p>
-   * The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
-   * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.
-   * </p>
+   * {@linkplain Connection#commit() commit} during automatic transaction management.</p>
+   *
+   * <p>The connection will also be a {@link ConnectionTracker}, which may be unwrapped via {@link Connection#unwrap(java.lang.Class)}.
+   * The connection tracking is used to close/free all objects before returning the connection to the underlying pool.</p>
    *
    * @param  isolationLevel  The {@link Connection#setTransactionIsolation(int) transaction isolation level}
    *
@@ -475,11 +446,10 @@ public class Database implements DatabaseAccess {
    *
    * @param  maxConnections  The maximum number of connections expected to be used by the current thread.
    *                         This should normally be one to avoid potential deadlock.
-   *                         <p>
-   *                         The connection will continue to be considered used by the allocating thread until
+   *
+   *                         <p>The connection will continue to be considered used by the allocating thread until
    *                         released (via {@link Connection#close()}, even if the connection is shared by another
-   *                         thread.
-   *                         </p>
+   *                         thread.</p>
    *
    * @return  The connection to the database
    *
@@ -629,16 +599,14 @@ public class Database implements DatabaseAccess {
   /**
    * Closes and/or releases the given connection back to the pool.
    * Any {@linkplain Connection#getAutoCommit() transaction in-progress} is {@linkplain Connection#rollback() rolled-back}.
-   * <p>
-   * When there is no {@linkplain FailFastConnection#getFailFastCause() fail-fast cause}, the connection is immediately
-   * deinit'ed then {@linkplain Connection#close() closed} (which returns the connection to the underlying pool).
-   * </p>
-   * <p>
-   * Otherwise, when there remains an unresolved {@linkplain FailFastConnection#getFailFastCause() fail-fast cause}, the
+   *
+   * <p>When there is no {@linkplain FailFastConnection#getFailFastCause() fail-fast cause}, the connection is immediately
+   * deinit'ed then {@linkplain Connection#close() closed} (which returns the connection to the underlying pool).</p>
+   *
+   * <p>Otherwise, when there remains an unresolved {@linkplain FailFastConnection#getFailFastCause() fail-fast cause}, the
    * connection is {@linkplain Connection#isValid(int) validated} in the background before being either
    * {@linkplain Connection#abort(java.util.concurrent.Executor) aborted} or deinit'ed then {@linkplain Connection#close() closed}
-   * (both of which return the connection to the underlying pool).
-   * </p>
+   * (both of which return the connection to the underlying pool).</p>
    *
    * @see  #getConnection(int, boolean, int, boolean)
    * @see  DatabaseConnection#close()

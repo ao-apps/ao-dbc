@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -30,10 +30,9 @@ import javax.sql.DataSource;
 /**
  * Allows closing of the underlying pool.  This is useful in application life cycle management, such as shutting down
  * a database as a web application is being destroyed.
- * <p>
- * The component that creates the database should generally be responsible for closing it.  To make it evident that the
- * rest of the application should not close the database, only the {@link Database} base type should be provided.
- * </p>
+ *
+ * <p>The component that creates the database should generally be responsible for closing it.  To make it evident that the
+ * rest of the application should not close the database, only the {@link Database} base type should be provided.</p>
  */
 public class CloseableDatabase extends Database implements AutoCloseable {
 

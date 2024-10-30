@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2018, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2018, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -134,20 +134,18 @@ public interface DatabaseAccess {
   boolean isInTransaction();
 
   /**
-   * <p>
    * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
-   * </p>
+   *
    * <ol>
    * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
    *     {@link ExtraRowException} on the outer-most transaction only.</li>
    * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
    * </ol>
-   * <p>
-   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   *
+   * <p>The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
    * another transaction is performed within this transaction.  Any nested transaction will automatically
    * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
-   * entire transaction on any exception.
-   * </p>
+   * entire transaction on any exception.</p>
    *
    * @see #isInTransaction()
    */
@@ -156,20 +154,18 @@ public interface DatabaseAccess {
   }
 
   /**
-   * <p>
    * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
-   * </p>
+   *
    * <ol>
    * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
    *     {@link ExtraRowException} on the outer-most transaction only.</li>
    * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
    * </ol>
-   * <p>
-   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   *
+   * <p>The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
    * another transaction is performed within this transaction.  Any nested transaction will automatically
    * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
-   * entire transaction on any exception.
-   * </p>
+   * entire transaction on any exception.</p>
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
@@ -180,20 +176,18 @@ public interface DatabaseAccess {
   }
 
   /**
-   * <p>
    * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
-   * </p>
+   *
    * <ol>
    * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
    *     {@link ExtraRowException} on the outer-most transaction only.</li>
    * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
    * </ol>
-   * <p>
-   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   *
+   * <p>The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
    * another transaction is performed within this transaction.  Any nested transaction will automatically
    * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
-   * entire transaction on any exception.
-   * </p>
+   * entire transaction on any exception.</p>
    *
    * @see #isInTransaction()
    */
@@ -202,20 +196,18 @@ public interface DatabaseAccess {
   }
 
   /**
-   * <p>
    * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
-   * </p>
+   *
    * <ol>
    * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
    *     {@link ExtraRowException} on the outer-most transaction only.</li>
    * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
    * </ol>
-   * <p>
-   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   *
+   * <p>The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
    * another transaction is performed within this transaction.  Any nested transaction will automatically
    * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
-   * entire transaction on any exception.
-   * </p>
+   * entire transaction on any exception.</p>
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
@@ -224,20 +216,18 @@ public interface DatabaseAccess {
   <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> exClass, DatabaseCallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex;
 
   /**
-   * <p>
    * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
-   * </p>
+   *
    * <ol>
    * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
    *     {@link ExtraRowException} on the outer-most transaction only.</li>
    * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
    * </ol>
-   * <p>
-   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   *
+   * <p>The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
    * another transaction is performed within this transaction.  Any nested transaction will automatically
    * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
-   * entire transaction on any exception.
-   * </p>
+   * entire transaction on any exception.</p>
    *
    * @see #isInTransaction()
    */
@@ -246,20 +236,18 @@ public interface DatabaseAccess {
   }
 
   /**
-   * <p>
    * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
-   * </p>
+   *
    * <ol>
    * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
    *     {@link ExtraRowException} on the outer-most transaction only.</li>
    * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
    * </ol>
-   * <p>
-   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   *
+   * <p>The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
    * another transaction is performed within this transaction.  Any nested transaction will automatically
    * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
-   * entire transaction on any exception.
-   * </p>
+   * entire transaction on any exception.</p>
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
@@ -270,20 +258,18 @@ public interface DatabaseAccess {
   }
 
   /**
-   * <p>
    * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
-   * </p>
+   *
    * <ol>
    * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
    *     {@link ExtraRowException} on the outer-most transaction only.</li>
    * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
    * </ol>
-   * <p>
-   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   *
+   * <p>The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
    * another transaction is performed within this transaction.  Any nested transaction will automatically
    * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
-   * entire transaction on any exception.
-   * </p>
+   * entire transaction on any exception.</p>
    *
    * @see #isInTransaction()
    */
@@ -292,20 +278,18 @@ public interface DatabaseAccess {
   }
 
   /**
-   * <p>
    * Executes an arbitrary transaction, providing automatic commit, rollback, and connection management.
-   * </p>
+   *
    * <ol>
    * <li>Rolls-back the transaction on {@link NoRowException}, {@link NullDataException}, or
    *     {@link ExtraRowException} on the outer-most transaction only.</li>
    * <li>Rolls-back the transaction on all other {@link Throwable}.</li>
    * </ol>
-   * <p>
-   * The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
+   *
+   * <p>The connection allocated is stored as a {@link ThreadLocal} and will be automatically reused if
    * another transaction is performed within this transaction.  Any nested transaction will automatically
    * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
-   * entire transaction on any exception.
-   * </p>
+   * entire transaction on any exception.</p>
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
@@ -3455,10 +3439,10 @@ public interface DatabaseAccess {
 
   /**
    * Read-only query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
-   * <p>
-   * When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
-   * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
-   * </p>
+   *
+   * <p>When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
+   * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.</p>
+   *
    * <ul>
    *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
    *   <li>readOnly = {@code true}</li>
@@ -3476,10 +3460,10 @@ public interface DatabaseAccess {
 
   /**
    * Read-write query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
-   * <p>
-   * When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
-   * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
-   * </p>
+   *
+   * <p>When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
+   * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.</p>
+   *
    * <ul>
    *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
    *   <li>readOnly = {@code false}</li>
@@ -3497,10 +3481,9 @@ public interface DatabaseAccess {
 
   /**
    * Query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
-   * <p>
-   * When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
-   * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
-   * </p>
+   *
+   * <p>When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
+   * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.</p>
    */
   default <T> Stream<T> stream(
       int isolationLevel,
@@ -3514,10 +3497,10 @@ public interface DatabaseAccess {
 
   /**
    * Read-only query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
-   * <p>
-   * When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
-   * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
-   * </p>
+   *
+   * <p>When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
+   * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.</p>
+   *
    * <ul>
    *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
    *   <li>readOnly = {@code true}</li>
@@ -3538,10 +3521,10 @@ public interface DatabaseAccess {
 
   /**
    * Read-write query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
-   * <p>
-   * When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
-   * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
-   * </p>
+   *
+   * <p>When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
+   * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.</p>
+   *
    * <ul>
    *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
    *   <li>readOnly = {@code false}</li>
@@ -3562,10 +3545,9 @@ public interface DatabaseAccess {
 
   /**
    * Query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
-   * <p>
-   * When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
-   * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.
-   * </p>
+   *
+   * <p>When the factory is {@linkplain ObjectFactory#isNullable() nullable}, the stream may contain {@code null} elements.
+   * Otherwise, will have the characteristic {@link Spliterator#NONNULL}.</p>
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    */
@@ -3580,9 +3562,9 @@ public interface DatabaseAccess {
 
   /**
    * Read-only query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
-   * <p>
-   * Always has the characteristic {@link Spliterator#NONNULL}.
-   * </p>
+   *
+   * <p>Always has the characteristic {@link Spliterator#NONNULL}.</p>
+   *
    * <ul>
    *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
    *   <li>readOnly = {@code true}</li>
@@ -3600,9 +3582,9 @@ public interface DatabaseAccess {
 
   /**
    * Read-write query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
-   * <p>
-   * Always has the characteristic {@link Spliterator#NONNULL}.
-   * </p>
+   *
+   * <p>Always has the characteristic {@link Spliterator#NONNULL}.</p>
+   *
    * <ul>
    *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
    *   <li>readOnly = {@code false}</li>
@@ -3620,9 +3602,8 @@ public interface DatabaseAccess {
 
   /**
    * Query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
-   * <p>
-   * Always has the characteristic {@link Spliterator#NONNULL}.
-   * </p>
+   *
+   * <p>Always has the characteristic {@link Spliterator#NONNULL}.</p>
    */
   default <T> Stream<Optional<T>> streamOptional(
       int isolationLevel,
@@ -3636,9 +3617,9 @@ public interface DatabaseAccess {
 
   /**
    * Read-only query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
-   * <p>
-   * Always has the characteristic {@link Spliterator#NONNULL}.
-   * </p>
+   *
+   * <p>Always has the characteristic {@link Spliterator#NONNULL}.</p>
+   *
    * <ul>
    *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
    *   <li>readOnly = {@code true}</li>
@@ -3659,9 +3640,9 @@ public interface DatabaseAccess {
 
   /**
    * Read-write query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
-   * <p>
-   * Always has the characteristic {@link Spliterator#NONNULL}.
-   * </p>
+   *
+   * <p>Always has the characteristic {@link Spliterator#NONNULL}.</p>
+   *
    * <ul>
    *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
    *   <li>readOnly = {@code false}</li>
@@ -3682,9 +3663,8 @@ public interface DatabaseAccess {
 
   /**
    * Query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
-   * <p>
-   * Always has the characteristic {@link Spliterator#NONNULL}.
-   * </p>
+   *
+   * <p>Always has the characteristic {@link Spliterator#NONNULL}.</p>
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    */
