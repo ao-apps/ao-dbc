@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2023, 2024, 2025  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -1407,39 +1407,39 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
         ResultSet results = pstmt.executeQuery();
         try {
           Spliterator<T> spliterator;
-            {
-              int characteristics = Spliterator.ORDERED | Spliterator.IMMUTABLE;
-              boolean isNullable = objectFactory.isNullable();
-              if (!isNullable) {
-                characteristics |= Spliterator.NONNULL;
-              }
-              int resultType = results.getType();
-              switch (resultType) {
-                case ResultSet.TYPE_FORWARD_ONLY:
-                  spliterator = Spliterators.spliteratorUnknownSize(
-                      new ResultSetIterator<>(objectFactory, isNullable, results),
-                      characteristics
-                  );
-                  break;
-                case ResultSet.TYPE_SCROLL_INSENSITIVE:
-                  characteristics |= Spliterator.SIZED;
-                // fall-through
-                case ResultSet.TYPE_SCROLL_SENSITIVE:
-                  int rowCount = 0;
-                  if (results.last()) {
-                    rowCount = results.getRow();
-                    results.beforeFirst();
-                  }
-                  spliterator = Spliterators.spliterator(
-                      new ResultSetIterator<>(objectFactory, isNullable, results),
-                      rowCount,
-                      characteristics
-                  );
-                  break;
-                default:
-                  throw new AssertionError(resultType);
-              }
+          {
+            int characteristics = Spliterator.ORDERED | Spliterator.IMMUTABLE;
+            boolean isNullable = objectFactory.isNullable();
+            if (!isNullable) {
+              characteristics |= Spliterator.NONNULL;
             }
+            int resultType = results.getType();
+            switch (resultType) {
+              case ResultSet.TYPE_FORWARD_ONLY:
+                spliterator = Spliterators.spliteratorUnknownSize(
+                    new ResultSetIterator<>(objectFactory, isNullable, results),
+                    characteristics
+                );
+                break;
+              case ResultSet.TYPE_SCROLL_INSENSITIVE:
+                characteristics |= Spliterator.SIZED;
+              // fall-through
+              case ResultSet.TYPE_SCROLL_SENSITIVE:
+                int rowCount = 0;
+                if (results.last()) {
+                  rowCount = results.getRow();
+                  results.beforeFirst();
+                }
+                spliterator = Spliterators.spliterator(
+                    new ResultSetIterator<>(objectFactory, isNullable, results),
+                    rowCount,
+                    characteristics
+                );
+                break;
+              default:
+                throw new AssertionError(resultType);
+            }
+          }
           return StreamSupport.stream(spliterator, false).onClose(new StreamCloser(pstmt, results));
         } catch (Throwable t) {
           throw AutoCloseables.closeAndCatch(t, results);
