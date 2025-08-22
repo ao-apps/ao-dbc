@@ -85,13 +85,13 @@ public class Catalog {
           ResultSetMetaData resultsMeta = results.getMetaData();
           while (results.next()) {
             int colCount = resultsMeta.getColumnCount();
-            //System.err.println("DEBUG: Catalog: getSchemas(): colCount=" + colCount);
-            //for (int i=1; i <= colCount; i++) {
-            //  resultsMeta.getColumnName(i);
-            //  System.err.println("DEBUG: Catalog: getSchemas(): resultsMeta.getColumnName("+i+")=" + resultsMeta.getColumnName(i));
-            //}
-            //System.err.println("DEBUG: Catalog: getSchemas(): results.getString(\"table_catalog\")=" + results.getString("table_catalog"));
-            //System.err.println("DEBUG: Catalog: getSchemas(): results.getString(\"TABLE_CATALOG\")=" + results.getString("TABLE_CATALOG"));
+            // System.err.println("DEBUG: Catalog: getSchemas(): colCount=" + colCount);
+            // for (int i=1; i <= colCount; i++) {
+            //   resultsMeta.getColumnName(i);
+            //   System.err.println("DEBUG: Catalog: getSchemas(): resultsMeta.getColumnName("+i+")=" + resultsMeta.getColumnName(i));
+            // }
+            // System.err.println("DEBUG: Catalog: getSchemas(): results.getString(\"table_catalog\")=" + results.getString("table_catalog"));
+            // System.err.println("DEBUG: Catalog: getSchemas(): results.getString(\"TABLE_CATALOG\")=" + results.getString("TABLE_CATALOG"));
             if (
                 colCount == 1 // PostgreSQL 8.3 only returns one column
                     || results.getString("TABLE_CATALOG") == null // PostgreSQL 9.4 driver returns null

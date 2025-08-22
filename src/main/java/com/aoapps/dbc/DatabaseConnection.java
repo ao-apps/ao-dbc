@@ -668,7 +668,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       } else {
         // Call setObject here, to give the database driver a chance to decide what to do
         pstmt.setObject(pos, param);
-        //throw new SQLException("Unexpected parameter class: "+clazz.getName());
+        // throw new SQLException("Unexpected parameter class: "+clazz.getName());
       }
     }
   }
@@ -676,7 +676,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   public static void setParams(
       Connection conn,
       PreparedStatement pstmt,
-      Object ... params
+      Object... params
   ) throws SQLException {
     int pos = 1;
     for (Object param : params) {
@@ -1106,7 +1106,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     Connection c = getConnection(isolationLevel, readOnly);
     PreparedStatement pstmt = c.prepareStatement(sql); // TODO: Use regular statements when there are no parameters?  Here and entire api?
@@ -1180,7 +1180,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     Connection c = getConnection(isolationLevel, readOnly);
     PreparedStatement pstmt = c.prepareStatement(sql);
@@ -1254,7 +1254,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     Connection c = getConnection(isolationLevel, readOnly);
     PreparedStatement pstmt = c.prepareStatement(sql);
@@ -1396,7 +1396,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     Connection c = getConnection(isolationLevel, readOnly);
     PreparedStatement pstmt = c.prepareStatement(sql);
@@ -1469,7 +1469,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
       Class<? extends Ex> exClass,
       ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     Connection c = getConnection(isolationLevel, readOnly);
     // TODO: Use regular Statement when there are no params?  Interaction with PostgreSQL prepared statement caching?
@@ -1490,7 +1490,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   @Override
   public int update(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     Connection c = getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false);
     try (PreparedStatement pstmt = c.prepareStatement(sql)) {
@@ -1507,7 +1507,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   @Override
   public long largeUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     Connection c = getConnection(Connections.DEFAULT_TRANSACTION_ISOLATION, false);
     try (PreparedStatement pstmt = c.prepareStatement(sql)) {

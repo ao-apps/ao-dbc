@@ -805,7 +805,7 @@ public class Database implements DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return transactionCall(db -> db.doubleStream(isolationLevel, readOnly, sql, params));
   }
@@ -815,7 +815,7 @@ public class Database implements DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return transactionCall(db -> db.intStream(isolationLevel, readOnly, sql, params));
   }
@@ -825,7 +825,7 @@ public class Database implements DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return transactionCall(db -> db.longStream(isolationLevel, readOnly, sql, params));
   }
@@ -842,7 +842,7 @@ public class Database implements DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return transactionCall(
         exClass,
@@ -862,7 +862,7 @@ public class Database implements DatabaseAccess {
       Class<? extends Ex> exClass,
       ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return transactionCall(
         exClass,
@@ -873,7 +873,7 @@ public class Database implements DatabaseAccess {
   @Override
   public int update(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return transactionCall(db -> db.update(sql, params));
   }
@@ -881,7 +881,7 @@ public class Database implements DatabaseAccess {
   @Override
   public long largeUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return transactionCall(db -> db.largeUpdate(sql, params));
   }

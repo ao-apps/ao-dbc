@@ -97,7 +97,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
    * exist or is non-static or non-public.
    */
   public static Method getValueOfStringMethod(Class<?> clazz) {
-    //System.err.println("clazz="+clazz);
+    // System.err.println("clazz="+clazz);
     Method existing = valueOfStringMethods.get(clazz);
     if (existing == null) {
       Method newMethod;
@@ -155,7 +155,7 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
                 continue CONSTRUCTORS;
               }
               params[i] = prefixParams[i];
-              //System.err.println(paramType.getName()+" ? "+(params[i] == null ? "null" : params[i].getClass()));
+              // System.err.println(paramType.getName()+" ? "+(params[i] == null ? "null" : params[i].getClass()));
             }
             // All remaining columns must be assignable from JDBC
             for (int c = 1; c <= numColumns; c++) {
@@ -241,10 +241,10 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
                   }
                 }
               }
-              //System.err.println(paramType.getName()+" ? "+(params[i] == null ? "null" : params[i].getClass()));
+              // System.err.println(paramType.getName()+" ? "+(params[i] == null ? "null" : params[i].getClass()));
             }
             Object newInstance = constructor.newInstance(params);
-            //System.err.println(newInstance.getClass().getName()+": "+newInstance);
+            // System.err.println(newInstance.getClass().getName()+": "+newInstance);
             return clazz.cast(newInstance);
           }
         }

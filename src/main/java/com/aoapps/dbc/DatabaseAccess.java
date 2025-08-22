@@ -322,7 +322,7 @@ public interface DatabaseAccess {
    */
   default BigDecimal queryBigDecimal(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, sql, params);
   }
@@ -343,7 +343,7 @@ public interface DatabaseAccess {
    */
   default BigDecimal queryBigDecimalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, sql, params);
   }
@@ -364,7 +364,7 @@ public interface DatabaseAccess {
    */
   default Optional<BigDecimal> queryBigDecimalOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, sql, params));
   }
@@ -384,7 +384,7 @@ public interface DatabaseAccess {
    */
   default Optional<BigDecimal> queryBigDecimalOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, sql, params));
   }
@@ -395,7 +395,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default BigDecimal executeBigDecimalQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryBigDecimal(sql, params);
   }
@@ -417,7 +417,7 @@ public interface DatabaseAccess {
    */
   default BigDecimal updateBigDecimal(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, sql, params);
   }
@@ -438,7 +438,7 @@ public interface DatabaseAccess {
    */
   default BigDecimal updateBigDecimalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, sql, params);
   }
@@ -459,7 +459,7 @@ public interface DatabaseAccess {
    */
   default Optional<BigDecimal> updateBigDecimalOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, sql, params));
   }
@@ -479,7 +479,7 @@ public interface DatabaseAccess {
    */
   default Optional<BigDecimal> updateBigDecimalOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryBigDecimal(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, sql, params));
   }
@@ -490,7 +490,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default BigDecimal executeBigDecimalUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return updateBigDecimal(sql, params);
   }
@@ -511,7 +511,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       boolean nullable,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(isolationLevel, readOnly, rowRequired, nullable, ObjectFactories.BigDecimal, sql, params);
   }
@@ -525,7 +525,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryBigDecimal(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
@@ -539,7 +539,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryBigDecimal(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
@@ -561,7 +561,7 @@ public interface DatabaseAccess {
    */
   default boolean queryBoolean(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, sql, params);
   }
@@ -582,7 +582,7 @@ public interface DatabaseAccess {
    */
   default Boolean queryBooleanNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, sql, params);
   }
@@ -603,7 +603,7 @@ public interface DatabaseAccess {
    */
   default Optional<Boolean> queryBooleanOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, sql, params));
   }
@@ -623,7 +623,7 @@ public interface DatabaseAccess {
    */
   default Optional<Boolean> queryBooleanOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, sql, params));
   }
@@ -634,7 +634,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default boolean executeBooleanQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryBoolean(sql, params);
   }
@@ -656,7 +656,7 @@ public interface DatabaseAccess {
    */
   default boolean updateBoolean(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, sql, params);
   }
@@ -677,7 +677,7 @@ public interface DatabaseAccess {
    */
   default Boolean updateBooleanNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, sql, params);
   }
@@ -698,7 +698,7 @@ public interface DatabaseAccess {
    */
   default Optional<Boolean> updateBooleanOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, sql, params));
   }
@@ -718,7 +718,7 @@ public interface DatabaseAccess {
    */
   default Optional<Boolean> updateBooleanOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryBoolean(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, sql, params));
   }
@@ -729,7 +729,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default boolean executeBooleanUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return updateBoolean(sql, params);
   }
@@ -750,7 +750,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       boolean nullable,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(
         isolationLevel,
@@ -772,7 +772,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryBoolean(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
@@ -786,7 +786,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryBoolean(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
@@ -808,7 +808,7 @@ public interface DatabaseAccess {
    */
   default byte[] queryByteArray(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, sql, params);
   }
@@ -829,7 +829,7 @@ public interface DatabaseAccess {
    */
   default byte[] queryByteArrayNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, sql, params);
   }
@@ -850,7 +850,7 @@ public interface DatabaseAccess {
    */
   default Optional<byte[]> queryByteArrayOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, sql, params));
   }
@@ -870,7 +870,7 @@ public interface DatabaseAccess {
    */
   default Optional<byte[]> queryByteArrayOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, sql, params));
   }
@@ -881,7 +881,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default byte[] executeByteArrayQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryByteArray(sql, params);
   }
@@ -903,7 +903,7 @@ public interface DatabaseAccess {
    */
   default byte[] updateByteArray(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, sql, params);
   }
@@ -924,7 +924,7 @@ public interface DatabaseAccess {
    */
   default byte[] updateByteArrayNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, sql, params);
   }
@@ -945,7 +945,7 @@ public interface DatabaseAccess {
    */
   default Optional<byte[]> updateByteArrayOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, sql, params));
   }
@@ -965,7 +965,7 @@ public interface DatabaseAccess {
    */
   default Optional<byte[]> updateByteArrayOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryByteArray(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, sql, params));
   }
@@ -976,7 +976,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default byte[] executeByteArrayUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return updateByteArray(sql, params);
   }
@@ -997,7 +997,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       boolean nullable,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(isolationLevel, readOnly, rowRequired, nullable, ObjectFactories.ByteArray, sql, params);
   }
@@ -1011,7 +1011,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryByteArray(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
@@ -1025,7 +1025,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryByteArray(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
@@ -1047,7 +1047,7 @@ public interface DatabaseAccess {
    */
   default Date queryDate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, sql, params);
   }
@@ -1068,7 +1068,7 @@ public interface DatabaseAccess {
    */
   default Date queryDateNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, sql, params);
   }
@@ -1089,7 +1089,7 @@ public interface DatabaseAccess {
    */
   default Optional<Date> queryDateOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, sql, params));
   }
@@ -1109,7 +1109,7 @@ public interface DatabaseAccess {
    */
   default Optional<Date> queryDateOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, sql, params));
   }
@@ -1120,7 +1120,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default Date executeDateQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryDate(sql, params);
   }
@@ -1142,7 +1142,7 @@ public interface DatabaseAccess {
    */
   default Date updateDate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, sql, params);
   }
@@ -1163,7 +1163,7 @@ public interface DatabaseAccess {
    */
   default Date updateDateNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, sql, params);
   }
@@ -1184,7 +1184,7 @@ public interface DatabaseAccess {
    */
   default Optional<Date> updateDateOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, sql, params));
   }
@@ -1204,7 +1204,7 @@ public interface DatabaseAccess {
    */
   default Optional<Date> updateDateOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryDate(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, sql, params));
   }
@@ -1215,7 +1215,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default Date executeDateUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return updateDate(sql, params);
   }
@@ -1236,7 +1236,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       boolean nullable,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(isolationLevel, readOnly, rowRequired, nullable, ObjectFactories.Date, sql, params);
   }
@@ -1250,7 +1250,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryDate(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
@@ -1264,7 +1264,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryDate(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
@@ -1286,7 +1286,7 @@ public interface DatabaseAccess {
    */
   default double queryDouble(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, sql, params);
   }
@@ -1307,7 +1307,7 @@ public interface DatabaseAccess {
    */
   default Double queryDoubleNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, sql, params);
   }
@@ -1328,7 +1328,7 @@ public interface DatabaseAccess {
    */
   default Optional<Double> queryDoubleOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, sql, params));
   }
@@ -1348,7 +1348,7 @@ public interface DatabaseAccess {
    */
   default Optional<Double> queryDoubleOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, sql, params));
   }
@@ -1370,7 +1370,7 @@ public interface DatabaseAccess {
    */
   default double updateDouble(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, sql, params);
   }
@@ -1391,7 +1391,7 @@ public interface DatabaseAccess {
    */
   default Double updateDoubleNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, sql, params);
   }
@@ -1412,7 +1412,7 @@ public interface DatabaseAccess {
    */
   default Optional<Double> updateDoubleOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, sql, params));
   }
@@ -1432,7 +1432,7 @@ public interface DatabaseAccess {
    */
   default Optional<Double> updateDoubleOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryDouble(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, sql, params));
   }
@@ -1453,7 +1453,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       boolean nullable,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(
         isolationLevel,
@@ -1475,7 +1475,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryDouble(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
@@ -1493,7 +1493,7 @@ public interface DatabaseAccess {
    */
   default DoubleStream doubleStream(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return doubleStream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
   }
@@ -1511,7 +1511,7 @@ public interface DatabaseAccess {
    */
   default DoubleStream doubleStreamUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return doubleStream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
   }
@@ -1525,7 +1525,7 @@ public interface DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException;
 
   /**
@@ -1545,7 +1545,7 @@ public interface DatabaseAccess {
    */
   default float queryFloat(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, sql, params);
   }
@@ -1566,7 +1566,7 @@ public interface DatabaseAccess {
    */
   default Float queryFloatNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, sql, params);
   }
@@ -1587,7 +1587,7 @@ public interface DatabaseAccess {
    */
   default Optional<Float> queryFloatOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, sql, params));
   }
@@ -1607,7 +1607,7 @@ public interface DatabaseAccess {
    */
   default Optional<Float> queryFloatOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, sql, params));
   }
@@ -1629,7 +1629,7 @@ public interface DatabaseAccess {
    */
   default float updateFloat(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, sql, params);
   }
@@ -1650,7 +1650,7 @@ public interface DatabaseAccess {
    */
   default Float updateFloatNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, sql, params);
   }
@@ -1671,7 +1671,7 @@ public interface DatabaseAccess {
    */
   default Optional<Float> updateFloatOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, sql, params));
   }
@@ -1691,7 +1691,7 @@ public interface DatabaseAccess {
    */
   default Optional<Float> updateFloatOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryFloat(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, sql, params));
   }
@@ -1712,7 +1712,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       boolean nullable,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(
         isolationLevel,
@@ -1734,7 +1734,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryFloat(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
@@ -1756,7 +1756,7 @@ public interface DatabaseAccess {
    */
   default int queryInt(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, sql, params);
   }
@@ -1777,7 +1777,7 @@ public interface DatabaseAccess {
    */
   default Integer queryIntNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, sql, params);
   }
@@ -1798,7 +1798,7 @@ public interface DatabaseAccess {
    */
   default Optional<Integer> queryIntOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, sql, params));
   }
@@ -1818,7 +1818,7 @@ public interface DatabaseAccess {
    */
   default Optional<Integer> queryIntOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, sql, params));
   }
@@ -1829,7 +1829,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default int executeIntQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryInt(sql, params);
   }
@@ -1851,7 +1851,7 @@ public interface DatabaseAccess {
    */
   default int updateInt(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, sql, params);
   }
@@ -1872,7 +1872,7 @@ public interface DatabaseAccess {
    */
   default Integer updateIntNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, sql, params);
   }
@@ -1893,7 +1893,7 @@ public interface DatabaseAccess {
    */
   default Optional<Integer> updateIntOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, sql, params));
   }
@@ -1913,7 +1913,7 @@ public interface DatabaseAccess {
    */
   default Optional<Integer> updateIntOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryInt(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, sql, params));
   }
@@ -1924,7 +1924,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default int executeIntUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return updateInt(sql, params);
   }
@@ -1945,7 +1945,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       boolean nullable,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(
         isolationLevel,
@@ -1967,7 +1967,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryInt(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
@@ -1981,7 +1981,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryInt(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
@@ -1999,7 +1999,7 @@ public interface DatabaseAccess {
    */
   default IntList queryIntList(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return queryIntList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
   }
@@ -2010,7 +2010,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default IntList executeIntListQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return queryIntList(sql, params);
   }
@@ -2028,7 +2028,7 @@ public interface DatabaseAccess {
    */
   default IntList updateIntList(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return queryIntList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
   }
@@ -2039,7 +2039,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default IntList executeIntListUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return updateIntList(sql, params);
   }
@@ -2053,7 +2053,7 @@ public interface DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return queryCall(
         isolationLevel,
@@ -2082,7 +2082,7 @@ public interface DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return queryIntList(isolationLevel, readOnly, sql, params);
   }
@@ -2100,7 +2100,7 @@ public interface DatabaseAccess {
    */
   default IntStream intStream(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return intStream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
   }
@@ -2118,7 +2118,7 @@ public interface DatabaseAccess {
    */
   default IntStream intStreamUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return intStream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
   }
@@ -2132,7 +2132,7 @@ public interface DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException;
 
   /**
@@ -2152,7 +2152,7 @@ public interface DatabaseAccess {
    */
   default long queryLong(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, sql, params);
   }
@@ -2173,7 +2173,7 @@ public interface DatabaseAccess {
    */
   default Long queryLongNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, sql, params);
   }
@@ -2194,7 +2194,7 @@ public interface DatabaseAccess {
    */
   default Optional<Long> queryLongOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, sql, params));
   }
@@ -2214,7 +2214,7 @@ public interface DatabaseAccess {
    */
   default Optional<Long> queryLongOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, sql, params));
   }
@@ -2225,7 +2225,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default long executeLongQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryLong(sql, params);
   }
@@ -2247,7 +2247,7 @@ public interface DatabaseAccess {
    */
   default long updateLong(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, sql, params);
   }
@@ -2268,7 +2268,7 @@ public interface DatabaseAccess {
    */
   default Long updateLongNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, sql, params);
   }
@@ -2289,7 +2289,7 @@ public interface DatabaseAccess {
    */
   default Optional<Long> updateLongOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, sql, params));
   }
@@ -2309,7 +2309,7 @@ public interface DatabaseAccess {
    */
   default Optional<Long> updateLongOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryLong(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, sql, params));
   }
@@ -2320,7 +2320,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default long executeLongUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return updateLong(sql, params);
   }
@@ -2341,7 +2341,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       boolean nullable,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(
         isolationLevel,
@@ -2363,7 +2363,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryLong(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
@@ -2377,7 +2377,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryLong(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
@@ -2395,7 +2395,7 @@ public interface DatabaseAccess {
    */
   default LongList queryLongList(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return queryLongList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
   }
@@ -2406,7 +2406,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default LongList executeLongListQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return queryLongList(sql, params);
   }
@@ -2424,7 +2424,7 @@ public interface DatabaseAccess {
    */
   default LongList updateLongList(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return queryLongList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
   }
@@ -2435,7 +2435,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default LongList executeLongListUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return updateLongList(sql, params);
   }
@@ -2449,7 +2449,7 @@ public interface DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return queryCall(
         isolationLevel,
@@ -2478,7 +2478,7 @@ public interface DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return queryLongList(isolationLevel, readOnly, sql, params);
   }
@@ -2496,7 +2496,7 @@ public interface DatabaseAccess {
    */
   default LongStream longStream(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return longStream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
   }
@@ -2514,7 +2514,7 @@ public interface DatabaseAccess {
    */
   default LongStream longStreamUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException {
     return longStream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
   }
@@ -2528,7 +2528,7 @@ public interface DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, SQLException;
 
   /**
@@ -2553,7 +2553,7 @@ public interface DatabaseAccess {
   default <T> T executeObjectQuery(
       Class<T> clazz,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return executeObjectQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, clazz, sql, params);
   }
@@ -2580,7 +2580,7 @@ public interface DatabaseAccess {
   default <T> T executeObjectUpdate(
       Class<T> clazz,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return executeObjectQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, clazz, sql, params);
   }
@@ -2603,7 +2603,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       Class<T> clazz,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryObject(isolationLevel, readOnly, rowRequired, true, new ObjectFactories.Object<>(clazz), sql, params);
   }
@@ -2626,7 +2626,7 @@ public interface DatabaseAccess {
   default <T> T queryObject(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, objectFactory, sql, params);
   }
@@ -2648,7 +2648,7 @@ public interface DatabaseAccess {
   default <T> T queryObjectNullable(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, objectFactory, sql, params);
   }
@@ -2670,7 +2670,7 @@ public interface DatabaseAccess {
   default <T> Optional<T> queryObjectOptional(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, objectFactory, sql, params));
   }
@@ -2691,7 +2691,7 @@ public interface DatabaseAccess {
   default <T> Optional<T> queryObjectOptionalNullable(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, objectFactory, sql, params));
   }
@@ -2703,7 +2703,7 @@ public interface DatabaseAccess {
   default <T> T executeObjectQuery(
       ObjectFactory<T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryObject(objectFactory, sql, params);
   }
@@ -2726,7 +2726,7 @@ public interface DatabaseAccess {
   default <T> T updateObject(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, objectFactory, sql, params);
   }
@@ -2748,7 +2748,7 @@ public interface DatabaseAccess {
   default <T> T updateObjectNullable(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, objectFactory, sql, params);
   }
@@ -2770,7 +2770,7 @@ public interface DatabaseAccess {
   default <T> Optional<T> updateObjectOptional(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, objectFactory, sql, params));
   }
@@ -2791,7 +2791,7 @@ public interface DatabaseAccess {
   default <T> Optional<T> updateObjectOptionalNullable(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, objectFactory, sql, params));
   }
@@ -2803,7 +2803,7 @@ public interface DatabaseAccess {
   default <T> T executeObjectUpdate(
       ObjectFactory<T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return updateObject(objectFactory, sql, params);
   }
@@ -2825,7 +2825,7 @@ public interface DatabaseAccess {
       boolean nullable,
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(isolationLevel, readOnly, rowRequired, nullable, RuntimeException.class, objectFactory, sql, params);
   }
@@ -2840,7 +2840,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryObject(isolationLevel, readOnly, rowRequired, true, objectFactory, sql, params);
   }
@@ -2855,7 +2855,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       ObjectFactory<T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryObject(isolationLevel, readOnly, rowRequired, true, objectFactory, sql, params);
   }
@@ -2881,7 +2881,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException, Ex {
     return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, exClass, objectFactory, sql, params);
   }
@@ -2906,7 +2906,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException, Ex {
     return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, exClass, objectFactory, sql, params);
   }
@@ -2931,7 +2931,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException, Ex {
     return Optional.ofNullable(queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, exClass, objectFactory, sql, params));
   }
@@ -2955,7 +2955,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException, Ex {
     return Optional.ofNullable(queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, exClass, objectFactory, sql, params));
   }
@@ -2970,7 +2970,7 @@ public interface DatabaseAccess {
       Class<Ex> exClass,
       ObjectFactoryE<T, Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException, Ex {
     return queryObject(exClass, objectFactory, sql, params);
   }
@@ -2996,7 +2996,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException, Ex {
     return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, exClass, objectFactory, sql, params);
   }
@@ -3021,7 +3021,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException, Ex {
     return queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, exClass, objectFactory, sql, params);
   }
@@ -3046,7 +3046,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException, Ex {
     return Optional.ofNullable(queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, exClass, objectFactory, sql, params));
   }
@@ -3070,7 +3070,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException, Ex {
     return Optional.ofNullable(queryObject(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, exClass, objectFactory, sql, params));
   }
@@ -3085,7 +3085,7 @@ public interface DatabaseAccess {
       Class<Ex> exClass,
       ObjectFactoryE<T, Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException, Ex {
     return updateObject(exClass, objectFactory, sql, params);
   }
@@ -3110,7 +3110,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException, Ex {
     return queryCall(
         isolationLevel,
@@ -3148,7 +3148,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException, Ex {
     return queryObject(isolationLevel, readOnly, rowRequired, true, exClass, objectFactory, sql, params);
   }
@@ -3166,7 +3166,7 @@ public interface DatabaseAccess {
       Class<Ex> exClass,
       ObjectFactoryE<T, Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException, Ex {
     return queryObject(isolationLevel, readOnly, rowRequired, true, exClass, objectFactory, sql, params);
   }
@@ -3189,7 +3189,7 @@ public interface DatabaseAccess {
   default <T> List<T> executeObjectListQuery(
       Class<T> clazz,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return executeObjectListQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, true, clazz, sql, params);
   }
@@ -3212,7 +3212,7 @@ public interface DatabaseAccess {
   default <T> List<T> executeObjectListUpdate(
       Class<T> clazz,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return executeObjectListQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, false, clazz, sql, params);
   }
@@ -3231,7 +3231,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       Class<T> clazz,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryList(isolationLevel, readOnly, new ObjectFactories.Object<>(clazz), sql, params);
   }
@@ -3250,7 +3250,7 @@ public interface DatabaseAccess {
   default <T> List<T> queryList(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, objectFactory, sql, params);
   }
@@ -3262,7 +3262,7 @@ public interface DatabaseAccess {
   default <T> List<T> executeObjectListQuery(
       ObjectFactory<T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryList(objectFactory, sql, params);
   }
@@ -3281,7 +3281,7 @@ public interface DatabaseAccess {
   default <T> List<T> updateList(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, objectFactory, sql, params);
   }
@@ -3293,7 +3293,7 @@ public interface DatabaseAccess {
   default <T> List<T> executeObjectListUpdate(
       ObjectFactory<T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return updateList(objectFactory, sql, params);
   }
@@ -3308,7 +3308,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryList(isolationLevel, readOnly, RuntimeException.class, objectFactory, sql, params);
   }
@@ -3322,7 +3322,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       ObjectFactory<T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryList(isolationLevel, readOnly, objectFactory, sql, params);
   }
@@ -3344,7 +3344,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, exClass, objectFactory, sql, params);
   }
@@ -3359,7 +3359,7 @@ public interface DatabaseAccess {
       Class<Ex> exClass,
       ObjectFactoryE<T, Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryList(exClass, objectFactory, sql, params);
   }
@@ -3381,7 +3381,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, exClass, objectFactory, sql, params);
   }
@@ -3396,7 +3396,7 @@ public interface DatabaseAccess {
       Class<Ex> exClass,
       ObjectFactoryE<T, Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return updateList(exClass, objectFactory, sql, params);
   }
@@ -3414,7 +3414,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     List<T> list = queryNewCollection(isolationLevel, readOnly, (Function<Integer, List<T>>) AoCollections::newArrayList, exClass, objectFactory, sql, params);
     return AoCollections.optimalUnmodifiableList(list);
@@ -3432,7 +3432,7 @@ public interface DatabaseAccess {
       Class<Ex> exClass,
       ObjectFactoryE<T, Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryList(isolationLevel, readOnly, exClass, objectFactory, sql, params);
   }
@@ -3453,7 +3453,7 @@ public interface DatabaseAccess {
   default <T> Stream<T> stream(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, objectFactory, sql, params);
   }
@@ -3474,7 +3474,7 @@ public interface DatabaseAccess {
   default <T> Stream<T> streamUpdate(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, objectFactory, sql, params);
   }
@@ -3490,7 +3490,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return stream(isolationLevel, readOnly, RuntimeException.class, objectFactory, sql, params);
   }
@@ -3514,7 +3514,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, true, exClass, objectFactory, sql, params);
   }
@@ -3538,7 +3538,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return stream(Connections.DEFAULT_TRANSACTION_ISOLATION, false, exClass, objectFactory, sql, params);
   }
@@ -3557,7 +3557,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex;
 
   /**
@@ -3575,7 +3575,7 @@ public interface DatabaseAccess {
   default <T> Stream<Optional<T>> streamOptional(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, true, objectFactory, sql, params);
   }
@@ -3595,7 +3595,7 @@ public interface DatabaseAccess {
   default <T> Stream<Optional<T>> streamOptionalUpdate(
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, false, objectFactory, sql, params);
   }
@@ -3610,7 +3610,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return streamOptional(isolationLevel, readOnly, RuntimeException.class, objectFactory, sql, params);
   }
@@ -3633,7 +3633,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, true, exClass, objectFactory, sql, params);
   }
@@ -3656,7 +3656,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return streamOptional(Connections.DEFAULT_TRANSACTION_ISOLATION, false, exClass, objectFactory, sql, params);
   }
@@ -3674,7 +3674,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     boolean isNullable = objectFactory.isNullable();
     return stream(
@@ -3722,7 +3722,7 @@ public interface DatabaseAccess {
       C collection,
       Class<T> clazz,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return executeObjectCollectionQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, true, collection, clazz, sql, params);
   }
@@ -3744,7 +3744,7 @@ public interface DatabaseAccess {
       C collection,
       Class<T> clazz,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return executeObjectCollectionQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, false, collection, clazz, sql, params);
   }
@@ -3762,7 +3762,7 @@ public interface DatabaseAccess {
       C collection,
       Class<T> clazz,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryCollection(isolationLevel, readOnly, collection, new ObjectFactories.Object<>(clazz), sql, params);
   }
@@ -3780,7 +3780,7 @@ public interface DatabaseAccess {
       C collection,
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, collection, objectFactory, sql, params);
   }
@@ -3793,7 +3793,7 @@ public interface DatabaseAccess {
       C collection,
       ObjectFactory<T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryCollection(collection, objectFactory, sql, params);
   }
@@ -3811,7 +3811,7 @@ public interface DatabaseAccess {
       C collection,
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, collection, objectFactory, sql, params);
   }
@@ -3824,7 +3824,7 @@ public interface DatabaseAccess {
       C collection,
       ObjectFactory<T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return updateCollection(collection, objectFactory, sql, params);
   }
@@ -3838,7 +3838,7 @@ public interface DatabaseAccess {
       C collection,
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryCollection(isolationLevel, readOnly, collection, RuntimeException.class, objectFactory, sql, params);
   }
@@ -3853,7 +3853,7 @@ public interface DatabaseAccess {
       C collection,
       ObjectFactory<T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryCollection(isolationLevel, readOnly, collection, objectFactory, sql, params);
   }
@@ -3874,7 +3874,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, collection, exClass, objectFactory, sql, params);
   }
@@ -3890,7 +3890,7 @@ public interface DatabaseAccess {
       Class<Ex> exClass,
       ObjectFactoryE<T, Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryCollection(collection, exClass, objectFactory, sql, params);
   }
@@ -3911,7 +3911,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, collection, exClass, objectFactory, sql, params);
   }
@@ -3927,7 +3927,7 @@ public interface DatabaseAccess {
       Class<Ex> exClass,
       ObjectFactoryE<T, Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return updateCollection(collection, exClass, objectFactory, sql, params);
   }
@@ -3944,7 +3944,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryCall(
         isolationLevel,
@@ -3977,7 +3977,7 @@ public interface DatabaseAccess {
       Class<Ex> exClass,
       ObjectFactoryE<T, Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryCollection(isolationLevel, readOnly, collection, exClass, objectFactory, sql, params);
   }
@@ -3998,7 +3998,7 @@ public interface DatabaseAccess {
       Function<? super Integer, ? extends C> newCollection,
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryNewCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, newCollection, objectFactory, sql, params);
   }
@@ -4019,7 +4019,7 @@ public interface DatabaseAccess {
       Function<? super Integer, ? extends C> newCollection,
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryNewCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, newCollection, objectFactory, sql, params);
   }
@@ -4035,7 +4035,7 @@ public interface DatabaseAccess {
       Function<? super Integer, ? extends C> newCollection,
       ObjectFactory<? extends T> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryNewCollection(isolationLevel, readOnly, newCollection, RuntimeException.class, objectFactory, sql, params);
   }
@@ -4058,7 +4058,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryNewCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, true, newCollection, exClass, objectFactory, sql, params);
   }
@@ -4081,7 +4081,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryNewCollection(Connections.DEFAULT_TRANSACTION_ISOLATION, false, newCollection, exClass, objectFactory, sql, params);
   }
@@ -4100,7 +4100,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryCall(
         isolationLevel,
@@ -4134,7 +4134,7 @@ public interface DatabaseAccess {
   default <T> T queryCall(
       ResultSetCallable<? extends T> resultSetCallable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryCall(Connections.DEFAULT_TRANSACTION_ISOLATION, true, resultSetCallable, sql, params);
   }
@@ -4147,7 +4147,7 @@ public interface DatabaseAccess {
   default <T> T executeQuery(
       ResultSetHandler<T> resultSetHandler,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryCall(resultSetHandler, sql, params);
   }
@@ -4164,7 +4164,7 @@ public interface DatabaseAccess {
   default <T> T updateCall(
       ResultSetCallable<? extends T> resultSetCallable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryCall(Connections.DEFAULT_TRANSACTION_ISOLATION, false, resultSetCallable, sql, params);
   }
@@ -4177,7 +4177,7 @@ public interface DatabaseAccess {
   default <T> T executeUpdate(
       ResultSetHandler<T> resultSetHandler,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return updateCall(resultSetHandler, sql, params);
   }
@@ -4190,7 +4190,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       ResultSetCallable<? extends T> resultSetCallable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryCall(isolationLevel, readOnly, RuntimeException.class, resultSetCallable, sql, params);
   }
@@ -4205,7 +4205,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       ResultSetHandler<T> resultSetHandler,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryCall(isolationLevel, readOnly, resultSetHandler, sql, params);
   }
@@ -4225,7 +4225,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryCall(Connections.DEFAULT_TRANSACTION_ISOLATION, true, exClass, resultSetCallable, sql, params);
   }
@@ -4241,7 +4241,7 @@ public interface DatabaseAccess {
       Class<Ex> exClass,
       ResultSetHandlerE<T, Ex> resultSetHandler,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryCall(exClass, resultSetHandler, sql, params);
   }
@@ -4261,7 +4261,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryCall(Connections.DEFAULT_TRANSACTION_ISOLATION, false, exClass, resultSetCallable, sql, params);
   }
@@ -4277,7 +4277,7 @@ public interface DatabaseAccess {
       Class<Ex> exClass,
       ResultSetHandlerE<T, Ex> resultSetHandler,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return updateCall(exClass, resultSetHandler, sql, params);
   }
@@ -4293,7 +4293,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ResultSetCallableE<? extends T, ? extends Ex> resultSetCallable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex;
 
   /**
@@ -4309,7 +4309,7 @@ public interface DatabaseAccess {
       Class<Ex> exClass,
       ResultSetHandlerE<T, Ex> resultSetHandler,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     return queryCall(isolationLevel, readOnly, exClass, resultSetHandler, sql, params);
   }
@@ -4326,7 +4326,7 @@ public interface DatabaseAccess {
   default void queryRun(
       ResultSetRunnable resultSetRunnable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     queryRun(Connections.DEFAULT_TRANSACTION_ISOLATION, true, resultSetRunnable, sql, params);
   }
@@ -4343,7 +4343,7 @@ public interface DatabaseAccess {
   default void updateRun(
       ResultSetRunnable resultSetRunnable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     queryRun(Connections.DEFAULT_TRANSACTION_ISOLATION, false, resultSetRunnable, sql, params);
   }
@@ -4356,7 +4356,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       ResultSetRunnable resultSetRunnable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     queryRun(isolationLevel, readOnly, RuntimeException.class, resultSetRunnable, sql, params);
   }
@@ -4376,7 +4376,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ResultSetRunnableE<? extends Ex> resultSetRunnable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     queryRun(Connections.DEFAULT_TRANSACTION_ISOLATION, true, exClass, resultSetRunnable, sql, params);
   }
@@ -4396,7 +4396,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ResultSetRunnableE<? extends Ex> resultSetRunnable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     queryRun(Connections.DEFAULT_TRANSACTION_ISOLATION, false, exClass, resultSetRunnable, sql, params);
   }
@@ -4412,7 +4412,7 @@ public interface DatabaseAccess {
       Class<? extends Ex> exClass,
       ResultSetRunnableE<? extends Ex> resultSetRunnable,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException, Ex {
     queryCall(
         isolationLevel,
@@ -4449,7 +4449,7 @@ public interface DatabaseAccess {
    */
   default short queryShort(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, sql, params);
   }
@@ -4470,7 +4470,7 @@ public interface DatabaseAccess {
    */
   default Short queryShortNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, sql, params);
   }
@@ -4491,7 +4491,7 @@ public interface DatabaseAccess {
    */
   default Optional<Short> queryShortOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, sql, params));
   }
@@ -4511,7 +4511,7 @@ public interface DatabaseAccess {
    */
   default Optional<Short> queryShortOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, sql, params));
   }
@@ -4522,7 +4522,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default short executeShortQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryShort(sql, params);
   }
@@ -4544,7 +4544,7 @@ public interface DatabaseAccess {
    */
   default short updateShort(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, sql, params);
   }
@@ -4565,7 +4565,7 @@ public interface DatabaseAccess {
    */
   default Short updateShortNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, sql, params);
   }
@@ -4586,7 +4586,7 @@ public interface DatabaseAccess {
    */
   default Optional<Short> updateShortOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, sql, params));
   }
@@ -4606,7 +4606,7 @@ public interface DatabaseAccess {
    */
   default Optional<Short> updateShortOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryShort(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, sql, params));
   }
@@ -4617,7 +4617,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default short executeShortUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return updateShort(sql, params);
   }
@@ -4638,7 +4638,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       boolean nullable,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(
         isolationLevel,
@@ -4660,7 +4660,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryShort(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
@@ -4674,7 +4674,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryShort(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
@@ -4694,7 +4694,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default List<Short> executeShortListQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return executeShortListQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
   }
@@ -4714,7 +4714,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default List<Short> executeShortListUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return executeShortListQuery(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
   }
@@ -4730,7 +4730,7 @@ public interface DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryList(isolationLevel, readOnly, ObjectFactories.Short, sql, params);
   }
@@ -4752,7 +4752,7 @@ public interface DatabaseAccess {
    */
   default String queryString(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, sql, params);
   }
@@ -4773,7 +4773,7 @@ public interface DatabaseAccess {
    */
   default String queryStringNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, sql, params);
   }
@@ -4794,7 +4794,7 @@ public interface DatabaseAccess {
    */
   default Optional<String> queryStringOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, sql, params));
   }
@@ -4814,7 +4814,7 @@ public interface DatabaseAccess {
    */
   default Optional<String> queryStringOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, sql, params));
   }
@@ -4825,7 +4825,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default String executeStringQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryString(sql, params);
   }
@@ -4847,7 +4847,7 @@ public interface DatabaseAccess {
    */
   default String updateString(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, sql, params);
   }
@@ -4868,7 +4868,7 @@ public interface DatabaseAccess {
    */
   default String updateStringNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, sql, params);
   }
@@ -4889,7 +4889,7 @@ public interface DatabaseAccess {
    */
   default Optional<String> updateStringOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, sql, params));
   }
@@ -4909,7 +4909,7 @@ public interface DatabaseAccess {
    */
   default Optional<String> updateStringOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryString(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, sql, params));
   }
@@ -4920,7 +4920,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default String executeStringUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return updateString(sql, params);
   }
@@ -4941,7 +4941,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       boolean nullable,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(isolationLevel, readOnly, rowRequired, nullable, ObjectFactories.String, sql, params);
   }
@@ -4955,7 +4955,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryString(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
@@ -4969,7 +4969,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryString(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
@@ -4985,7 +4985,7 @@ public interface DatabaseAccess {
    */
   default List<String> queryStringList(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryStringList(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
   }
@@ -4996,7 +4996,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default List<String> executeStringListQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryStringList(sql, params);
   }
@@ -5012,7 +5012,7 @@ public interface DatabaseAccess {
    */
   default List<String> updateStringList(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryStringList(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
   }
@@ -5023,7 +5023,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default List<String> executeStringListUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return updateStringList(sql, params);
   }
@@ -5035,7 +5035,7 @@ public interface DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryList(isolationLevel, readOnly, ObjectFactories.String, sql, params);
   }
@@ -5048,7 +5048,7 @@ public interface DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return queryStringList(isolationLevel, readOnly, sql, params);
   }
@@ -5064,7 +5064,7 @@ public interface DatabaseAccess {
    */
   default Stream<String> streamString(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return streamString(Connections.DEFAULT_TRANSACTION_ISOLATION, true, sql, params);
   }
@@ -5080,7 +5080,7 @@ public interface DatabaseAccess {
    */
   default Stream<String> streamStringUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return streamString(Connections.DEFAULT_TRANSACTION_ISOLATION, false, sql, params);
   }
@@ -5092,7 +5092,7 @@ public interface DatabaseAccess {
       int isolationLevel,
       boolean readOnly,
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return stream(isolationLevel, readOnly, ObjectFactories.String, sql, params);
   }
@@ -5114,7 +5114,7 @@ public interface DatabaseAccess {
    */
   default Timestamp queryTimestamp(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, sql, params);
   }
@@ -5135,7 +5135,7 @@ public interface DatabaseAccess {
    */
   default Timestamp queryTimestampNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, true, sql, params);
   }
@@ -5156,7 +5156,7 @@ public interface DatabaseAccess {
    */
   default Optional<Timestamp> queryTimestampOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, false, sql, params));
   }
@@ -5176,7 +5176,7 @@ public interface DatabaseAccess {
    */
   default Optional<Timestamp> queryTimestampOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, sql, params));
   }
@@ -5187,7 +5187,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default Timestamp executeTimestampQuery(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryTimestamp(sql, params);
   }
@@ -5209,7 +5209,7 @@ public interface DatabaseAccess {
    */
   default Timestamp updateTimestamp(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, sql, params);
   }
@@ -5230,7 +5230,7 @@ public interface DatabaseAccess {
    */
   default Timestamp updateTimestampNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, true, sql, params);
   }
@@ -5251,7 +5251,7 @@ public interface DatabaseAccess {
    */
   default Optional<Timestamp> updateTimestampOptional(
       String sql,
-      Object ... params
+      Object... params
   ) throws NullDataException, ExtraRowException, SQLException {
     return Optional.ofNullable(queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, false, sql, params));
   }
@@ -5271,7 +5271,7 @@ public interface DatabaseAccess {
    */
   default Optional<Timestamp> updateTimestampOptionalNullable(
       String sql,
-      Object ... params
+      Object... params
   ) throws ExtraRowException, SQLException {
     return Optional.ofNullable(queryTimestamp(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, sql, params));
   }
@@ -5282,7 +5282,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default Timestamp executeTimestampUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return updateTimestamp(sql, params);
   }
@@ -5303,7 +5303,7 @@ public interface DatabaseAccess {
       boolean rowRequired,
       boolean nullable,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryObject(isolationLevel, readOnly, rowRequired, nullable, ObjectFactories.Timestamp, sql, params);
   }
@@ -5317,7 +5317,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryTimestamp(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
@@ -5331,7 +5331,7 @@ public interface DatabaseAccess {
       boolean readOnly,
       boolean rowRequired,
       String sql,
-      Object ... params
+      Object... params
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryTimestamp(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
@@ -5344,7 +5344,7 @@ public interface DatabaseAccess {
   //       Implement as a functional interface "UpdateValidator" (int) -> SQLException?
   int update(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException;
 
   /**
@@ -5352,7 +5352,7 @@ public interface DatabaseAccess {
    */
   long largeUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException;
 
   /**
@@ -5361,7 +5361,7 @@ public interface DatabaseAccess {
   @Deprecated(forRemoval = true)
   default int executeUpdate(
       String sql,
-      Object ... params
+      Object... params
   ) throws SQLException {
     return update(sql, params);
   }
