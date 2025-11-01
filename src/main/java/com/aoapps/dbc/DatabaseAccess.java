@@ -3097,11 +3097,11 @@ public interface DatabaseAccess {
    *
    * @return  The value, {@code null} when no row and {@code !rowRequired},
    *          or {@code null} when row with {@code objectFactory} returning {@code null} value and {@code nullable}.
-    *
+   *
    * @throws  NoRowException     When has no row and {@code rowRequired}.
    * @throws  NullDataException  When has a row, but with {@code objectFactory} returning {@code null} and {@code !nullable}.
    * @throws  ExtraRowException  When has more than one row.
-  */
+   */
   default <T, Ex extends Throwable> T queryObject(
       int isolationLevel,
       boolean readOnly,
