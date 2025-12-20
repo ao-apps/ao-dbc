@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ao-dbc - Simplified JDBC access for simplified code.
+Copyright (C) 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025  AO Industries, Inc.
+    support@aoindustries.com
+    7262 Bull Pen Cir
+    Mobile, AL 36695
+
+This file is part of ao-dbc.
+
+ao-dbc is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ao-dbc is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<jsp:root
+  xmlns:ao="https://oss.aoapps.com/taglib/"
+  xmlns:c="http://java.sun.com/jsp/jstl/core"
+  xmlns:changelog="https://semanticcms.com/changelog/taglib/"
+  xmlns:core="https://semanticcms.com/core/taglib/"
+  xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+  xmlns:jsp="http://java.sun.com/JSP/Page"
+  version="2.1"
+>
+  <jsp:directive.page language="java" pageEncoding="UTF-8" />
+  <jsp:directive.page session="false" />
+  <core:page
+    title="@{documented.name} Changelog"
+    shortTitle="Changelog"
+    tocLevels="1"
+    datePublished="2016-10-29T19:31:26-05:00"
+    dateModified="2025-07-02T23:05:45Z"
+  >
+    <c:set var="latestRelease" value="4.0.0" />
+    <c:if test="${
+      fn:endsWith('@{project.version}', '-SNAPSHOT')
+      and !fn:endsWith('@{project.version}', '-POST-SNAPSHOT')
+      and '@{project.version}' != (latestRelease.concat('-SNAPSHOT'))
+    }">
+      <changelog:release
+        projectName="@{documented.name}"
+        version="@{project.version}"
+        groupId="@{project.groupId}"
+        artifactId="@{documented.artifactId}"
+        scmUrl="@{project.scm.url}"
+      >
+        <!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
+        <!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
+      </changelog:release>
+    </c:if>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="4.0.0"
+      datePublished="2024-05-11T16:20:52Z"
+      groupId="@{project.groupId}"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>
+          <p>
+            <code>DatabaseAccess</code> now implements transactional methods instead of them only being on
+            <code>Database</code>.  This allows code to accept <code>DatabaseAccess</code> while still being able to
+            efficiently have its own transactional block.  Previously, <code>DatabaseAccess</code> was typically used
+            only for one-off database calls.
+          </p>
+          <p>
+            When transactional methods are via a <code>Database</code> instance, the implementation is the same as
+            before.  When the transactional methods are via a <code>DatabaseConnection</code>, they are directly
+            implemented on the connection.
+          </p>
+        </li>
+        <li>
+          New <code>DatabaseConnection.onCommit(…)</code> and <code>DatabaseConnection.onRollback(…)</code> events.
+        </li>
+        <li>
+          New set of methods that return <code><ao:a rel="nofollow" href="@{javadoc.link.javase}java.base/java/util/Optional.html">Optional</ao:a></code>
+          instead of throwing <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/NoRowException.html">NoRowException</ao:a></code>.
+        </li>
+        <li>
+          <p>
+            <strong>Breaking change:</strong> Single-row <code>DatabaseAccess.queryObject(…)</code>,
+            <code>DatabaseAccess.updateObject(…)</code>, and all related more specific type methods will no longer
+            return <code>null</code> when there is a row with a SQL NULL value, instead will throw
+            <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/NullDataException.html">NullDataException</ao:a></code>.
+            This was already the behavior for primitive types (and related wrappers).  This aligns the behavior across
+            all types.
+          </p>
+          <p>
+            When SQL NULL values are expected, use one of the new <code>DatabaseAccess.queryObjectNullable(…)</code>,
+            <code>DatabaseAccess.queryObjectOptionalNullable(…)</code>, or related more specific type methods.
+          </p>
+        </li>
+        <li>Implemented remaining SQL types for formatted result set exceptions/logging.</li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="3.1.1"
+      datePublished="2022-05-15T00:19:47-05:00"
+      groupId="@{project.groupId}"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Updated dependencies.</li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="3.1.0"
+      datePublished="2021-10-16T23:59:46-05:00"
+      groupId="@{project.groupId}"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Localized exceptions now allow access to i18n resources used to generate localized message.</li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="3.0.0"
+      datePublished="2021-07-20T01:10:03-05:00"
+      groupId="@{project.groupId}"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Minimum Java version changed from 1.8 to 11.</li>
+        <li>Now supports Java 9+ modules with included <code>module-info.class</code>.</li>
+        <li>Maven artifact relocated from <code>com.aoindustries:ao-dbc</code> to <code>com.aoapps:ao-dbc</code>.</li>
+        <li>Package renamed from <code>com.aoindustries.dbc</code> to <code>com.aoapps.dbc</code>.</li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="2.1.1"
+      datePublished="2020-12-26T23:02:34-06:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>
+          <p>
+            Fixed bug where <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/NoRowException.html">NoRowException</ao:a></code>
+            (and similar) were being wrapped, which was interfering with catch blocks.
+          </p>
+          <p>
+            Removed all uses of <ao:a href="https://oss.aoapps.com/sql/apidocs/com.aoapps.sql/com/aoapps/sql/WrappedSQLException.html">WrappedSQLException</ao:a>.
+            Now registers SQL statements directly with <code><ao:a href="https://oss.aoapps.com/lang/apidocs/com.aoapps.lang/com/aoapps/lang/util/ErrorPrinter.html">ErrorPrinter</ao:a></code>
+            instead.  This allows the SQL statements to be logged while not altering exception types underneath
+            the application.
+          </p>
+        </li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="2.1.0"
+      datePublished="2020-12-14T15:33:21-06:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>
+          Added localization constructors to <code>ExtraRowException</code>, <code>NoRowException</code>,
+          and <code>NullDataException</code>.
+        </li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="2.0.1"
+      datePublished="2020-11-30T06:12:56-06:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>
+          Now subclassing more specific exception types where appropriate, instead of just using
+          <ao:a rel="nofollow" href="@{javadoc.link.javase}java.sql/java/sql/SQLException.html">SQLException</ao:a>
+          everywhere.
+        </li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="2.0.0"
+      datePublished="2020-11-29T21:54:17-06:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li><code>createObject</code> now unwraps cause from <code>InvocationTargetException</code>.</li>
+        <li>Integrated support of <code>Throwable.addSuppressed(Throwable)</code>:
+          <ol>
+            <li>
+              <code>DatabaseConnection.rollback()</code> now throws <code>SQLException</code>, instead of
+              logging and returning.
+            </li>
+            <li>
+              New <code>DatabaseConnection.rollback(Throwable)</code> that adds any exceptions occurring
+              during rollback to the given throwable via <code>Throwable.addSuppressed(Throwable)</code>.
+            </li>
+            <li>
+              Deprecated <code>DatabaseConnection.rollbackAndClose()</code> in favor of either explicit
+              <code>DatabaseConnection.rollback()</code> or relying on the automatic rollback
+              of transactions in-progress during <code>DatabaseConnection.close()</code>.  Furthermore,
+              any connection with an unresolved fail-fast state will be validated and closed as-needed
+              before being returned to the underlying connection pool.
+            </li>
+            <li>
+              <code>DatabaseConnection.rollbackAndClose()</code> (now deprecated) now throws
+              <code>SQLException</code>, instead of logging and returning.
+            </li>
+            <li>
+              New <code>DatabaseConnection.rollbackAndClose(Throwable)</code> (also deprecated) that adds
+              any exceptions occurring during rollback to the given throwable via
+              <code>Throwable.addSuppressed(Throwable)</code>.
+            </li>
+            <li>
+              <code>Database.getConnection(…)</code> now adds any exceptions occurring
+              during clean-up (close and/or release connection) to the first throwable via
+              <code>Throwable.addSuppressed(Throwable)</code>.
+            </li>
+            <li>
+              <code>DatabaseConnection</code> now implements <code>AutoCloseable</code>, with the
+              expectation to by used via try-with-resources.
+            </li>
+          </ol>
+        </li>
+        <li>
+          Any exception during <code>SQLData</code> initialization will now clean-up properly
+          (close and/or release connection).
+        </li>
+        <li>
+          <code>execute*(…)</code> methods now also rollback on all types of <code>Throwable</code>
+          except <code>ThreadDeath</code> and <code>NoRowException</code>, versus just handling
+          <code>Exception</code> and below.
+        </li>
+        <li>
+          <code>AutoCloseable</code> implementation moved to a new class <code>CloseableDatabase</code>,
+          which extends <code>Database</code>.  This allows the return of <code>Database</code> in
+          contexts where it is not expected to be closed.
+        </li>
+        <li>
+          Now logs <code>SQLWarning</code> from connections obtained from both <code>AOConnectionPool</code>
+          and <code>DataSource</code>.  Previously, warnings were only logged by <code>AOConnectionPool</code>.
+        </li>
+        <li>Created <code>ObjectFactory</code> instances for common types in <code>ObjectFactories</code>.</li>
+        <li>
+          <p>
+            <code>execute*Query(…)</code> and <code>execute*Update(…)</code> that return Java primitives,
+            along with the specialized primitive-list <code>executeIntList*(…)</code> and
+            <code>executeLongList*(…)</code>, now throw a new <code>NullDataException</code> when the
+            result returns a <code>NULL</code> value.
+          </p>
+          <p>
+            Previously, the default conversion was used.  Any code that relied on this default conversion
+            will need to be updated: a small lambda on <code>queryObject(…)</code> or
+            <code>updateObject(…)</code> would do the trick.
+          </p>
+        </li>
+        <li>
+          Moved base implementation methods from <code>AbstractDatabaseAccess</code> abstract class to
+          default methods on the <code>DatabaseAccess</code> interface, then removed
+          <code>AbstractDatabaseAccess</code>.
+        </li>
+        <li>Declared throws of <code>ExtraRowException</code> where it may occur.</li>
+        <li>No longer automatically rollback transaction on <code>ExtraRowException</code>.</li>
+        <li>
+          When <code>Database.getConnection(…)</code> gets a connection from an underlying
+          <code>DataSource</code>, if the connection is not auto-commit, it will be rolled-back and set to
+          auto-commit.  As this is not expected to happen normally, a warning will be logged.
+        </li>
+        <li>
+          <code>Database.getConnection(…)</code> will no longer perform automatic commits that were to
+          facilitate read-only and transaction isolation level changes.  Exceptions may now be thrown by
+          the underlying JDBC driver when attempts are made to change read-only state or isolation levels
+          during a transaction; this is a safer behavior.
+        </li>
+        <li>Added support for primitive <code>double</code> and <code>float</code> queries and updates.</li>
+        <li>Added support for Java 8+ streaming queries and updates.</li>
+        <li>
+          Deprecated <code>executeShortList*(…)</code> methods.  These offer no performance advantage over
+          <code>queryList(…)</code> combined with <code>ObjectFactories.Short</code>, plus we do not have
+          this type of list method for other wrapper types.
+        </li>
+        <li>
+          Deprecated <code>executeObject*(…)</code> methods that accept a <code><![CDATA[Class&lt;T&gt;]]></code>
+          parameter.  This class has its constructor accessed via reflection.  This construct has been
+          obsoleted by constructor lamdas <code>Class::new</code> used as <code>ObjectFactory</code>.
+        </li>
+        <li>Renamed <code>execute*Query(…)</code> methods to <code>query*(…)</code>.</li>
+        <li>Renamed <code>execute*Update(…)</code> methods to <code>update*(…)</code>.</li>
+        <li>
+          Deprecated <code>ResultSetHandler</code> and <code>ResultSetHandlerE</code> in favor of new
+          <code>ResultSetRunnable</code>, <code>ResultSetRunnableE</code>, <code>ResultSetCallable</code>,
+          and <code>ResultSetCallableE</code>.  Having both runnable and callable variants allows
+          implementations to not return anything.  Previously, to satisfy the interface, something always
+          had to be returned, even if just a <code>(Void)null</code>.
+        </li>
+        <li>
+          Renamed <code>Database.executeTransaction(…)</code> to <code>Database.transactionCall(…)</code> and
+          <code>Database.transactionRun(…)</code>.
+        </li>
+        <li>
+          Added new methods <code>Database.transactionRun(RunnableE)</code> and
+          <code>Database.transactionCall(CallableE)</code>, which are useful when a transaction scope is
+          needed, but the <code>DatabaseConnection</code> itself is not required.
+        </li>
+        <li>
+          Renamed <code>Database.createDatabaseConnection()</code> to <code>connect()</code>.  Since this
+          method puts the burden of transaction management on the caller, please consider using the various
+          <code>transactionCall(…)</code> or <code>transactionRun(…)</code> methods.
+        </li>
+        <li>
+          Added overloads of <code>Database.getConnection(…)</code> and
+          <code>DatabaseConnection.getConnection(…)</code>, paralleling the methods of the underlying
+          <code>AOConnectionPool</code>.
+        </li>
+        <li>
+          <code>NullDataException</code> and <code>ExtraRowException</code> now include a summary of the
+          row as the exception message.  This implementation adds
+          <core:link book="/encoding" page="/index.jspx" /> as new dependency.
+        </li>
+        <li>
+          Deprecated <code>Database.releaseConnection(Connection)</code> and
+          <code>DatabaseConnection.releaseConnection()</code>
+          in favor of <code>Connection.close()</code>
+          for use in try-with-resources:
+          <ol>
+            <li>New protected method <code>Database.release(Connection)</code> that performs the release.</li>
+            <li>This implementation adds <core:link book="/concurrent" page="/index.jspx" /> as new dependency.</li>
+          </ol>
+        </li>
+        <li>Changed generic bounds from specific to bounded, where appropriate.</li>
+        <li>Generic exception upper bounds changed from <code>Exception</code> to <code>Throwable</code>.</li>
+        <li>Now pre-sizing collections when number of rows in result set is known.</li>
+        <li>Added support for <code>executeLargeUpdate</code>.</li>
+        <li>
+          Now uses the fail-fast state of the new <code>FailFastConnection</code> to know when to close or
+          abort the underlying database connection.
+        </li>
+        <li>
+          <p>
+            Now registering exception types for use with <code>Throwables.newSurrogate(…)</code> that supports creating new instances
+            of throwables in order to have caller stack trace.  When wrapped, the original throwable is the
+            cause of the new throwable.  When not wrapped, the original throwable is used directly and
+            caller stack trace is lost.
+          </p>
+          <p>
+            This is used to maintain exception types and states across thread boundaries, such as when an exception cause
+            is obtained from an <code>ExecutionException</code>.
+          </p>
+        </li>
+        <li>
+          Defined <ao:a href="https://en.wikipedia.org/wiki/SQLSTATE">SQLSTATE</ao:a> values for all
+          <ao:a rel="nofollow" href="@{javadoc.link.javase}java.sql/java/sql/SQLException.html">SQLException</ao:a>.
+        </li>
+        <li>
+          <p>
+            Fetch size increased from 1000 to 10000 rows.
+          </p>
+          <p>
+            This value may be increased over time as the amount of typical system memory increases.  As
+            this may affect the number of round trips, and the speed of light is not likely to change,
+            future increases may be of benefit.
+          </p>
+        </li>
+        <li>Added JDBC 4.2 Types.</li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.4.1"
+      datePublished="2020-08-27T22:47:28-05:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>
+          Fixed bug in <code>releaseConnection</code> that would fail
+          when trying to restore original type maps on a closed connection.
+          Now checks that the connection is not closed first.
+        </li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.4.0"
+      datePublished="2020-03-28T02:21:51-05:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Minimum Java version changed from 1.7 to 1.8.</li>
+        <li>
+          Reduced use of property substitutions in <code>pom.xml</code>.
+          This is to help 3rd-party parsers that fail to perform full Maven-compatible substitutions.
+        </li>
+        <li>
+          <code>Database</code> is now <code>AutoCloseable</code>,
+          which closes the underlying pool.
+        </li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.3.0"
+      datePublished="2019-10-01T20:44:38-05:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Updated for compatibility with <core:link book="/hodgepodge" page="/changelog.jspx" element="release-notes-3.1.0">aocode-public-3.1.0</core:link>.</li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.2.1"
+      datePublished="2019-06-20T22:08:18-05:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Minimum Java version changed from 1.6 to 1.7.</li>
+        <li>Using managed dependencies:
+          <ol>
+            <li>This project uses managed dependencies.</li>
+            <li>This project's managed dependencies may also be imported by other projects.</li>
+          </ol>
+        </li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.2.0"
+      datePublished="2019-04-23T04:46:32-05:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>
+          New set of <code>execute*Update</code> methods that mirror the short form of <code>execute*Query</code> methods,
+          but that do not operate read-only.  This alleviates most of the uses of the longer form of
+          <code>execute*Query</code>.  Less is more - now get back to work!
+        </li>
+        <li>
+          Now supports the automatic loading of <ao:a rel="nofollow" href="@{javadoc.link.javase}java.sql/java/sql/SQLData.html">SQLData</ao:a>
+          implementations via <ao:a rel="nofollow" href="@{javadoc.link.javase}java.base/java/util/ServiceLoader.html">ServiceLoader</ao:a>.
+        </li>
+        <li>
+          Now calling <ao:a rel="nofollow" href="@{javadoc.link.javase}java.sql/java/sql/PreparedStatement.html#setObject(int, java.lang.Object)">PreparedStatement.setObject(int, java.lang.Object)</ao:a>
+          to give the database driver a chance to decide what to do.
+        </li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.1.3"
+      datePublished="2017-07-19T19:16:33-05:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Updated dependencies.</li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.1.2"
+      datePublished="2016-11-15T18:37:30-06:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>New <core:link book="/parent" page="/index.jspx" /> POM to simplify <code>pom.xml</code> files.</li>
+        <li>Project documentation moved to per-project book in <ao:a href="https://semanticcms.com/">SemanticCMS</ao:a> format.</li>
+        <li>Added changelog as top-level project link.</li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.1.1"
+      datePublished="2016-10-20T18:09:00-05:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Improved Javadoc formatting.</li>
+        <li>Improved README formatting.</li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.1.0"
+      datePublished="2016-10-04T19:27:00-05:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Improved Javadoc formatting.</li>
+        <li>Improved README formatting.</li>
+        <li>Each lock object now a small empty class to help identify lock contention.
+          <p>
+            The lock contention profiler in NetBeans is just showing "java.lang.Object" all over, and can't seem to
+            get from the lock object id to the actual object in the heap dump using OQL (id not found).
+          </p>
+        </li>
+      </ul>
+    </changelog:release>
+
+    <changelog:release
+      projectName="@{documented.name}"
+      version="1.0"
+      datePublished="2016-09-04T22:44:00-05:00"
+      groupId="com.aoindustries"
+      artifactId="@{documented.artifactId}"
+      scmUrl="@{project.scm.url}"
+    >
+      <ul>
+        <li>Project moved to GitHub and Maven.</li>
+      </ul>
+    </changelog:release>
+  </core:page>
+</jsp:root>
