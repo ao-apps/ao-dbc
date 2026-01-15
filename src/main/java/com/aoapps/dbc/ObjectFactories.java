@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2020, 2021, 2022, 2023, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -73,7 +73,6 @@ public final class ObjectFactories {
   };
 
   /**
-   *
    * @deprecated  Please use a constructor lambda {@code Class::new}.
    */
   @Deprecated(forRemoval = false)
