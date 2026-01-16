@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2018, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2018, 2020, 2021, 2022, 2023, 2024, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,6 +54,8 @@ import java.util.stream.Stream;
 // TODO: A set of getConnection methods, as found common between Database and DatabaseConnection?
 //       Impact on commit() or rollback on close()?
 public interface DatabaseAccess {
+
+  // <editor-fold desc="Null" defaultstate="collapsed">
 
   /**
    * These may be used as parameters to represent null values of specific types.
@@ -118,6 +120,10 @@ public interface DatabaseAccess {
       return type;
     }
   }
+
+  // </editor-fold>
+
+  // <editor-fold desc="Transactions" defaultstate="collapsed">
 
   /**
    * Checks if the current thread is in a transaction.
@@ -304,6 +310,10 @@ public interface DatabaseAccess {
         }
     );
   }
+
+  // </editor-fold>
+
+  // <editor-fold desc="BigDecimal" defaultstate="collapsed">
 
   /**
    * Read-only query the database with a required non-null {@link BigDecimal} return type.
@@ -543,6 +553,10 @@ public interface DatabaseAccess {
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryBigDecimal(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
+
+  // </editor-fold>
+
+  // <editor-fold desc="Boolean" defaultstate="collapsed">
 
   /**
    * Read-only query the database with a required non-null {@code boolean} return type.
@@ -791,6 +805,10 @@ public interface DatabaseAccess {
     return queryBoolean(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="byte[]" defaultstate="collapsed">
+
   /**
    * Read-only query the database with a required non-null {@code byte[]} return type.
    * <ul>
@@ -1029,6 +1047,10 @@ public interface DatabaseAccess {
   ) throws NoRowException, ExtraRowException, SQLException {
     return queryByteArray(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
+
+  // </editor-fold>
+
+  // <editor-fold desc="Date" defaultstate="collapsed">
 
   /**
    * Read-only query the database with a required non-null {@link Date} return type.
@@ -1269,6 +1291,10 @@ public interface DatabaseAccess {
     return queryDate(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="Double" defaultstate="collapsed">
+
   /**
    * Read-only query the database with a required non-null {@code double} return type.
    * <ul>
@@ -1480,6 +1506,10 @@ public interface DatabaseAccess {
     return queryDouble(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="DoubleStream" defaultstate="collapsed">
+
   /**
    * Read-only query the database with a {@link DoubleStream} return type.
    * <ul>
@@ -1527,6 +1557,10 @@ public interface DatabaseAccess {
       String sql,
       Object... params
   ) throws NullDataException, SQLException;
+
+  // </editor-fold>
+
+  // <editor-fold desc="Float" defaultstate="collapsed">
 
   /**
    * Read-only query the database with a required non-null {@code float} return type.
@@ -1738,6 +1772,10 @@ public interface DatabaseAccess {
   ) throws NoRowException, NullDataException, ExtraRowException, SQLException {
     return queryFloat(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
+
+  // </editor-fold>
+
+  // <editor-fold desc="Integer" defaultstate="collapsed">
 
   /**
    * Read-only query the database with a required non-null {@code int} return type.
@@ -1986,6 +2024,10 @@ public interface DatabaseAccess {
     return queryInt(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="IntList" defaultstate="collapsed">
+
   /**
    * Read-only query the database with an {@link IntList} return type.
    * <ul>
@@ -2087,6 +2129,10 @@ public interface DatabaseAccess {
     return queryIntList(isolationLevel, readOnly, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="IntStream" defaultstate="collapsed">
+
   /**
    * Read-only query the database with an {@link IntStream} return type.
    * <ul>
@@ -2134,6 +2180,10 @@ public interface DatabaseAccess {
       String sql,
       Object... params
   ) throws NullDataException, SQLException;
+
+  // </editor-fold>
+
+  // <editor-fold desc="Long" defaultstate="collapsed">
 
   /**
    * Read-only query the database with a required non-null {@code long} return type.
@@ -2382,6 +2432,10 @@ public interface DatabaseAccess {
     return queryLong(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="LongList" defaultstate="collapsed">
+
   /**
    * Read-only query the database with a {@link LongList} return type.
    * <ul>
@@ -2483,6 +2537,10 @@ public interface DatabaseAccess {
     return queryLongList(isolationLevel, readOnly, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="LongStream" defaultstate="collapsed">
+
   /**
    * Read-only query the database with a {@link LongStream} return type.
    * <ul>
@@ -2530,6 +2588,10 @@ public interface DatabaseAccess {
       String sql,
       Object... params
   ) throws NullDataException, SQLException;
+
+  // </editor-fold>
+
+  // <editor-fold desc="Object" defaultstate="collapsed">
 
   /**
    * Read-only query the database with a required {@code <T>} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
@@ -3171,6 +3233,10 @@ public interface DatabaseAccess {
     return queryObject(isolationLevel, readOnly, rowRequired, true, exClass, objectFactory, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="List" defaultstate="collapsed">
+
   /**
    * Read-only query the database with a {@link List List&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
    * <ul>
@@ -3436,6 +3502,10 @@ public interface DatabaseAccess {
   ) throws SQLException, Ex {
     return queryList(isolationLevel, readOnly, exClass, objectFactory, sql, params);
   }
+
+  // </editor-fold>
+
+  // <editor-fold desc="Stream" defaultstate="collapsed">
 
   /**
    * Read-only query the database with a {@link Stream Stream&lt;T&gt;} return type, objects are created with the provided factory.
@@ -3704,6 +3774,10 @@ public interface DatabaseAccess {
         params
     );
   }
+
+  // </editor-fold>
+
+  // <editor-fold desc="Collection" defaultstate="collapsed">
 
   /**
    * Read-only query the database with a {@link Collection Collection&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
@@ -3982,6 +4056,10 @@ public interface DatabaseAccess {
     return queryCollection(isolationLevel, readOnly, collection, exClass, objectFactory, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="NewCollection" defaultstate="collapsed">
+
   /**
    * Read-only query the database with a {@link Collection Collection&lt;T&gt;} return type, objects are created with the provided factory.
    * <ul>
@@ -4121,6 +4199,10 @@ public interface DatabaseAccess {
         params
     );
   }
+
+  // </editor-fold>
+
+  // <editor-fold desc="Call" defaultstate="collapsed">
 
   /**
    * Read-only query the database, calling the {@link ResultSetCallable} once.
@@ -4314,6 +4396,10 @@ public interface DatabaseAccess {
     return queryCall(isolationLevel, readOnly, exClass, resultSetHandler, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="Run" defaultstate="collapsed">
+
   /**
    * Read-only query the database, calling the {@link ResultSetRunnable} once.
    * <ul>
@@ -4427,10 +4513,14 @@ public interface DatabaseAccess {
     );
   }
 
+  // </editor-fold>
+
   // TODO: Variants that return the ResultSet?
   //       Closing the ResultSet would also close its associated PreparedStatement along with all the other usual cleanup
   //       This variant could then be used as the basis for the stream* implementations.
   //       This would be consistent with the proposed transaction() methods that would return the DatabaseConnection
+
+  // <editor-fold desc="Short" defaultstate="collapsed">
 
   /**
    * Read-only query the database with a required non-null {@code short} return type.
@@ -4679,6 +4769,10 @@ public interface DatabaseAccess {
     return queryShort(isolationLevel, readOnly, rowRequired, false, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="List<Short>" defaultstate="collapsed">
+
   /**
    * Read-only query the database with a {@code List<Short>} return type.
    * <ul>
@@ -4734,6 +4828,10 @@ public interface DatabaseAccess {
   ) throws SQLException {
     return queryList(isolationLevel, readOnly, ObjectFactories.Short, sql, params);
   }
+
+  // </editor-fold>
+
+  // <editor-fold desc="String" defaultstate="collapsed">
 
   /**
    * Read-only query the database with a required non-null {@link String} return type.
@@ -4974,6 +5072,10 @@ public interface DatabaseAccess {
     return queryString(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="List<String>" defaultstate="collapsed">
+
   /**
    * Read-only query the database with a {@link List List&lt;String&gt;} return type.
    * <ul>
@@ -5053,6 +5155,10 @@ public interface DatabaseAccess {
     return queryStringList(isolationLevel, readOnly, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="Stream<String>" defaultstate="collapsed">
+
   /**
    * Read-only query the database with a {@link Stream Stream&lt;String&gt;} return type.
    * <ul>
@@ -5096,6 +5202,10 @@ public interface DatabaseAccess {
   ) throws SQLException {
     return stream(isolationLevel, readOnly, ObjectFactories.String, sql, params);
   }
+
+  // </editor-fold>
+
+  // <editor-fold desc="Timestamp" defaultstate="collapsed">
 
   /**
    * Read-only query the database with a required non-null {@link Timestamp} return type.
@@ -5336,6 +5446,10 @@ public interface DatabaseAccess {
     return queryTimestamp(isolationLevel, readOnly, rowRequired, true, sql, params);
   }
 
+  // </editor-fold>
+
+  // <editor-fold desc="update" defaultstate="collapsed">
+
   /**
    * Performs an update on the database and returns the number of rows affected.
    */
@@ -5365,4 +5479,7 @@ public interface DatabaseAccess {
   ) throws SQLException {
     return update(sql, params);
   }
+
+  // </editor-fold>
+
 }
