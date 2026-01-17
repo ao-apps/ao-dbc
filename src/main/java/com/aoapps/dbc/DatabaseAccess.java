@@ -26,10 +26,15 @@ package com.aoapps.dbc;
 import com.aoapps.collections.AoCollections;
 import com.aoapps.collections.IntList;
 import com.aoapps.collections.LongList;
+import com.aoapps.lang.AutoCloseables;
 import com.aoapps.lang.RunnableE;
+import com.aoapps.lang.Throwables;
 import com.aoapps.lang.concurrent.CallableE;
+import com.aoapps.lang.exception.WrappedException;
+import com.aoapps.lang.util.ErrorPrinter;
 import com.aoapps.sql.Connections;
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,13 +43,17 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.PrimitiveIterator;
 import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Function;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Wraps and simplifies access to a JDBC database.
@@ -310,6 +319,177 @@ public interface DatabaseAccess {
         }
     );
   }
+
+  // </editor-fold>
+
+  // <editor-fold desc="ResultSetImpl" defaultstate="collapsed">
+
+  /**
+   * Read-only query the database with a required result.
+   * The cursor is already positioned so {@link ReadOnlySingleResult#next()} should not be called.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code true}</li>
+   *   <li>allowExtraRows = {@code false}</li>
+   * </ul>
+   *
+   * <p>{@link ExtraRowException} detection is deferred to {@link ReadOnlySingleResult#close()}.</p>
+   *
+   * @return  The result, which must be {@link ReadOnlySingleResult#close() closed}.
+   *          Unlike typical implementations of {@link ResultSet#close()}, the implementations of this method perform
+   *          additional clean-up, depending on the usage.  Examples include:
+   *
+   *          <ol>
+   *          <li>Verifying no unexpected additional results to enforce {@link ExtraRowException}</li>
+   *          <li>Registering specific SQL statement in
+   *              {@link ErrorPrinter#addSql(java.lang.Throwable, java.sql.PreparedStatement)}
+   *              during exception handling</li>
+   *          <li>Closing the related {@link PreparedStatement}</li>
+   *          <li>Managing transaction boundaries</li>
+   *          <li>Closing the related {@link Connection}, which will typically release it back to the pool.</li>
+   *          </ol>
+   *
+   * @throws  NoRowException  When has no row.
+   */
+  default ReadOnlySingleResult querySingleResult(
+      String sql,
+      Object... params
+  ) throws NoRowException, SQLException {
+    return (ReadOnlySingleResult) queryResultSet(Connections.DEFAULT_TRANSACTION_ISOLATION, true, true, false, sql, params);
+  }
+
+  /**
+   * Read-only query the database with a result having any number of rows.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code true}</li>
+   *   <li>rowRequired = {@code false}</li>
+   *   <li>allowExtraRows = {@code true}</li>
+   * </ul>
+   *
+   * @return  The result, which must be {@link ReadOnlyResultSet#close() closed}.
+   *          Unlike typical implementations of {@link ResultSet#close()}, the implementations of this method perform
+   *          additional clean-up, depending on the usage.  Examples include:
+   *
+   *          <ol>
+   *          <li>Registering specific SQL statement in
+   *              {@link ErrorPrinter#addSql(java.lang.Throwable, java.sql.PreparedStatement)}
+   *              during exception handling</li>
+   *          <li>Closing the related {@link PreparedStatement}</li>
+   *          <li>Managing transaction boundaries</li>
+   *          <li>Closing the related {@link Connection}, which will typically release it back to the pool.</li>
+   *          </ol>
+   */
+  default ReadOnlyResultSet queryResultSet(
+      String sql,
+      Object... params
+  ) throws SQLException {
+    return (ReadOnlyResultSet) queryResultSet(Connections.DEFAULT_TRANSACTION_ISOLATION, true, false, true, sql, params);
+  }
+
+  /**
+   * Read-write query the database with a required result.
+   * The cursor is already positioned so {@link SingleResult#next()} should not be called.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code true}</li>
+   *   <li>allowExtraRows = {@code false}</li>
+   * </ul>
+   *
+   * <p>{@link ExtraRowException} detection is deferred to {@link SingleResult#close()}.</p>
+   *
+   * @return  The result, which must be {@link SingleResult#close() closed}.
+   *          Unlike typical implementations of {@link ResultSet#close()}, the implementations of this method perform
+   *          additional clean-up, depending on the usage.  Examples include:
+   *
+   *          <ol>
+   *          <li>Verifying no unexpected additional results to enforce {@link ExtraRowException}</li>
+   *          <li>Registering specific SQL statement in
+   *              {@link ErrorPrinter#addSql(java.lang.Throwable, java.sql.PreparedStatement)}
+   *              during exception handling</li>
+   *          <li>Closing the related {@link PreparedStatement}</li>
+   *          <li>Managing transaction boundaries</li>
+   *          <li>Closing the related {@link Connection}, which will typically release it back to the pool.</li>
+   *          </ol>
+   *
+   * @throws  NoRowException  When has no row.
+   */
+  default SingleResult updateSingleResult(
+      String sql,
+      Object... params
+  ) throws NoRowException, SQLException {
+    return (SingleResult) queryResultSet(Connections.DEFAULT_TRANSACTION_ISOLATION, false, true, false, sql, params);
+  }
+
+  /**
+   * Read-write query the database with a result having any number of rows.
+   * <ul>
+   *   <li>isolationLevel = {@link Connections#DEFAULT_TRANSACTION_ISOLATION}</li>
+   *   <li>readOnly = {@code false}</li>
+   *   <li>rowRequired = {@code false}</li>
+   *   <li>allowExtraRows = {@code true}</li>
+   * </ul>
+   *
+   * @return  The result, which must be {@link ResultSet#close() closed}.
+   *          Unlike typical implementations of {@link ResultSet#close()}, the implementations of this method perform
+   *          additional clean-up, depending on the usage.  Examples include:
+   *
+   *          <ol>
+   *          <li>Registering specific SQL statement in
+   *              {@link ErrorPrinter#addSql(java.lang.Throwable, java.sql.PreparedStatement)}
+   *              during exception handling</li>
+   *          <li>Closing the related {@link PreparedStatement}</li>
+   *          <li>Managing transaction boundaries</li>
+   *          <li>Closing the related {@link Connection}, which will typically release it back to the pool.</li>
+   *          </ol>
+   */
+  default ResultSet updateResultSet(
+      String sql,
+      Object... params
+  ) throws SQLException {
+    return queryResultSet(Connections.DEFAULT_TRANSACTION_ISOLATION, false, false, true, sql, params);
+  }
+
+  /**
+   * Query the database with a result.
+   *
+   * <p>{@link ExtraRowException} detection is deferred to {@link ResultSet#close()}
+   * only when {@code !allowExtraRows}.</p>
+   *
+   * @param  rowRequired  When {@code true}, will call {@link ResultSet#next()} on the result.
+   *                      Then if no row, will throw {@link NoRowException}.  This means that the
+   *                      result set will be at {@link ResultSet#first()},
+   *                      not at {@link ResultSet#beforeFirst()}.
+   *
+   *                      <p>Combined with {@code allowExtraRows = false}, this is a natural
+   *                      fit for callers that expect one and only one row.</p>
+   *
+   * @return  The result, which must be {@link ResultSet#close() closed}.
+   *          Unlike typical implementations of {@link ResultSet#close()}, the implementations of this method perform
+   *          additional clean-up, depending on the usage.  Examples include:
+   *
+   *          <ol>
+   *          <li>Verifying no unexpected additional results to enforce {@link ExtraRowException}</li>
+   *          <li>Registering specific SQL statement in
+   *              {@link ErrorPrinter#addSql(java.lang.Throwable, java.sql.PreparedStatement)}
+   *              during exception handling</li>
+   *          <li>Closing the related {@link PreparedStatement}</li>
+   *          <li>Managing transaction boundaries</li>
+   *          <li>Closing the related {@link Connection}, which will typically release it back to the pool.</li>
+   *          </ol>
+   *
+   * @throws  NoRowException  When has no row and {@code rowRequired}.
+   */
+  ResultSet queryResultSet(
+      int isolationLevel,
+      boolean readOnly,
+      boolean rowRequired,
+      boolean allowExtraRows,
+      String sql,
+      Object... params
+  ) throws NoRowException, SQLException;
 
   // </editor-fold>
 
@@ -1551,12 +1731,65 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    */
-  DoubleStream doubleStream(
+  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+  default DoubleStream doubleStream(
       int isolationLevel,
       boolean readOnly,
       String sql,
       Object... params
-  ) throws NullDataException, SQLException;
+  ) throws NullDataException, SQLException {
+    ResultSet results = queryResultSet(isolationLevel, readOnly, false, true, sql, params);
+    try {
+      return StreamSupport.doubleStream(
+          Spliterators.spliteratorUnknownSize(
+              new PrimitiveIterator.OfDouble() {
+                private double next;
+                private boolean nextSet; // next may be null, so extra flag
+
+                @Override
+                public boolean hasNext() {
+                  try {
+                    if (!nextSet && results.next()) {
+                      next = results.getDouble(1);
+                      if (results.wasNull()) {
+                        throw new NullDataException(results);
+                      }
+                      nextSet = true;
+                    }
+                    return nextSet;
+                  } catch (Throwable t) {
+                    throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
+                  }
+                }
+
+                @Override
+                public double nextDouble() {
+                  try {
+                    if (nextSet) {
+                      nextSet = false;
+                      return next;
+                    } else if (results.next()) {
+                      double d = results.getDouble(1);
+                      if (results.wasNull()) {
+                        throw new NullDataException(results);
+                      }
+                      return d;
+                    } else {
+                      throw new NoSuchElementException();
+                    }
+                  } catch (Throwable t) {
+                    throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
+                  }
+                }
+              },
+              Spliterator.ORDERED | Spliterator.NONNULL
+          ),
+          false
+      ).onClose(() -> AutoCloseables.closeAndThrow(WrappedException.class, WrappedException::new, results));
+    } catch (Throwable t) {
+      throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, results);
+    }
+  }
 
   // </editor-fold>
 
@@ -2174,12 +2407,65 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    */
-  IntStream intStream(
+  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+  default IntStream intStream(
       int isolationLevel,
       boolean readOnly,
       String sql,
       Object... params
-  ) throws NullDataException, SQLException;
+  ) throws NullDataException, SQLException {
+    ResultSet results = queryResultSet(isolationLevel, readOnly, false, true, sql, params);
+    try {
+      return StreamSupport.intStream(
+          Spliterators.spliteratorUnknownSize(
+              new PrimitiveIterator.OfInt() {
+                private int next;
+                private boolean nextSet; // next may be null, so extra flag
+
+                @Override
+                public boolean hasNext() {
+                  try {
+                    if (!nextSet && results.next()) {
+                      next = results.getInt(1);
+                      if (results.wasNull()) {
+                        throw new NullDataException(results);
+                      }
+                      nextSet = true;
+                    }
+                    return nextSet;
+                  } catch (Throwable t) {
+                    throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
+                  }
+                }
+
+                @Override
+                public int nextInt() {
+                  try {
+                    if (nextSet) {
+                      nextSet = false;
+                      return next;
+                    } else if (results.next()) {
+                      int i = results.getInt(1);
+                      if (results.wasNull()) {
+                        throw new NullDataException(results);
+                      }
+                      return i;
+                    } else {
+                      throw new NoSuchElementException();
+                    }
+                  } catch (Throwable t) {
+                    throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
+                  }
+                }
+              },
+              Spliterator.ORDERED | Spliterator.NONNULL
+          ),
+          false
+      ).onClose(() -> AutoCloseables.closeAndThrow(WrappedException.class, WrappedException::new, results));
+    } catch (Throwable t) {
+      throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, results);
+    }
+  }
 
   // </editor-fold>
 
@@ -2582,12 +2868,65 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    */
-  LongStream longStream(
+  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+  default LongStream longStream(
       int isolationLevel,
       boolean readOnly,
       String sql,
       Object... params
-  ) throws NullDataException, SQLException;
+  ) throws NullDataException, SQLException {
+    ResultSet results = queryResultSet(isolationLevel, readOnly, false, true, sql, params);
+    try {
+      return StreamSupport.longStream(
+          Spliterators.spliteratorUnknownSize(
+              new PrimitiveIterator.OfLong() {
+                private long next;
+                private boolean nextSet; // next may be null, so extra flag
+
+                @Override
+                public boolean hasNext() {
+                  try {
+                    if (!nextSet && results.next()) {
+                      next = results.getLong(1);
+                      if (results.wasNull()) {
+                        throw new NullDataException(results);
+                      }
+                      nextSet = true;
+                    }
+                    return nextSet;
+                  } catch (Throwable t) {
+                    throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
+                  }
+                }
+
+                @Override
+                public long nextLong() {
+                  try {
+                    if (nextSet) {
+                      nextSet = false;
+                      return next;
+                    } else if (results.next()) {
+                      long l = results.getLong(1);
+                      if (results.wasNull()) {
+                        throw new NullDataException(results);
+                      }
+                      return l;
+                    } else {
+                      throw new NoSuchElementException();
+                    }
+                  } catch (Throwable t) {
+                    throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
+                  }
+                }
+              },
+              Spliterator.ORDERED | Spliterator.NONNULL
+          ),
+          false
+      ).onClose(() -> AutoCloseables.closeAndThrow(WrappedException.class, WrappedException::new, results));
+    } catch (Throwable t) {
+      throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, results);
+    }
+  }
 
   // </editor-fold>
 
@@ -3621,14 +3960,58 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    */
-  <T, Ex extends Throwable> Stream<T> stream(
+  // TODO: Take an optional int for additional characteristics?  Might be useful for DISTINCT and SORTED, in particular.
+  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "fallthrough"})
+  default <T, Ex extends Throwable> Stream<T> stream(
       int isolationLevel,
       boolean readOnly,
       Class<? extends Ex> exClass,
       ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
       String sql,
       Object... params
-  ) throws SQLException, Ex;
+  ) throws SQLException, Ex {
+    ResultSet results = queryResultSet(isolationLevel, readOnly, false, true, sql, params);
+    try {
+      Spliterator<T> spliterator;
+      {
+        int characteristics = Spliterator.ORDERED | Spliterator.IMMUTABLE;
+        boolean isNullable = objectFactory.isNullable();
+        if (!isNullable) {
+          characteristics |= Spliterator.NONNULL;
+        }
+        int resultType = results.getType();
+        switch (resultType) {
+          case ResultSet.TYPE_FORWARD_ONLY:
+            spliterator = Spliterators.spliteratorUnknownSize(
+                new DatabaseUtils.ResultSetIterator<>(objectFactory, isNullable, results),
+                characteristics
+            );
+            break;
+          case ResultSet.TYPE_SCROLL_INSENSITIVE:
+            characteristics |= Spliterator.SIZED;
+          // fall-through
+          case ResultSet.TYPE_SCROLL_SENSITIVE:
+            int rowCount = 0;
+            if (results.last()) {
+              rowCount = results.getRow();
+              results.beforeFirst();
+            }
+            spliterator = Spliterators.spliterator(
+                new DatabaseUtils.ResultSetIterator<>(objectFactory, isNullable, results),
+                rowCount,
+                characteristics
+            );
+            break;
+          default:
+            throw new AssertionError(resultType);
+        }
+      }
+      return StreamSupport.stream(spliterator, false).onClose(() ->
+          AutoCloseables.closeAndThrow(WrappedException.class, WrappedException::new, results));
+    } catch (Throwable t) {
+      throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, results);
+    }
+  }
 
   /**
    * Read-only query the database with a {@link Stream Stream&lt;Optional&lt;T&gt;&gt;} return type, objects are created with the provided factory.
@@ -4514,11 +4897,6 @@ public interface DatabaseAccess {
   }
 
   // </editor-fold>
-
-  // TODO: Variants that return the ResultSet?
-  //       Closing the ResultSet would also close its associated PreparedStatement along with all the other usual cleanup
-  //       This variant could then be used as the basis for the stream* implementations.
-  //       This would be consistent with the proposed transaction() methods that would return the DatabaseConnection
 
   // <editor-fold desc="Short" defaultstate="collapsed">
 

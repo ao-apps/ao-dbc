@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2018, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014, 2015, 2016, 2018, 2020, 2021, 2022, 2023, 2024, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -25,6 +25,8 @@ package com.aoapps.dbc;
 
 import static com.aoapps.encoding.TextInPsqlEncoder.textInPsqlEncoder;
 
+import com.aoapps.lang.Throwables;
+import com.aoapps.lang.exception.WrappedException;
 import java.io.IOException;
 import java.sql.Array;
 import java.sql.Blob;
@@ -37,6 +39,8 @@ import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Types;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -330,6 +334,66 @@ public final class DatabaseUtils {
         return rowCount;
       default:
         throw new AssertionError(resultType);
+    }
+  }
+
+  /**
+   * @param  <Ex>  An arbitrary exception type that may be thrown
+   */
+  static class ResultSetIterator<T, Ex extends Throwable> implements Iterator<T> {
+
+    private final ObjectFactoryE<? extends T, ? extends Ex> objectFactory;
+    private final ResultSet results;
+    private final boolean isNullable;
+
+    private T next;
+    private boolean nextSet; // next may be null, so extra flag
+
+    ResultSetIterator(ObjectFactoryE<? extends T, ? extends Ex> objectFactory, boolean isNullable, ResultSet results) {
+      this.objectFactory = objectFactory;
+      this.results = results;
+      this.isNullable = isNullable;
+    }
+
+    private T createAndCheckNullable(ResultSet results) throws SQLException, Ex {
+      T t = objectFactory.createObject(results);
+      if (t == null && !isNullable) {
+        throw new NullDataException(results);
+      }
+      return t;
+    }
+
+    @Override
+    @SuppressWarnings("UseSpecificCatch")
+    public boolean hasNext() {
+      try {
+        if (!nextSet && results.next()) {
+          next = createAndCheckNullable(results);
+          nextSet = true;
+        }
+        return nextSet;
+      } catch (Throwable t) {
+        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
+      }
+    }
+
+    @Override
+    @SuppressWarnings("UseSpecificCatch")
+    public T next() throws NoSuchElementException {
+      try {
+        if (nextSet) {
+          T t = next;
+          next = null;
+          nextSet = false;
+          return t;
+        } else if (results.next()) {
+          return createAndCheckNullable(results);
+        } else {
+          throw new NoSuchElementException();
+        }
+      } catch (Throwable t) {
+        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
+      }
     }
   }
 }

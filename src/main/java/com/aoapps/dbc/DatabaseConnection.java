@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2023, 2024, 2025  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -27,7 +27,6 @@ import com.aoapps.lang.AutoCloseables;
 import com.aoapps.lang.RunnableE;
 import com.aoapps.lang.Throwables;
 import com.aoapps.lang.concurrent.CallableE;
-import com.aoapps.lang.exception.WrappedException;
 import com.aoapps.lang.util.ErrorPrinter;
 import com.aoapps.sql.Connections;
 import com.aoapps.sql.failfast.FailFastConnection;
@@ -56,17 +55,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.PrimitiveIterator;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * A {@link DatabaseConnection} represents the scope of an overall transaction.
@@ -1084,105 +1073,18 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
     return t0;
   }
 
-  private static class StreamCloser implements Runnable {
-
-    private final Statement stmt;
-    private final ResultSet results;
-
-    private StreamCloser(Statement stmt, ResultSet results) {
-      this.stmt = stmt;
-      this.results = results;
-    }
-
-    @Override
-    public void run() {
-      AutoCloseables.closeAndThrow(WrappedException.class, WrappedException::new, results, stmt);
-    }
-  }
-
   @Override
-  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
-  public DoubleStream doubleStream(
+  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
+  public ResultSet queryResultSet(
       int isolationLevel,
       boolean readOnly,
+      boolean rowRequired,
+      boolean allowExtraRows,
       String sql,
       Object... params
-  ) throws NullDataException, SQLException {
+  ) throws NoRowException, SQLException {
     Connection c = getConnection(isolationLevel, readOnly);
-    PreparedStatement pstmt = c.prepareStatement(sql); // TODO: Use regular statements when there are no parameters?  Here and entire api?
-    try {
-      try {
-        pstmt.setFetchSize(FETCH_SIZE);
-        setParams(c, pstmt, params);
-        ResultSet results = pstmt.executeQuery();
-        try {
-          return StreamSupport.doubleStream(
-              Spliterators.spliteratorUnknownSize(
-                  new PrimitiveIterator.OfDouble() {
-                    private double next;
-                    private boolean nextSet; // next may be null, so extra flag
-
-                    @Override
-                    public boolean hasNext() {
-                      try {
-                        if (!nextSet && results.next()) {
-                          next = results.getDouble(1);
-                          if (results.wasNull()) {
-                            throw new NullDataException(results);
-                          }
-                          nextSet = true;
-                        }
-                        return nextSet;
-                      } catch (Throwable t) {
-                        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-                      }
-                    }
-
-                    @Override
-                    public double nextDouble() {
-                      try {
-                        if (nextSet) {
-                          nextSet = false;
-                          return next;
-                        } else if (results.next()) {
-                          double d = results.getDouble(1);
-                          if (results.wasNull()) {
-                            throw new NullDataException(results);
-                          }
-                          return d;
-                        } else {
-                          throw new NoSuchElementException();
-                        }
-                      } catch (Throwable t) {
-                        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-                      }
-                    }
-                  },
-                  Spliterator.ORDERED | Spliterator.NONNULL
-              ),
-              false
-          ).onClose(new StreamCloser(pstmt, results));
-        } catch (Throwable t) {
-          throw AutoCloseables.closeAndCatch(t, results);
-        }
-      } catch (Error | RuntimeException | SQLException e) {
-        ErrorPrinter.addSql(e, pstmt);
-        throw e;
-      }
-    } catch (Throwable t) {
-      throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, pstmt);
-    }
-  }
-
-  @Override
-  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
-  public IntStream intStream(
-      int isolationLevel,
-      boolean readOnly,
-      String sql,
-      Object... params
-  ) throws NullDataException, SQLException {
-    Connection c = getConnection(isolationLevel, readOnly);
+    Throwable t0 = null;
     PreparedStatement pstmt = c.prepareStatement(sql);
     try {
       try {
@@ -1190,271 +1092,43 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
         setParams(c, pstmt, params);
         ResultSet results = pstmt.executeQuery();
         try {
-          return StreamSupport.intStream(
-              Spliterators.spliteratorUnknownSize(
-                  new PrimitiveIterator.OfInt() {
-                    private int next;
-                    private boolean nextSet; // next may be null, so extra flag
-
-                    @Override
-                    public boolean hasNext() {
-                      try {
-                        if (!nextSet && results.next()) {
-                          next = results.getInt(1);
-                          if (results.wasNull()) {
-                            throw new NullDataException(results);
-                          }
-                          nextSet = true;
-                        }
-                        return nextSet;
-                      } catch (Throwable t) {
-                        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-                      }
-                    }
-
-                    @Override
-                    public int nextInt() {
-                      try {
-                        if (nextSet) {
-                          nextSet = false;
-                          return next;
-                        } else if (results.next()) {
-                          int i = results.getInt(1);
-                          if (results.wasNull()) {
-                            throw new NullDataException(results);
-                          }
-                          return i;
-                        } else {
-                          throw new NoSuchElementException();
-                        }
-                      } catch (Throwable t) {
-                        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-                      }
-                    }
-                  },
-                  Spliterator.ORDERED | Spliterator.NONNULL
-              ),
-              false
-          ).onClose(new StreamCloser(pstmt, results));
-        } catch (Throwable t) {
-          throw AutoCloseables.closeAndCatch(t, results);
-        }
-      } catch (Error | RuntimeException | SQLException e) {
-        ErrorPrinter.addSql(e, pstmt);
-        throw e;
-      }
-    } catch (Throwable t) {
-      throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, pstmt);
-    }
-  }
-
-  @Override
-  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
-  public LongStream longStream(
-      int isolationLevel,
-      boolean readOnly,
-      String sql,
-      Object... params
-  ) throws NullDataException, SQLException {
-    Connection c = getConnection(isolationLevel, readOnly);
-    PreparedStatement pstmt = c.prepareStatement(sql);
-    try {
-      try {
-        pstmt.setFetchSize(FETCH_SIZE);
-        setParams(c, pstmt, params);
-        ResultSet results = pstmt.executeQuery();
-        try {
-          return StreamSupport.longStream(
-              Spliterators.spliteratorUnknownSize(
-                  new PrimitiveIterator.OfLong() {
-                    private long next;
-                    private boolean nextSet; // next may be null, so extra flag
-
-                    @Override
-                    public boolean hasNext() {
-                      try {
-                        if (!nextSet && results.next()) {
-                          next = results.getLong(1);
-                          if (results.wasNull()) {
-                            throw new NullDataException(results);
-                          }
-                          nextSet = true;
-                        }
-                        return nextSet;
-                      } catch (Throwable t) {
-                        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-                      }
-                    }
-
-                    @Override
-                    public long nextLong() {
-                      try {
-                        if (nextSet) {
-                          nextSet = false;
-                          return next;
-                        } else if (results.next()) {
-                          long l = results.getLong(1);
-                          if (results.wasNull()) {
-                            throw new NullDataException(results);
-                          }
-                          return l;
-                        } else {
-                          throw new NoSuchElementException();
-                        }
-                      } catch (Throwable t) {
-                        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-                      }
-                    }
-                  },
-                  Spliterator.ORDERED | Spliterator.NONNULL
-              ),
-              false
-          ).onClose(new StreamCloser(pstmt, results));
-        } catch (Throwable t) {
-          throw AutoCloseables.closeAndCatch(t, results);
-        }
-      } catch (Error | RuntimeException | SQLException e) {
-        ErrorPrinter.addSql(e, pstmt);
-        throw e;
-      }
-    } catch (Throwable t) {
-      throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, pstmt);
-    }
-  }
-
-  /**
-   * @param  <Ex>  An arbitrary exception type that may be thrown
-   */
-  private static class ResultSetIterator<T, Ex extends Throwable> implements Iterator<T> {
-
-    private final ObjectFactoryE<? extends T, ? extends Ex> objectFactory;
-    private final ResultSet results;
-    private final boolean isNullable;
-
-    private T next;
-    private boolean nextSet; // next may be null, so extra flag
-
-    private ResultSetIterator(ObjectFactoryE<? extends T, ? extends Ex> objectFactory, boolean isNullable, ResultSet results) {
-      this.objectFactory = objectFactory;
-      this.results = results;
-      this.isNullable = isNullable;
-    }
-
-    private T createAndCheckNullable(ResultSet results) throws SQLException, Ex {
-      T t = objectFactory.createObject(results);
-      if (t == null && !isNullable) {
-        throw new NullDataException(results);
-      }
-      return t;
-    }
-
-    @Override
-    @SuppressWarnings("UseSpecificCatch")
-    public boolean hasNext() {
-      try {
-        if (!nextSet && results.next()) {
-          next = createAndCheckNullable(results);
-          nextSet = true;
-        }
-        return nextSet;
-      } catch (Throwable t) {
-        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-      }
-    }
-
-    @Override
-    @SuppressWarnings("UseSpecificCatch")
-    public T next() throws NoSuchElementException {
-      try {
-        if (nextSet) {
-          T t = next;
-          next = null;
-          nextSet = false;
-          return t;
-        } else if (results.next()) {
-          return createAndCheckNullable(results);
-        } else {
-          throw new NoSuchElementException();
-        }
-      } catch (Throwable t) {
-        throw Throwables.wrap(t, WrappedException.class, WrappedException::new);
-      }
-    }
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @param  <Ex>  An arbitrary exception type that may be thrown
-   */
-  @Override
-  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter", "fallthrough"})
-  // TODO: Take an optional int for additional characteristics?  Might be useful for DISTINCT and SORTED, in particular.
-  public <T, Ex extends Throwable> Stream<T> stream(
-      int isolationLevel,
-      boolean readOnly,
-      Class<? extends Ex> exClass,
-      ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
-      String sql,
-      Object... params
-  ) throws SQLException, Ex {
-    Connection c = getConnection(isolationLevel, readOnly);
-    PreparedStatement pstmt = c.prepareStatement(sql);
-    try {
-      try {
-        pstmt.setFetchSize(FETCH_SIZE);
-        setParams(c, pstmt, params);
-        ResultSet results = pstmt.executeQuery();
-        try {
-          Spliterator<T> spliterator;
-          {
-            int characteristics = Spliterator.ORDERED | Spliterator.IMMUTABLE;
-            boolean isNullable = objectFactory.isNullable();
-            if (!isNullable) {
-              characteristics |= Spliterator.NONNULL;
-            }
-            int resultType = results.getType();
-            switch (resultType) {
-              case ResultSet.TYPE_FORWARD_ONLY:
-                spliterator = Spliterators.spliteratorUnknownSize(
-                    new ResultSetIterator<>(objectFactory, isNullable, results),
-                    characteristics
-                );
-                break;
-              case ResultSet.TYPE_SCROLL_INSENSITIVE:
-                characteristics |= Spliterator.SIZED;
-              // fall-through
-              case ResultSet.TYPE_SCROLL_SENSITIVE:
-                int rowCount = 0;
-                if (results.last()) {
-                  rowCount = results.getRow();
-                  results.beforeFirst();
-                }
-                spliterator = Spliterators.spliterator(
-                    new ResultSetIterator<>(objectFactory, isNullable, results),
-                    rowCount,
-                    characteristics
-                );
-                break;
-              default:
-                throw new AssertionError(resultType);
-            }
+          if (rowRequired && !results.next()) {
+            throw new NoRowException();
           }
-          return StreamSupport.stream(spliterator, false).onClose(new StreamCloser(pstmt, results));
+          return new ResultSetImpl(results) {
+            @Override
+            public void close() throws ExtraRowException, SQLException {
+              try {
+                try {
+                  try {
+                    if (!allowExtraRows && wrapped.next()) {
+                      throw new ExtraRowException(wrapped);
+                    }
+                  } finally {
+                    wrapped.close();
+                  }
+                } catch (Error | RuntimeException | SQLException e) {
+                  ErrorPrinter.addSql(e, pstmt);
+                  throw e;
+                }
+              } finally {
+                pstmt.close();
+              }
+            }
+          };
         } catch (Throwable t) {
-          throw AutoCloseables.closeAndCatch(t, results);
+          throw AutoCloseables.closeAndWrap(t, SQLException.class, SQLException::new, results);
         }
       } catch (Error | RuntimeException | SQLException e) {
         ErrorPrinter.addSql(e, pstmt);
         throw e;
       }
     } catch (Throwable t) {
-      t = AutoCloseables.closeAndCatch(t, pstmt);
-      if (exClass.isInstance(t)) {
-        throw exClass.cast(t);
-      }
-      throw Throwables.wrap(t, SQLException.class, SQLException::new);
+      t0 = Throwables.addSuppressed(t0, t);
+      t0 = AutoCloseables.closeAndCatch(t0, pstmt);
     }
+    assert t0 != null;
+    throw Throwables.wrap(t0, SQLException.class, SQLException::new);
   }
 
   /**

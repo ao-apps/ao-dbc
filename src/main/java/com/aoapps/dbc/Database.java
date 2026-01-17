@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022, 2023, 2024  AO Industries, Inc.
+ * Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -34,6 +34,7 @@ import com.aoapps.sql.pool.AOConnectionPool;
 import com.aoapps.sql.tracker.ConnectionTracker;
 import com.aoapps.sql.tracker.ConnectionTrackerImpl;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLData;
 import java.sql.SQLException;
 import java.util.IdentityHashMap;
@@ -43,10 +44,6 @@ import java.util.ServiceLoader;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
 import javax.sql.DataSource;
 
 /**
@@ -801,53 +798,58 @@ public class Database implements DatabaseAccess {
   }
 
   @Override
-  public DoubleStream doubleStream(
+  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "AssignmentToCatchBlockParameter"})
+  public ResultSet queryResultSet(
       int isolationLevel,
       boolean readOnly,
+      boolean rowRequired,
+      boolean allowExtraRows,
       String sql,
       Object... params
-  ) throws NullDataException, SQLException {
-    return transactionCall(db -> db.doubleStream(isolationLevel, readOnly, sql, params));
-  }
-
-  @Override
-  public IntStream intStream(
-      int isolationLevel,
-      boolean readOnly,
-      String sql,
-      Object... params
-  ) throws NullDataException, SQLException {
-    return transactionCall(db -> db.intStream(isolationLevel, readOnly, sql, params));
-  }
-
-  @Override
-  public LongStream longStream(
-      int isolationLevel,
-      boolean readOnly,
-      String sql,
-      Object... params
-  ) throws NullDataException, SQLException {
-    return transactionCall(db -> db.longStream(isolationLevel, readOnly, sql, params));
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @param  <Ex>  An arbitrary exception type that may be thrown
-   */
-  @Override
-  public <T, Ex extends Throwable> Stream<T> stream(
-      int isolationLevel,
-      boolean readOnly,
-      Class<? extends Ex> exClass,
-      ObjectFactoryE<? extends T, ? extends Ex> objectFactory,
-      String sql,
-      Object... params
-  ) throws SQLException, Ex {
-    return transactionCall(
-        exClass,
-        db -> db.stream(isolationLevel, readOnly, exClass, objectFactory, sql, params)
-    );
+  ) throws NoRowException, SQLException {
+    DatabaseConnection db = transactionConnection.get();
+    if (db != null) {
+      // Reuse existing connection
+      return db.queryResultSet(isolationLevel, readOnly, rowRequired, allowExtraRows, sql, params);
+    } else {
+      // Create new connection
+      Throwable t0 = null;
+      DatabaseConnection newConn = connect();
+      try {
+        try {
+          transactionConnection.set(newConn);
+          try {
+            return new ResultSetImpl(newConn.queryResultSet(isolationLevel, readOnly, rowRequired, allowExtraRows, sql, params)) {
+              @Override
+              public void close() throws SQLException {
+                try {
+                  try {
+                    wrapped.close();
+                    newConn.commit();
+                  } finally {
+                    transactionConnection.remove();
+                  }
+                } catch (Throwable t) {
+                  t = newConn.rollback(t);
+                  throw Throwables.wrap(t, SQLException.class, SQLException::new);
+                }
+              }
+            };
+          } catch (Throwable t) {
+            transactionConnection.remove();
+            throw t;
+          }
+        } catch (Throwable t) {
+          t0 = Throwables.addSuppressed(t0, t);
+          t0 = newConn.rollback(t0);
+        }
+      } catch (Throwable t) {
+        t0 = Throwables.addSuppressed(t0, t);
+        t0 = AutoCloseables.closeAndCatch(t0, newConn);
+      }
+      assert t0 != null;
+      throw Throwables.wrap(t0, SQLException.class, SQLException::new);
+    }
   }
 
   /**

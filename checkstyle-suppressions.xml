@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ao-dbc - Simplified JDBC access for simplified code.
-Copyright (C) 2022, 2023, 2024  AO Industries, Inc.
+Copyright (C) 2022, 2023, 2024, 2026  AO Industries, Inc.
     support@aoindustries.com
     7262 Bull Pen Cir
     Mobile, AL 36695
@@ -37,6 +37,10 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
   />
   <suppress
     checks="JavadocParagraph"
+    files="[/\\]com[/\\]aoapps[/\\]dbc[/\\]DatabaseAccess\.java$"
+  />
+  <suppress
+    checks="JavadocParagraph"
     files="[/\\]com[/\\]aoapps[/\\]dbc[/\\]DatabaseConnection\.java$"
   />
 
@@ -44,6 +48,13 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
   <suppress
     checks="(ClassTypeParameterName|InterfaceTypeParameterName|MethodTypeParameterName)"
     message="'Ex'"
+  />
+
+  <!-- Consistency with standard JDBC API names -->
+  <suppress
+    checks="ParameterName"
+    files="[/\\]com[/\\]aoapps[/\\]dbc[/\\]"
+    message="'(nClob|nString)'"
   />
 
   <!-- Will not reorder overloads -->

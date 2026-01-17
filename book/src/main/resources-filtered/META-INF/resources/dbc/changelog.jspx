@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T19:31:26-05:00"
-    dateModified="2025-07-02T23:05:45Z"
+    dateModified="2026-01-17T04:51:33Z"
   >
     <c:set var="latestRelease" value="4.0.0" />
     <c:if test="${
@@ -54,6 +54,36 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
       >
         <!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
         <!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
+        <ul>
+          <li>
+            <p>
+              New methods on <code>DatabaseAccess</code> that return the <code>ResultSet</code> to be used directly.
+              This is primarily intended for use in try-with-resources blocks or other strong equivalents.  It is
+              critical the result set is closed, so that associated resources may be cleaned-up and transaction
+              lifecycle may be properly managed.
+            </p>
+            <p>
+              Some of the new methods return specialized sub-interfaces of <code>ResultSet</code> that deprecate methods
+              not expected to be used in that context.  For example, <code>ResultSet.update*(…)</code> methods are not
+              expected to be called on the results of a read-only query.  Another example is that
+              <code>ResultSet.next()</code> is not expected to be called on <code>querySingleResult(…)</code>, which has
+              already moved to the first record in order to enforce <code>NoRowException</code>.
+            </p>
+            <p>
+              We debated whether it is better to pollute the API with additional types versus returning just
+              <code>ResultSet</code>.  API users are expected to typically use <code>var</code> inside
+              try-with-resources, so these specialized types will not impact the API users negatively.  At the same
+              time, they help guide the API user toward only using the expected methods for their given context.
+            </p>
+            <p>
+              This update also refactors the stream query/update methods to be based off the new
+              <code>queryResultSet(…)</code> method.  This fixes an issue where streams used directly from a
+              <code>Database</code> instance lived beyond their enclosing transaction scope.  Since the new
+              <code>queryResultSet(…)</code> method releases the transaction scope on <code>ResultSet.close()</code>,
+              this provides the underpinning for better managing stream transaction scopes.
+            </p>
+          </li>
+        </ul>
       </changelog:release>
     </c:if>
 

@@ -29,7 +29,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
     <relativePath>../../parent/pom.xml</relativePath>
   </parent>
 
-  <groupId>com.aoapps</groupId><artifactId>ao-dbc-book</artifactId><version>4.0.0-POST-SNAPSHOT</version>
+  <groupId>com.aoapps</groupId><artifactId>ao-dbc-book</artifactId><version>4.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <properties>
