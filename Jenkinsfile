@@ -91,6 +91,11 @@ pipeline {
       defaultValue: false,
       description: mavenDebug_description
     )
+    choice(
+      name: 'sonarQubeAnalysis',
+      choices: sonarQubeAnalysis_choices,
+      description: sonarQubeAnalysis_description
+    )
   }
   triggers {
     upstream(
