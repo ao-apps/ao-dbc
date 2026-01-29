@@ -50,7 +50,7 @@ import java.util.Calendar;
 import java.util.Map;
 
 /**
- * The result of a query or update in-progress that must be {@linkplain #close() closed}.  Without being closed,
+ * The result of a query or update in-progress that must be {@linkplain ResultSetImpl#close() closed}.  Without being closed,
  * resources could not be freed in a timely manner, and some additional required actions might not be taken.
  *
  * <p>This is the behind-the-scenes implementation.  This implements {@link ReadOnlySingleResult} so that it

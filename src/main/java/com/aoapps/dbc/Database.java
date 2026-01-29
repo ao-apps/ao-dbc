@@ -51,7 +51,7 @@ import javax.sql.DataSource;
  * If the current thread is already in a transaction, the calls will be performed using the connection associated with that transaction.
  * For transactions across multiple statements, use {@link DatabaseConnection}.
  *
- * @see  #createDatabaseConnection
+ * @see  Database#createDatabaseConnection
  * @see  DatabaseConnection
  *
  * @author  AO Industries, Inc.
@@ -101,7 +101,7 @@ public class Database implements DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use either {@link #connect()} or one of the various call/run methods, which enforce
+   * @deprecated  Please use either {@link Database#connect()} or one of the various call/run methods, which enforce
    *              the transaction semantics.
    */
   @Deprecated(forRemoval = true)
@@ -117,14 +117,14 @@ public class Database implements DatabaseAccess {
    * <p>Note that the close methods will rollback any transaction in progress, so it is up to the caller to
    * perform any necessary {@link DatabaseConnection#commit()}.</p>
    *
-   * @see #transactionCall(com.aoapps.lang.concurrent.CallableE)
-   * @see #transactionCall(java.lang.Class, com.aoapps.lang.concurrent.CallableE)
-   * @see #transactionCall(com.aoapps.dbc.DatabaseCallable)
-   * @see #transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)
-   * @see #transactionRun(com.aoapps.lang.RunnableE)
-   * @see #transactionRun(java.lang.Class, com.aoapps.lang.RunnableE)
-   * @see #transactionRun(com.aoapps.dbc.DatabaseRunnable)
-   * @see #transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)
+   * @see Database#transactionCall(com.aoapps.lang.concurrent.CallableE)
+   * @see Database#transactionCall(java.lang.Class, com.aoapps.lang.concurrent.CallableE)
+   * @see Database#transactionCall(com.aoapps.dbc.DatabaseCallable)
+   * @see Database#transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)
+   * @see Database#transactionRun(com.aoapps.lang.RunnableE)
+   * @see Database#transactionRun(java.lang.Class, com.aoapps.lang.RunnableE)
+   * @see Database#transactionRun(com.aoapps.dbc.DatabaseRunnable)
+   * @see Database#transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)
    */
   public DatabaseConnection connect() {
     return new DatabaseConnection(this);
@@ -133,7 +133,7 @@ public class Database implements DatabaseAccess {
   /**
    * Gets the pool or {@code null} if using a {@link DataSource}.
    *
-   * @see  #getDataSource()
+   * @see  Database#getDataSource()
    */
   public AOConnectionPool getConnectionPool() {
     return pool;
@@ -142,14 +142,14 @@ public class Database implements DatabaseAccess {
   /**
    * Gets the data source or {@code null} if using an {@link AOConnectionPool}.
    *
-   * @see  #getConnectionPool()
+   * @see  Database#getConnectionPool()
    */
   public DataSource getDataSource() {
     return dataSource;
   }
 
   /**
-   * Gets the executors for this database.  Is {@linkplain Executors#close() closed} on {@link #close()}.
+   * Gets the executors for this database.  Is {@linkplain Executors#close() closed} on {@link Database#close()}.
    */
   Executors getExecutors() {
     return executors;
@@ -194,10 +194,10 @@ public class Database implements DatabaseAccess {
 
   /**
    * Whenever a new connection is obtained from the pool or the dataSource,
-   * it is passed here for initialization of {@link #getSqlDataTypes()}.
+   * it is passed here for initialization of {@link Database#getSqlDataTypes()}.
    *
-   * @see  #deinitSqlDataTypes(java.sql.Connection)
-   * @see  #getConnection(int, boolean, int, boolean)
+   * @see  Database#deinitSqlDataTypes(java.sql.Connection)
+   * @see  Database#getConnection(int, boolean, int, boolean)
    */
   protected void initSqlDataTypes(Connection conn) throws SQLException {
     // Load custom types from ServiceLoader
@@ -217,10 +217,10 @@ public class Database implements DatabaseAccess {
 
   /**
    * Before a connection is release back to the pool or the dataSource,
-   * it is passed here for de-initialization of {@link #getSqlDataTypes()}.
+   * it is passed here for de-initialization of {@link Database#getSqlDataTypes()}.
    *
-   * @see  #initSqlDataTypes(java.sql.Connection)
-   * @see  #release(com.aoapps.sql.failfast.FailFastConnection)
+   * @see  Database#initSqlDataTypes(java.sql.Connection)
+   * @see  Database#release(com.aoapps.sql.failfast.FailFastConnection)
    */
   protected void deinitSqlDataTypes(Connection conn) throws SQLException {
     // TODO: Do not remove on release and avoid re-adding for performance?
@@ -236,8 +236,8 @@ public class Database implements DatabaseAccess {
    *
    * <p>This default implementation does nothing.</p>
    *
-   * @see  #deinitConnection(java.sql.Connection)
-   * @see  #getConnection(int, boolean, int, boolean)
+   * @see  Database#deinitConnection(java.sql.Connection)
+   * @see  Database#getConnection(int, boolean, int, boolean)
    */
   protected void initConnection(Connection conn) throws SQLException {
     // Do nothing
@@ -249,8 +249,8 @@ public class Database implements DatabaseAccess {
    *
    * <p>This default implementation does nothing.</p>
    *
-   * @see  #initConnection(java.sql.Connection)
-   * @see  #release(com.aoapps.sql.failfast.FailFastConnection)
+   * @see  Database#initConnection(java.sql.Connection)
+   * @see  Database#release(com.aoapps.sql.failfast.FailFastConnection)
    */
   protected void deinitConnection(Connection conn) throws SQLException {
     // Do nothing
@@ -282,7 +282,7 @@ public class Database implements DatabaseAccess {
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
-   * @see  #getConnection(int, boolean, int, boolean)
+   * @see  Database#getConnection(int, boolean, int, boolean)
    * @see  DatabaseConnection#getConnection()
    * @see  Connection#close()
    */
@@ -326,7 +326,7 @@ public class Database implements DatabaseAccess {
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
-   * @see  #getConnection(int, boolean, int, boolean)
+   * @see  Database#getConnection(int, boolean, int, boolean)
    * @see  DatabaseConnection#getConnection(int)
    * @see  Connection#close()
    */
@@ -366,7 +366,7 @@ public class Database implements DatabaseAccess {
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
-   * @see  #getConnection(int, boolean, int, boolean)
+   * @see  Database#getConnection(int, boolean, int, boolean)
    * @see  DatabaseConnection#getConnection(boolean)
    * @see  Connection#close()
    */
@@ -406,7 +406,7 @@ public class Database implements DatabaseAccess {
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
-   * @see  #getConnection(int, boolean, int, boolean)
+   * @see  Database#getConnection(int, boolean, int, boolean)
    * @see  DatabaseConnection#getConnection(int, boolean)
    * @see  Connection#close()
    */
@@ -605,10 +605,10 @@ public class Database implements DatabaseAccess {
    * {@linkplain Connection#abort(java.util.concurrent.Executor) aborted} or deinit'ed then {@linkplain Connection#close() closed}
    * (both of which return the connection to the underlying pool).</p>
    *
-   * @see  #getConnection(int, boolean, int, boolean)
+   * @see  Database#getConnection(int, boolean, int, boolean)
    * @see  DatabaseConnection#close()
-   * @see  #deinitConnection(java.sql.Connection)
-   * @see  #deinitSqlDataTypes(java.sql.Connection)
+   * @see  Database#deinitConnection(java.sql.Connection)
+   * @see  Database#deinitSqlDataTypes(java.sql.Connection)
    */
   @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
   protected void release(FailFastConnection conn) throws SQLException {
@@ -662,7 +662,7 @@ public class Database implements DatabaseAccess {
   /**
    * Performs the deinit and close of the wrapped connection.
    *
-   * @see  #release(com.aoapps.sql.failfast.FailFastConnection)
+   * @see  Database#release(com.aoapps.sql.failfast.FailFastConnection)
    */
   @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
   private Throwable closeWrappedConnection(Throwable t0, Connection wrapped) {
@@ -722,7 +722,7 @@ public class Database implements DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #transactionCall(com.aoapps.dbc.DatabaseCallable)}
+   * @deprecated  Please use {@link Database#transactionCall(com.aoapps.dbc.DatabaseCallable)}
    */
   @Deprecated(forRemoval = true)
   @SuppressWarnings("overloads")
@@ -766,7 +766,7 @@ public class Database implements DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)}
+   * @deprecated  Please use {@link Database#transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)}
    */
   @Deprecated(forRemoval = true)
   public final <V, Ex extends Exception> V executeTransaction(Class<Ex> exClass, DatabaseCallableE<V, Ex> callable) throws SQLException, Ex {
@@ -774,7 +774,7 @@ public class Database implements DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #transactionRun(com.aoapps.dbc.DatabaseRunnable)}
+   * @deprecated  Please use {@link Database#transactionRun(com.aoapps.dbc.DatabaseRunnable)}
    */
   @Deprecated(forRemoval = true)
   @SuppressWarnings("overloads")
@@ -785,7 +785,7 @@ public class Database implements DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)}
+   * @deprecated  Please use {@link Database#transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)}
    */
   @Deprecated(forRemoval = true)
   public final <Ex extends Exception> void executeTransaction(Class<Ex> exClass, DatabaseRunnableE<Ex> runnable) throws SQLException, Ex {

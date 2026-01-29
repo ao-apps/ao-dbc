@@ -175,7 +175,7 @@ public class Table {
    * Gets all columns for this schema in their ordinal position order.
    * Column with ordinal position one is at index zero.
    *
-   * @see  #getColumnMap()
+   * @see  Table#getColumnMap()
    */
   @SuppressWarnings("ReturnOfCollectionOrArrayField") // Returning unmodifiable
   public List<Column> getColumns() throws SQLException {

@@ -137,14 +137,14 @@ public interface DatabaseAccess {
   /**
    * Checks if the current thread is in a transaction.
    *
-   * @see #transactionCall(com.aoapps.lang.concurrent.CallableE)
-   * @see #transactionCall(java.lang.Class, com.aoapps.lang.concurrent.CallableE)
-   * @see #transactionCall(com.aoapps.dbc.DatabaseCallable)
-   * @see #transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)
-   * @see #transactionRun(com.aoapps.lang.RunnableE)
-   * @see #transactionRun(java.lang.Class, com.aoapps.lang.RunnableE)
-   * @see #transactionRun(com.aoapps.dbc.DatabaseRunnable)
-   * @see #transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)
+   * @see DatabaseAccess#transactionCall(com.aoapps.lang.concurrent.CallableE)
+   * @see DatabaseAccess#transactionCall(java.lang.Class, com.aoapps.lang.concurrent.CallableE)
+   * @see DatabaseAccess#transactionCall(com.aoapps.dbc.DatabaseCallable)
+   * @see DatabaseAccess#transactionCall(java.lang.Class, com.aoapps.dbc.DatabaseCallableE)
+   * @see DatabaseAccess#transactionRun(com.aoapps.lang.RunnableE)
+   * @see DatabaseAccess#transactionRun(java.lang.Class, com.aoapps.lang.RunnableE)
+   * @see DatabaseAccess#transactionRun(com.aoapps.dbc.DatabaseRunnable)
+   * @see DatabaseAccess#transactionRun(java.lang.Class, com.aoapps.dbc.DatabaseRunnableE)
    */
   boolean isInTransaction();
 
@@ -162,7 +162,7 @@ public interface DatabaseAccess {
    * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
    * entire transaction on any exception.</p>
    *
-   * @see #isInTransaction()
+   * @see DatabaseAccess#isInTransaction()
    */
   default <V> V transactionCall(CallableE<? extends V, ? extends SQLException> callable) throws SQLException {
     return transactionCall(SQLException.class, callable);
@@ -184,7 +184,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see #isInTransaction()
+   * @see DatabaseAccess#isInTransaction()
    */
   default <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> exClass, CallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex {
     return transactionCall(exClass, db -> callable.call());
@@ -204,7 +204,7 @@ public interface DatabaseAccess {
    * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
    * entire transaction on any exception.</p>
    *
-   * @see #isInTransaction()
+   * @see DatabaseAccess#isInTransaction()
    */
   default <V> V transactionCall(DatabaseCallable<? extends V> callable) throws SQLException {
     return transactionCall(RuntimeException.class, callable::call);
@@ -226,7 +226,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see #isInTransaction()
+   * @see DatabaseAccess#isInTransaction()
    */
   <V, Ex extends Throwable> V transactionCall(Class<? extends Ex> exClass, DatabaseCallableE<? extends V, ? extends Ex> callable) throws SQLException, Ex;
 
@@ -244,7 +244,7 @@ public interface DatabaseAccess {
    * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
    * entire transaction on any exception.</p>
    *
-   * @see #isInTransaction()
+   * @see DatabaseAccess#isInTransaction()
    */
   default void transactionRun(RunnableE<? extends SQLException> runnable) throws SQLException {
     transactionRun(SQLException.class, runnable);
@@ -266,7 +266,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see #isInTransaction()
+   * @see DatabaseAccess#isInTransaction()
    */
   default <Ex extends Throwable> void transactionRun(Class<? extends Ex> exClass, RunnableE<? extends Ex> runnable) throws SQLException, Ex {
     transactionRun(exClass, db -> runnable.run());
@@ -286,7 +286,7 @@ public interface DatabaseAccess {
    * become part of the enclosing transaction.  For safety, a nested transaction will still rollback the
    * entire transaction on any exception.</p>
    *
-   * @see #isInTransaction()
+   * @see DatabaseAccess#isInTransaction()
    */
   default void transactionRun(DatabaseRunnable runnable) throws SQLException {
     transactionRun(RuntimeException.class, runnable::run);
@@ -308,7 +308,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see #isInTransaction()
+   * @see DatabaseAccess#isInTransaction()
    */
   default <Ex extends Throwable> void transactionRun(Class<? extends Ex> exClass, DatabaseRunnableE<? extends Ex> runnable) throws SQLException, Ex {
     transactionCall(
@@ -580,7 +580,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryBigDecimal(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryBigDecimal(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default BigDecimal executeBigDecimalQuery(
@@ -675,7 +675,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateBigDecimal(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateBigDecimal(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default BigDecimal executeBigDecimalUpdate(
@@ -707,7 +707,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryBigDecimal(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryBigDecimal(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default BigDecimal queryBigDecimal(
@@ -721,7 +721,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryBigDecimal(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryBigDecimal(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default BigDecimal executeBigDecimalQuery(
@@ -823,7 +823,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryBoolean(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryBoolean(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default boolean executeBooleanQuery(
@@ -918,7 +918,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateBoolean(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateBoolean(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default boolean executeBooleanUpdate(
@@ -958,7 +958,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryBoolean(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryBoolean(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Boolean queryBoolean(
@@ -972,7 +972,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryBoolean(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryBoolean(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Boolean executeBooleanQuery(
@@ -1074,7 +1074,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryByteArray(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryByteArray(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default byte[] executeByteArrayQuery(
@@ -1169,7 +1169,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateByteArray(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateByteArray(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default byte[] executeByteArrayUpdate(
@@ -1201,7 +1201,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryByteArray(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryByteArray(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default byte[] queryByteArray(
@@ -1215,7 +1215,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryByteArray(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryByteArray(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default byte[] executeByteArrayQuery(
@@ -1317,7 +1317,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryDate(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryDate(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Date executeDateQuery(
@@ -1412,7 +1412,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateDate(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateDate(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Date executeDateUpdate(
@@ -1444,7 +1444,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryDate(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryDate(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Date queryDate(
@@ -1458,7 +1458,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryDate(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryDate(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Date executeDateQuery(
@@ -1673,7 +1673,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryDouble(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryDouble(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Double queryDouble(
@@ -1699,7 +1699,7 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    *
-   * @see  #doubleStreamUpdate(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#doubleStreamUpdate(java.lang.String, java.lang.Object...)
    */
   default DoubleStream doubleStream(
       String sql,
@@ -1717,7 +1717,7 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    *
-   * @see  #doubleStream(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#doubleStream(java.lang.String, java.lang.Object...)
    */
   default DoubleStream doubleStreamUpdate(
       String sql,
@@ -1993,7 +1993,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryFloat(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryFloat(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Float queryFloat(
@@ -2095,7 +2095,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryInt(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryInt(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default int executeIntQuery(
@@ -2190,7 +2190,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateInt(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateInt(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default int executeIntUpdate(
@@ -2230,7 +2230,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryInt(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryInt(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Integer queryInt(
@@ -2244,7 +2244,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryInt(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryInt(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Integer executeIntQuery(
@@ -2270,7 +2270,7 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    *
-   * @see  #updateIntList(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#updateIntList(java.lang.String, java.lang.Object...)
    */
   default IntList queryIntList(
       String sql,
@@ -2280,7 +2280,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryIntList(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryIntList(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default IntList executeIntListQuery(
@@ -2299,7 +2299,7 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    *
-   * @see  #queryIntList(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#queryIntList(java.lang.String, java.lang.Object...)
    */
   default IntList updateIntList(
       String sql,
@@ -2309,7 +2309,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateIntList(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateIntList(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default IntList executeIntListUpdate(
@@ -2350,7 +2350,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryIntList(int, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryIntList(int, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default IntList executeIntListQuery(
@@ -2375,7 +2375,7 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    *
-   * @see  #intStreamUpdate(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#intStreamUpdate(java.lang.String, java.lang.Object...)
    */
   default IntStream intStream(
       String sql,
@@ -2393,7 +2393,7 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    *
-   * @see  #intStream(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#intStream(java.lang.String, java.lang.Object...)
    */
   default IntStream intStreamUpdate(
       String sql,
@@ -2556,7 +2556,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryLong(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryLong(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default long executeLongQuery(
@@ -2651,7 +2651,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateLong(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateLong(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default long executeLongUpdate(
@@ -2691,7 +2691,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryLong(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryLong(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Long queryLong(
@@ -2705,7 +2705,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryLong(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryLong(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Long executeLongQuery(
@@ -2731,7 +2731,7 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    *
-   * @see  #updateLongList(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#updateLongList(java.lang.String, java.lang.Object...)
    */
   default LongList queryLongList(
       String sql,
@@ -2741,7 +2741,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryLongList(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryLongList(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default LongList executeLongListQuery(
@@ -2760,7 +2760,7 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    *
-   * @see  #queryLongList(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#queryLongList(java.lang.String, java.lang.Object...)
    */
   default LongList updateLongList(
       String sql,
@@ -2770,7 +2770,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateLongList(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateLongList(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default LongList executeLongListUpdate(
@@ -2811,7 +2811,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryLongList(int, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryLongList(int, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default LongList executeLongListQuery(
@@ -2836,7 +2836,7 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    *
-   * @see  #longStreamUpdate(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#longStreamUpdate(java.lang.String, java.lang.Object...)
    */
   default LongStream longStream(
       String sql,
@@ -2854,7 +2854,7 @@ public interface DatabaseAccess {
    *
    * @throws  NullDataException  When has a SQL NULL value.
    *
-   * @see  #longStream(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#longStream(java.lang.String, java.lang.Object...)
    */
   default LongStream longStreamUpdate(
       String sql,
@@ -2945,9 +2945,9 @@ public interface DatabaseAccess {
    * @throws  NoRowException     When has no row.
    * @throws  ExtraRowException  When has more than one row.
    *
-   * @see  #executeObjectUpdate(java.lang.Class, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#executeObjectUpdate(java.lang.Class, java.lang.String, java.lang.Object...)
    *
-   * @deprecated  Please use {@link #queryObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with a constructor lambda {@code Class::new}.
    */
   @Deprecated(forRemoval = true)
@@ -2972,9 +2972,9 @@ public interface DatabaseAccess {
    * @throws  NoRowException     When has no row.
    * @throws  ExtraRowException  When has more than one row.
    *
-   * @see  #executeObjectQuery(java.lang.Class, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#executeObjectQuery(java.lang.Class, java.lang.String, java.lang.Object...)
    *
-   * @deprecated  Please use {@link #updateObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with a constructor lambda {@code Class::new}.
    */
   @Deprecated(forRemoval = true)
@@ -2994,7 +2994,7 @@ public interface DatabaseAccess {
    * @throws  NoRowException     When has no row and {@code rowRequired}.
    * @throws  ExtraRowException  When has more than one row.
    *
-   * @deprecated  Please use {@link #queryObject(int, boolean, boolean, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryObject(int, boolean, boolean, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with a constructor lambda {@code Class::new}.
    */
   @Deprecated(forRemoval = true)
@@ -3098,7 +3098,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T> T executeObjectQuery(
@@ -3198,7 +3198,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateObject(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T> T executeObjectUpdate(
@@ -3232,7 +3232,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryObject(int, boolean, boolean, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryObject(int, boolean, boolean, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T> T queryObject(
@@ -3247,7 +3247,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryObject(int, boolean, boolean, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryObject(int, boolean, boolean, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T> T executeObjectQuery(
@@ -3364,7 +3364,7 @@ public interface DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #queryObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, Ex extends Exception> T executeObjectQuery(
@@ -3479,7 +3479,7 @@ public interface DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #updateObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateObject(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, Ex extends Exception> T executeObjectUpdate(
@@ -3539,7 +3539,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryObject(int, boolean, boolean, boolean, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryObject(int, boolean, boolean, boolean, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, Ex extends Throwable> T queryObject(
@@ -3557,7 +3557,7 @@ public interface DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #queryObject(int, boolean, boolean, boolean, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryObject(int, boolean, boolean, boolean, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, Ex extends Exception> T executeObjectQuery(
@@ -3585,9 +3585,9 @@ public interface DatabaseAccess {
    *
    * @return  An unmodifiable list
    *
-   * @see  #executeObjectListUpdate(java.lang.Class, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#executeObjectListUpdate(java.lang.Class, java.lang.String, java.lang.Object...)
    *
-   * @deprecated  Please use {@link #queryList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with a constructor lambda {@code Class::new}.
    */
   @Deprecated(forRemoval = true)
@@ -3608,9 +3608,9 @@ public interface DatabaseAccess {
    *
    * @return  An unmodifiable list
    *
-   * @see  #executeObjectListQuery(java.lang.Class, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#executeObjectListQuery(java.lang.Class, java.lang.String, java.lang.Object...)
    *
-   * @deprecated  Please use {@link #updateList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with a constructor lambda {@code Class::new}.
    */
   @Deprecated(forRemoval = true)
@@ -3627,7 +3627,7 @@ public interface DatabaseAccess {
    *
    * @return  An unmodifiable list
    *
-   * @deprecated  Please use {@link #queryList(int, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryList(int, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with a constructor lambda {@code Class::new}.
    */
   @Deprecated(forRemoval = true)
@@ -3650,7 +3650,7 @@ public interface DatabaseAccess {
    *
    * @return  An unmodifiable list
    *
-   * @see  #updateList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#updateList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
    */
   default <T> List<T> queryList(
       ObjectFactory<? extends T> objectFactory,
@@ -3661,7 +3661,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T> List<T> executeObjectListQuery(
@@ -3681,7 +3681,7 @@ public interface DatabaseAccess {
    *
    * @return  An unmodifiable list
    *
-   * @see  #queryList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#queryList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
    */
   default <T> List<T> updateList(
       ObjectFactory<? extends T> objectFactory,
@@ -3692,7 +3692,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T> List<T> executeObjectListUpdate(
@@ -3719,7 +3719,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryList(int, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryList(int, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T> List<T> executeObjectListQuery(
@@ -3743,7 +3743,7 @@ public interface DatabaseAccess {
    *
    * @return  An unmodifiable list
    *
-   * @see  #updateList(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#updateList(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
    */
   default <T, Ex extends Throwable> List<T> queryList(
       Class<? extends Ex> exClass,
@@ -3757,7 +3757,7 @@ public interface DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #queryList(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryList(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, Ex extends Exception> List<T> executeObjectListQuery(
@@ -3780,7 +3780,7 @@ public interface DatabaseAccess {
    *
    * @return  An unmodifiable list
    *
-   * @see  #queryList(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#queryList(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
    */
   default <T, Ex extends Throwable> List<T> updateList(
       Class<? extends Ex> exClass,
@@ -3794,7 +3794,7 @@ public interface DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #updateList(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateList(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, Ex extends Exception> List<T> executeObjectListUpdate(
@@ -3828,7 +3828,7 @@ public interface DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #queryList(int, boolean, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryList(int, boolean, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, Ex extends Exception> List<T> executeObjectListQuery(
@@ -3857,7 +3857,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
-   * @see  #streamUpdate(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#streamUpdate(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
    */
   default <T> Stream<T> stream(
       ObjectFactory<? extends T> objectFactory,
@@ -3878,7 +3878,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
-   * @see  #stream(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#stream(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
    */
   default <T> Stream<T> streamUpdate(
       ObjectFactory<? extends T> objectFactory,
@@ -3917,7 +3917,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #streamUpdate(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#streamUpdate(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
    */
   default <T, Ex extends Throwable> Stream<T> stream(
       Class<? extends Ex> exClass,
@@ -3941,7 +3941,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #stream(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#stream(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
    */
   default <T, Ex extends Throwable> Stream<T> streamUpdate(
       Class<? extends Ex> exClass,
@@ -4023,7 +4023,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
-   * @see  #streamOptionalUpdate(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#streamOptionalUpdate(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
    */
   default <T> Stream<Optional<T>> streamOptional(
       ObjectFactory<? extends T> objectFactory,
@@ -4043,7 +4043,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
-   * @see  #streamOptional(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#streamOptional(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
    */
   default <T> Stream<Optional<T>> streamOptionalUpdate(
       ObjectFactory<? extends T> objectFactory,
@@ -4080,7 +4080,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #streamOptionalUpdate(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#streamOptionalUpdate(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
    */
   default <T, Ex extends Throwable> Stream<Optional<T>> streamOptional(
       Class<? extends Ex> exClass,
@@ -4103,7 +4103,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #streamOptional(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#streamOptional(java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
    */
   default <T, Ex extends Throwable> Stream<Optional<T>> streamOptionalUpdate(
       Class<? extends Ex> exClass,
@@ -4169,9 +4169,9 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
-   * @see  #executeObjectCollectionUpdate(java.util.Collection, java.lang.Class, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#executeObjectCollectionUpdate(java.util.Collection, java.lang.Class, java.lang.String, java.lang.Object...)
    *
-   * @deprecated  Please use {@link #queryCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with a constructor lambda {@code Class::new}.
    */
   @Deprecated(forRemoval = true)
@@ -4191,9 +4191,9 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
-   * @see  #executeObjectCollectionQuery(java.util.Collection, java.lang.Class, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#executeObjectCollectionQuery(java.util.Collection, java.lang.Class, java.lang.String, java.lang.Object...)
    *
-   * @deprecated  Please use {@link #updateCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with a constructor lambda {@code Class::new}.
    */
   @Deprecated(forRemoval = true)
@@ -4209,7 +4209,7 @@ public interface DatabaseAccess {
   /**
    * Query the database with a {@link Collection Collection&lt;T&gt;} return type.  Class &lt;T&gt; must have a constructor that takes a single argument of {@link ResultSet}.
    *
-   * @deprecated  Please use {@link #queryCollection(int, boolean, java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryCollection(int, boolean, java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with a constructor lambda {@code Class::new}.
    */
   @Deprecated(forRemoval = true)
@@ -4231,7 +4231,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
-   * @see  #updateCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#updateCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
    */
   default <T, C extends Collection<? super T>> C queryCollection(
       C collection,
@@ -4243,7 +4243,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, C extends Collection<? super T>> C executeObjectCollectionQuery(
@@ -4262,7 +4262,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
-   * @see  #queryCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#queryCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
    */
   default <T, C extends Collection<? super T>> C updateCollection(
       C collection,
@@ -4274,7 +4274,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateCollection(java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, C extends Collection<? super T>> C executeObjectCollectionUpdate(
@@ -4301,7 +4301,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryCollection(int, boolean, java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryCollection(int, boolean, java.util.Collection, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, C extends Collection<? super T>> C executeObjectCollectionQuery(
@@ -4324,7 +4324,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #updateCollection(java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#updateCollection(java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
    */
   default <T, C extends Collection<? super T>, Ex extends Throwable> C queryCollection(
       C collection,
@@ -4339,7 +4339,7 @@ public interface DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #queryCollection(java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryCollection(java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, C extends Collection<? super T>, Ex extends Exception> C executeObjectCollectionQuery(
@@ -4361,7 +4361,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #queryCollection(java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#queryCollection(java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
    */
   default <T, C extends Collection<? super T>, Ex extends Throwable> C updateCollection(
       C collection,
@@ -4376,7 +4376,7 @@ public interface DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #updateCollection(java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateCollection(java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, C extends Collection<? super T>, Ex extends Exception> C executeObjectCollectionUpdate(
@@ -4424,7 +4424,7 @@ public interface DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #queryCollection(int, boolean, java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryCollection(int, boolean, java.util.Collection, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default <T, C extends Collection<? super T>, Ex extends Exception> C executeObjectCollectionQuery(
@@ -4452,7 +4452,7 @@ public interface DatabaseAccess {
    *
    * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
    *
-   * @see  #updateNewCollection(java.util.function.Function, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#updateNewCollection(java.util.function.Function, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)
    */
   @SuppressWarnings("overloads")
   default <T, C extends Collection<? super T>> C queryNewCollection(
@@ -4473,7 +4473,7 @@ public interface DatabaseAccess {
    *
    * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
    *
-   * @see  #queryNewCollection(java.util.function.Function, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object[])
+   * @see  DatabaseAccess#queryNewCollection(java.util.function.Function, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object[])
    */
   @SuppressWarnings("overloads")
   default <T, C extends Collection<? super T>> C updateNewCollection(
@@ -4511,7 +4511,7 @@ public interface DatabaseAccess {
    * @param  <Ex>  An arbitrary exception type that may be thrown
    * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
    *
-   * @see  #updateNewCollection(java.util.function.Function, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#updateNewCollection(java.util.function.Function, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object...)
    */
   @SuppressWarnings("overloads")
   default <T, C extends Collection<? super T>, Ex extends Throwable> C queryNewCollection(
@@ -4534,7 +4534,7 @@ public interface DatabaseAccess {
    * @param  <Ex>  An arbitrary exception type that may be thrown
    * @param  newCollection  given the row count, or {@code null} when unknown, creates the new collection
    *
-   * @see  #queryNewCollection(java.util.function.Function, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object[])
+   * @see  DatabaseAccess#queryNewCollection(java.util.function.Function, java.lang.Class, com.aoapps.dbc.ObjectFactoryE, java.lang.String, java.lang.Object[])
    */
   @SuppressWarnings("overloads")
   default <T, C extends Collection<? super T>, Ex extends Throwable> C updateNewCollection(
@@ -4594,7 +4594,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
-   * @see  #updateCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object[])
+   * @see  DatabaseAccess#updateCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object[])
    */
   default <T> T queryCall(
       ResultSetCallable<? extends T> resultSetCallable,
@@ -4605,7 +4605,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   @SuppressWarnings("removal")
@@ -4624,7 +4624,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
-   * @see  #queryCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object[])
+   * @see  DatabaseAccess#queryCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object[])
    */
   default <T> T updateCall(
       ResultSetCallable<? extends T> resultSetCallable,
@@ -4635,7 +4635,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateCall(com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   @SuppressWarnings("removal")
@@ -4661,7 +4661,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryCall(int, boolean, com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryCall(int, boolean, com.aoapps.dbc.ResultSetCallable, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   @SuppressWarnings("removal")
@@ -4684,7 +4684,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #updateCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object[])
+   * @see  DatabaseAccess#updateCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object[])
    */
   default <T, Ex extends Throwable> T queryCall(
       Class<? extends Ex> exClass,
@@ -4698,7 +4698,7 @@ public interface DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #queryCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   @SuppressWarnings("removal")
@@ -4720,7 +4720,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #queryCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object[])
+   * @see  DatabaseAccess#queryCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object[])
    */
   default <T, Ex extends Throwable> T updateCall(
       Class<? extends Ex> exClass,
@@ -4734,7 +4734,7 @@ public interface DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #updateCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateCall(java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   @SuppressWarnings("removal")
@@ -4764,7 +4764,7 @@ public interface DatabaseAccess {
   /**
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @deprecated  Please use {@link #queryCall(int, boolean, java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryCall(int, boolean, java.lang.Class, com.aoapps.dbc.ResultSetCallableE, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   @SuppressWarnings("removal")
@@ -4790,7 +4790,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
-   * @see  #updateRun(com.aoapps.dbc.ResultSetRunnable, java.lang.String, java.lang.Object[])
+   * @see  DatabaseAccess#updateRun(com.aoapps.dbc.ResultSetRunnable, java.lang.String, java.lang.Object[])
    */
   default void queryRun(
       ResultSetRunnable resultSetRunnable,
@@ -4807,7 +4807,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
-   * @see  #queryRun(com.aoapps.dbc.ResultSetRunnable, java.lang.String, java.lang.Object[])
+   * @see  DatabaseAccess#queryRun(com.aoapps.dbc.ResultSetRunnable, java.lang.String, java.lang.Object[])
    */
   default void updateRun(
       ResultSetRunnable resultSetRunnable,
@@ -4839,7 +4839,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #updateRun(java.lang.Class, com.aoapps.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object[])
+   * @see  DatabaseAccess#updateRun(java.lang.Class, com.aoapps.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object[])
    */
   default <Ex extends Throwable> void queryRun(
       Class<? extends Ex> exClass,
@@ -4859,7 +4859,7 @@ public interface DatabaseAccess {
    *
    * @param  <Ex>  An arbitrary exception type that may be thrown
    *
-   * @see  #queryRun(java.lang.Class, com.aoapps.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object[])
+   * @see  DatabaseAccess#queryRun(java.lang.Class, com.aoapps.dbc.ResultSetRunnableE, java.lang.String, java.lang.Object[])
    */
   default <Ex extends Throwable> void updateRun(
       Class<? extends Ex> exClass,
@@ -4985,7 +4985,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryShort(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryShort(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default short executeShortQuery(
@@ -5080,7 +5080,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateShort(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateShort(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default short executeShortUpdate(
@@ -5120,7 +5120,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryShort(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryShort(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Short queryShort(
@@ -5134,7 +5134,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryShort(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryShort(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Short executeShortQuery(
@@ -5158,9 +5158,9 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
-   * @see  #executeShortListUpdate(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#executeShortListUpdate(java.lang.String, java.lang.Object...)
    *
-   * @deprecated  Please use {@link #queryList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with {@link ObjectFactories#Short}
    */
   @Deprecated(forRemoval = true)
@@ -5178,9 +5178,9 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
-   * @see  #executeShortListQuery(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#executeShortListQuery(java.lang.String, java.lang.Object...)
    *
-   * @deprecated  Please use {@link #updateList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateList(com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with {@link ObjectFactories#Short}
    */
   @Deprecated(forRemoval = true)
@@ -5194,7 +5194,7 @@ public interface DatabaseAccess {
   /**
    * Query the database with a {@code List<Short>} return type.
    *
-   * @deprecated  Please use {@link #queryList(int, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryList(int, boolean, com.aoapps.dbc.ObjectFactory, java.lang.String, java.lang.Object...)}
    *              with {@link ObjectFactories#Short}
    */
   @Deprecated(forRemoval = true)
@@ -5296,7 +5296,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryString(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryString(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default String executeStringQuery(
@@ -5391,7 +5391,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateString(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateString(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default String executeStringUpdate(
@@ -5423,7 +5423,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryString(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryString(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default String queryString(
@@ -5437,7 +5437,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryString(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryString(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default String executeStringQuery(
@@ -5461,7 +5461,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
-   * @see  #updateStringList(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#updateStringList(java.lang.String, java.lang.Object...)
    */
   default List<String> queryStringList(
       String sql,
@@ -5471,7 +5471,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryStringList(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryStringList(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default List<String> executeStringListQuery(
@@ -5488,7 +5488,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
-   * @see  #queryStringList(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#queryStringList(java.lang.String, java.lang.Object...)
    */
   default List<String> updateStringList(
       String sql,
@@ -5498,7 +5498,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateStringList(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateStringList(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default List<String> executeStringListUpdate(
@@ -5521,7 +5521,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryStringList(int, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryStringList(int, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default List<String> executeStringListQuery(
@@ -5544,7 +5544,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code true}</li>
    * </ul>
    *
-   * @see  #streamStringUpdate(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#streamStringUpdate(java.lang.String, java.lang.Object...)
    */
   default Stream<String> streamString(
       String sql,
@@ -5560,7 +5560,7 @@ public interface DatabaseAccess {
    *   <li>readOnly = {@code false}</li>
    * </ul>
    *
-   * @see  #streamString(java.lang.String, java.lang.Object...)
+   * @see  DatabaseAccess#streamString(java.lang.String, java.lang.Object...)
    */
   default Stream<String> streamStringUpdate(
       String sql,
@@ -5670,7 +5670,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryTimestamp(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryTimestamp(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Timestamp executeTimestampQuery(
@@ -5765,7 +5765,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #updateTimestamp(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#updateTimestamp(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Timestamp executeTimestampUpdate(
@@ -5797,7 +5797,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryTimestamp(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryTimestamp(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Timestamp queryTimestamp(
@@ -5811,7 +5811,7 @@ public interface DatabaseAccess {
   }
 
   /**
-   * @deprecated  Please use {@link #queryTimestamp(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#queryTimestamp(int, boolean, boolean, boolean, java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default Timestamp executeTimestampQuery(
@@ -5848,7 +5848,7 @@ public interface DatabaseAccess {
   ) throws SQLException;
 
   /**
-   * @deprecated  Please use {@link #update(java.lang.String, java.lang.Object...)}
+   * @deprecated  Please use {@link DatabaseAccess#update(java.lang.String, java.lang.Object...)}
    */
   @Deprecated(forRemoval = true)
   default int executeUpdate(

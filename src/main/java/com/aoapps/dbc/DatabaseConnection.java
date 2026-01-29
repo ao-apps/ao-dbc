@@ -203,8 +203,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * thereof) of the database is unknown.</p>
    *
    * <p>The default auto-commit state depends on the read-only, isolation levels, and the presence of any
-   * {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit} or
-   * {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
+   * {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit} or
+   * {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
    * auto-commit is enabled.  It then remains unchanged while is read-only, at an isolation level of
    * {@link Connection#TRANSACTION_READ_COMMITTED} or below, and has no event listeners.  This means, conversely, that
    * auto-commit is disabled when is read-write, at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
@@ -240,15 +240,15 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *
    *          <p>This connection may be used in try-with-resources, but any calls to {@link Connection#close()} are
    *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
-   *          {@linkplain #close() closed}.</p>
+   *          {@linkplain DatabaseConnection#close() closed}.</p>
    *
    *          <p>{@link Connection#commit()} and {@link Connection#rollback()} should not be used directly, since they will
-   *          not fire any {@link #onCommit(com.aoapps.lang.RunnableE)} or {@link #onRollback(com.aoapps.lang.RunnableE)}
-   *          events.  Instead, please use {@link #commit()} and {@link #rollback()}.</p>
+   *          not fire any {@link DatabaseConnection#onCommit(com.aoapps.lang.RunnableE)} or {@link DatabaseConnection#onRollback(com.aoapps.lang.RunnableE)}
+   *          events.  Instead, please use {@link DatabaseConnection#commit()} and {@link DatabaseConnection#rollback()}.</p>
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
-   * @see  #getConnection(int, boolean, int)
+   * @see  DatabaseConnection#getConnection(int, boolean, int)
    * @see  Database#getConnection()
    * @see  Connection#close()
    */
@@ -270,8 +270,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * thereof) of the database is unknown.</p>
    *
    * <p>The default auto-commit state depends on the read-only, isolation levels, and the presence of any
-   * {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit} or
-   * {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
+   * {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit} or
+   * {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
    * auto-commit is enabled.  It then remains unchanged while is read-only, at an isolation level of
    * {@link Connection#TRANSACTION_READ_COMMITTED} or below, and has no event listeners.  This means, conversely, that
    * auto-commit is disabled when is read-write, at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
@@ -314,15 +314,15 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *
    *          <p>This connection may be used in try-with-resources, but any calls to {@link Connection#close()} are
    *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
-   *          {@linkplain #close() closed}.</p>
+   *          {@linkplain DatabaseConnection#close() closed}.</p>
    *
    *          <p>{@link Connection#commit()} and {@link Connection#rollback()} should not be used directly, since they will
-   *          not fire any {@link #onCommit(com.aoapps.lang.RunnableE)} or {@link #onRollback(com.aoapps.lang.RunnableE)}
-   *          events.  Instead, please use {@link #commit()} and {@link #rollback()}.</p>
+   *          not fire any {@link DatabaseConnection#onCommit(com.aoapps.lang.RunnableE)} or {@link DatabaseConnection#onRollback(com.aoapps.lang.RunnableE)}
+   *          events.  Instead, please use {@link DatabaseConnection#commit()} and {@link DatabaseConnection#rollback()}.</p>
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
-   * @see  #getConnection(int, boolean, int)
+   * @see  DatabaseConnection#getConnection(int, boolean, int)
    * @see  Database#getConnection(int)
    * @see  Connection#close()
    */
@@ -345,8 +345,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * thereof) of the database is unknown.</p>
    *
    * <p>The default auto-commit state depends on the read-only, isolation levels, and the presence of any
-   * {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit} or
-   * {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
+   * {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit} or
+   * {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
    * auto-commit is enabled.  It then remains unchanged while is read-only, at an isolation level of
    * {@link Connection#TRANSACTION_READ_COMMITTED} or below, and has no event listeners.  This means, conversely, that
    * auto-commit is disabled when is read-write, at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
@@ -385,15 +385,15 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *
    *          <p>This connection may be used in try-with-resources, but any calls to {@link Connection#close()} are
    *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
-   *          {@linkplain #close() closed}.</p>
+   *          {@linkplain DatabaseConnection#close() closed}.</p>
    *
    *          <p>{@link Connection#commit()} and {@link Connection#rollback()} should not be used directly, since they will
-   *          not fire any {@link #onCommit(com.aoapps.lang.RunnableE)} or {@link #onRollback(com.aoapps.lang.RunnableE)}
-   *          events.  Instead, please use {@link #commit()} and {@link #rollback()}.</p>
+   *          not fire any {@link DatabaseConnection#onCommit(com.aoapps.lang.RunnableE)} or {@link DatabaseConnection#onRollback(com.aoapps.lang.RunnableE)}
+   *          events.  Instead, please use {@link DatabaseConnection#commit()} and {@link DatabaseConnection#rollback()}.</p>
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
-   * @see  #getConnection(int, boolean, int)
+   * @see  DatabaseConnection#getConnection(int, boolean, int)
    * @see  Database#getConnection(boolean)
    * @see  Connection#close()
    */
@@ -414,8 +414,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * thereof) of the database is unknown.</p>
    *
    * <p>The default auto-commit state depends on the read-only, isolation levels, and the presence of any
-   * {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit} or
-   * {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
+   * {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit} or
+   * {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
    * auto-commit is enabled.  It then remains unchanged while is read-only, at an isolation level of
    * {@link Connection#TRANSACTION_READ_COMMITTED} or below, and has no event listeners.  This means, conversely, that
    * auto-commit is disabled when is read-write, at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
@@ -459,15 +459,15 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *
    *          <p>This connection may be used in try-with-resources, but any calls to {@link Connection#close()} are
    *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
-   *          {@linkplain #close() closed}.</p>
+   *          {@linkplain DatabaseConnection#close() closed}.</p>
    *
    *          <p>{@link Connection#commit()} and {@link Connection#rollback()} should not be used directly, since they will
-   *          not fire any {@link #onCommit(com.aoapps.lang.RunnableE)} or {@link #onRollback(com.aoapps.lang.RunnableE)}
-   *          events.  Instead, please use {@link #commit()} and {@link #rollback()}.</p>
+   *          not fire any {@link DatabaseConnection#onCommit(com.aoapps.lang.RunnableE)} or {@link DatabaseConnection#onRollback(com.aoapps.lang.RunnableE)}
+   *          events.  Instead, please use {@link DatabaseConnection#commit()} and {@link DatabaseConnection#rollback()}.</p>
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
-   * @see  #getConnection(int, boolean, int)
+   * @see  DatabaseConnection#getConnection(int, boolean, int)
    * @see  Database#getConnection(int, boolean)
    * @see  Connection#close()
    */
@@ -487,8 +487,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * thereof) of the database is unknown.</p>
    *
    * <p>The default auto-commit state depends on the read-only, isolation levels, and the presence of any
-   * {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit} or
-   * {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
+   * {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit} or
+   * {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback} event listeners.  Upon initial connection,
    * auto-commit is enabled.  It then remains unchanged while is read-only, at an isolation level of
    * {@link Connection#TRANSACTION_READ_COMMITTED} or below, and has no event listeners.  This means, conversely, that
    * auto-commit is disabled when is read-write, at an isolation level of {@link Connection#TRANSACTION_REPEATABLE_READ}
@@ -539,11 +539,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *
    *          <p>This connection may be used in try-with-resources, but any calls to {@link Connection#close()} are
    *          ignored.  Instead, the connection is released and/or closed when this {@link DatabaseConnection} is
-   *          {@linkplain #close() closed}.</p>
+   *          {@linkplain DatabaseConnection#close() closed}.</p>
    *
    *          <p>{@link Connection#commit()} and {@link Connection#rollback()} should not be used directly, since they will
-   *          not fire any {@link #onCommit(com.aoapps.lang.RunnableE)} or {@link #onRollback(com.aoapps.lang.RunnableE)}
-   *          events.  Instead, please use {@link #commit()} and {@link #rollback()}.</p>
+   *          not fire any {@link DatabaseConnection#onCommit(com.aoapps.lang.RunnableE)} or {@link DatabaseConnection#onRollback(com.aoapps.lang.RunnableE)}
+   *          events.  Instead, please use {@link DatabaseConnection#commit()} and {@link DatabaseConnection#rollback()}.</p>
    *
    * @throws  SQLException  when an error occurs, or when a thread attempts to allocate more than half the pool
    *
@@ -688,16 +688,16 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * <p>When an on-commit event handler throws any exception, remaining on-commit event handlers registered after the
    * failed one will not be fired.</p>
    *
-   * <p>When adding the first non-null event handler (either of {@link #onCommit(com.aoapps.lang.RunnableE)} or
-   * {@link #onRollback(com.aoapps.lang.RunnableE)}), if the connection exists and currently has
+   * <p>When adding the first non-null event handler (either of {@link DatabaseConnection#onCommit(com.aoapps.lang.RunnableE)} or
+   * {@link DatabaseConnection#onRollback(com.aoapps.lang.RunnableE)}), if the connection exists and currently has
    * {@linkplain Connection#getAutoCommit() auto-commit} enabled, auto-commit will be disabled.  This is so the event
    * scope can match the transaction scope of the underlying database.</p>
    *
    * @param onCommit The event handler, may be {@code null} which will simply be ignored.
    *
    * @see EventException
-   * @see #commit()
-   * @see #onRollback(com.aoapps.lang.RunnableE)
+   * @see DatabaseConnection#commit()
+   * @see DatabaseConnection#onRollback(com.aoapps.lang.RunnableE)
    */
   @SuppressWarnings("unchecked")
   public DatabaseConnection onCommit(RunnableE<?> onCommit) throws SQLException {
@@ -722,19 +722,19 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * <p>When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
    * failed one will not be fired.</p>
    *
-   * <p>When adding the first non-null event handler (either of {@link #onCommit(com.aoapps.lang.RunnableE)} or
-   * {@link #onRollback(com.aoapps.lang.RunnableE)}), if the connection exists and currently has
+   * <p>When adding the first non-null event handler (either of {@link DatabaseConnection#onCommit(com.aoapps.lang.RunnableE)} or
+   * {@link DatabaseConnection#onRollback(com.aoapps.lang.RunnableE)}), if the connection exists and currently has
    * {@linkplain Connection#getAutoCommit() auto-commit} enabled, auto-commit will be disabled.  This is so the event
    * scope can match the transaction scope of the underlying database.</p>
    *
    * @param onRollback The event handler, may be {@code null} which will simply be ignored.
    *
    * @see EventException
-   * @see #rollback()
-   * @see #rollback(java.lang.Throwable)
-   * @see #close()
-   * @see #close(java.lang.Throwable)
-   * @see #onCommit(com.aoapps.lang.RunnableE)
+   * @see DatabaseConnection#rollback()
+   * @see DatabaseConnection#rollback(java.lang.Throwable)
+   * @see DatabaseConnection#close()
+   * @see DatabaseConnection#close(java.lang.Throwable)
+   * @see DatabaseConnection#onCommit(com.aoapps.lang.RunnableE)
    */
   @SuppressWarnings("unchecked")
   public DatabaseConnection onRollback(RunnableE<?> onRollback) throws SQLException {
@@ -749,16 +749,16 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   }
 
   /**
-   * Clears {@link #onRollbacks}, copies then clears {@link #onCommits}, then calls each on-commit handler
+   * Clears {@link DatabaseConnection#onRollbacks}, copies then clears {@link DatabaseConnection#onCommits}, then calls each on-commit handler
    * in order.
    *
    * @throws SQLException   Any {@link SQLException} thrown by the event handler is propagated
    *
-   * @throws EventException When an {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handler} fails,
+   * @throws EventException When an {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit event handler} fails,
    *                        any {@link Throwable} other than {@link Error}, {@link RuntimeException},
    *                        or {@link SQLException} will be wrapped in an {@link EventException}.
    *
-   * @see #fireOnRollbacks()
+   * @see DatabaseConnection#fireOnRollbacks()
    */
   @SuppressWarnings("UseSpecificCatch")
   private void fireOnCommits() throws SQLException, EventException {
@@ -778,16 +778,16 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   }
 
   /**
-   * Clears {@link #onCommits}, copies then clears {@link #onRollbacks}, then calls each on-rollback handler
+   * Clears {@link DatabaseConnection#onCommits}, copies then clears {@link DatabaseConnection#onRollbacks}, then calls each on-rollback handler
    * in reverse order.
    *
    * @throws SQLException   Any {@link SQLException} thrown by the event handler is propagated
    *
-   * @throws EventException When an {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handler} fails,
+   * @throws EventException When an {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback event handler} fails,
    *                        any {@link Throwable} other than {@link Error}, {@link RuntimeException},
    *                        or {@link SQLException} will be wrapped in an {@link EventException}.
    *
-   * @see #fireOnCommits()
+   * @see DatabaseConnection#fireOnCommits()
    */
   @SuppressWarnings("UseSpecificCatch")
   private void fireOnRollbacks() throws SQLException, EventException {
@@ -810,8 +810,8 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * Commits the current transaction.
    *
    * <p>Once the underlying transaction (if any) is successfully committed, any
-   * {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are discarded, then all
-   * {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are fired in order.
+   * {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are discarded, then all
+   * {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are fired in order.
    * When an on-commit event handler throws any exception, remaining on-commit event handlers registered after the
    * failed one will not be fired.</p>
    */
@@ -830,7 +830,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   }
 
   /**
-   * @deprecated  Please use {@link #close()}
+   * @deprecated  Please use {@link DatabaseConnection#close()}
    */
   @Deprecated(forRemoval = true)
   public void releaseConnection() throws SQLException {
@@ -840,9 +840,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   /**
    * Closes and/or releases the current connection back to the pool.
    *
-   * <p>Any {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.</p>
+   * <p>Any {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.</p>
    *
-   * <p>All {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
+   * <p>All {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
    * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
    * failed one will not be fired.</p>
    *
@@ -850,7 +850,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    * This will still be done even when an on-rollback event handler has thrown an exception.</p>
    *
    * @see  Database#release(com.aoapps.sql.failfast.FailFastConnection)
-   * @see  #close(java.lang.Throwable)
+   * @see  DatabaseConnection#close(java.lang.Throwable)
    */
   @Override
   @SuppressWarnings({"BroadCatchBlock", "TooBroadCatch", "UseSpecificCatch"})
@@ -878,9 +878,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   /**
    * Closes and/or releases the current connection back to the pool.
    *
-   * <p>Any {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.</p>
+   * <p>Any {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.</p>
    *
-   * <p>All {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
+   * <p>All {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
    * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
    * failed one will not be fired.</p>
    *
@@ -891,7 +891,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *
    * @return  The given exception, or new exception, or {@code null} when none given and none new
    *
-   * @see  #close()
+   * @see  DatabaseConnection#close()
    * @see  AutoCloseables#closeAndCatch(java.lang.Throwable, java.lang.AutoCloseable)
    */
   public Throwable close(Throwable t0) {
@@ -901,9 +901,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   /**
    * Rolls back the current connection, if have connection and is not auto-commit.
    *
-   * <p>Any {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.</p>
+   * <p>Any {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.</p>
    *
-   * <p>All {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
+   * <p>All {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
    * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
    * failed one will not be fired.</p>
    *
@@ -943,9 +943,9 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   /**
    * Rolls back the current connection, if have connection and is not auto-commit.
    *
-   * <p>Any {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.</p>
+   * <p>Any {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.</p>
    *
-   * <p>All {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
+   * <p>All {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
    * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
    * failed one will not be fired.</p>
    *
@@ -956,7 +956,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *
    * @return  The given exception, or new exception, or {@code null} when none given and none new
    *
-   * @see  #rollback()
+   * @see  DatabaseConnection#rollback()
    * @see  Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)
    */
   // TODO: Rollback to the savepoint of the current sub-transaction?
@@ -973,11 +973,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   /**
    * Rolls back the current connection, if have connection and is not auto-commit, and forces the underlying
    * connection closed via {@link Connection#abort(java.util.concurrent.Executor)}.  This close is distinct
-   * from {@link #close()}, which is intended for releasing to the underlying pool via {@link Connection#close()}.
+   * from {@link DatabaseConnection#close()}, which is intended for releasing to the underlying pool via {@link Connection#close()}.
    *
-   * <p>Any {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.</p>
+   * <p>Any {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.</p>
    *
-   * <p>All {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
+   * <p>All {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
    * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
    * failed one will not be fired.</p>
    *
@@ -986,11 +986,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *
    * @return  {@code true} when connected and rolled-back (or is auto-commit)
    *
-   * @see  #rollback()
-   * @see  #rollbackAndClose(java.lang.Throwable)
+   * @see  DatabaseConnection#rollback()
+   * @see  DatabaseConnection#rollbackAndClose(java.lang.Throwable)
    *
-   * @deprecated  Please use {@link #rollback()}.  The connection will be {@linkplain Connection#isValid(int) validated}
-   *              during {@link #close()} when there is any unresolved {@linkplain FailFastConnection#getFailFastState() fail-fast state}.
+   * @deprecated  Please use {@link DatabaseConnection#rollback()}.  The connection will be {@linkplain Connection#isValid(int) validated}
+   *              during {@link DatabaseConnection#close()} when there is any unresolved {@linkplain FailFastConnection#getFailFastState() fail-fast state}.
    */
   @Deprecated(forRemoval = true)
   @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
@@ -1040,11 +1040,11 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
   /**
    * Rolls back the current connection, if have connection and is not auto-commit, and forces the underlying
    * connection closed via {@link Connection#abort(java.util.concurrent.Executor)}.  This close is distinct
-   * from {@link #close()}, which is intended for releasing to the underlying pool via {@link Connection#close()}.
+   * from {@link DatabaseConnection#close()}, which is intended for releasing to the underlying pool via {@link Connection#close()}.
    *
-   * <p>Any {@linkplain #onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.</p>
+   * <p>Any {@linkplain DatabaseConnection#onCommit(com.aoapps.lang.RunnableE) on-commit event handlers} are discarded.</p>
    *
-   * <p>All {@linkplain #onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
+   * <p>All {@linkplain DatabaseConnection#onRollback(com.aoapps.lang.RunnableE) on-rollback event handlers} are fired in reverse order.
    * When an on-rollback event handler throws any exception, remaining on-rollback event handlers registered before the
    * failed one will not be fired.</p>
    *
@@ -1055,12 +1055,12 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
    *
    * @return  The given exception, or new exception, or {@code null} when none given and none new
    *
-   * @see  #rollback(java.lang.Throwable)
-   * @see  #rollbackAndClose()
+   * @see  DatabaseConnection#rollback(java.lang.Throwable)
+   * @see  DatabaseConnection#rollbackAndClose()
    * @see  Throwables#addSuppressed(java.lang.Throwable, java.lang.Throwable)
    *
-   * @deprecated  Please use {@link #rollback(java.lang.Throwable)}.  The connection will be {@linkplain Connection#isValid(int) validated}
-   *              during {@link #close(java.lang.Throwable)} when there is any unresolved {@linkplain FailFastConnection#getFailFastState() fail-fast state}.
+   * @deprecated  Please use {@link DatabaseConnection#rollback(java.lang.Throwable)}.  The connection will be {@linkplain Connection#isValid(int) validated}
+   *              during {@link DatabaseConnection#close(java.lang.Throwable)} when there is any unresolved {@linkplain FailFastConnection#getFailFastState() fail-fast state}.
    */
   @Deprecated(forRemoval = true)
   @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch"})
