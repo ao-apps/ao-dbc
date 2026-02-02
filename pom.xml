@@ -29,12 +29,12 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
-  <groupId>com.aoapps</groupId><artifactId>ao-dbc</artifactId><version>4.1.0-SNAPSHOT</version>
+  <groupId>com.aoapps</groupId><artifactId>ao-dbc</artifactId><version>4.1.0</version>
   <packaging>jar</packaging>
 
   <properties>
     <!-- Must be set to ${git.commit.time} for snapshots or ISO 8601 timestamp for releases. -->
-    <project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2026-02-02T15:58:21Z</project.build.outputTimestamp>
     <module.name>com.aoapps.dbc</module.name>
     <javadoc.breadcrumbs><![CDATA[<a target="${javadoc.target}" href="https://oss.aoapps.com/">AO OSS</a>
 / <a target="${javadoc.target}" href="${project.url}">Database Connectivity</a>]]></javadoc.breadcrumbs>
@@ -74,7 +74,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
     <connection>scm:git:git://github.com/ao-apps/ao-dbc.git</connection>
     <developerConnection>scm:git:git@github.com:ao-apps/ao-dbc.git</developerConnection>
     <url>https://github.com/ao-apps/ao-dbc</url>
-    <tag>HEAD</tag>
+    <tag>ao-dbc-4.1.0</tag>
   </scm>
 
   <issueManagement>
