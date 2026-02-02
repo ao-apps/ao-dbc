@@ -267,7 +267,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
         <groupId>com.aoapps</groupId><artifactId>ao-collections-transformers</artifactId><version>2.1.0${POST-SNAPSHOT}</version>
       </dependency>
       <dependency>
-        <groupId>com.aoapps</groupId><artifactId>ao-sql-wrapper</artifactId><version>2.2.0-SNAPSHOT<!-- ${POST-SNAPSHOT} --></version>
+        <groupId>com.aoapps</groupId><artifactId>ao-sql-wrapper</artifactId><version>2.2.0${POST-SNAPSHOT}</version>
       </dependency>
       <dependency>
         <groupId>com.aoapps</groupId><artifactId>ao-tempfiles</artifactId><version>3.1.0${POST-SNAPSHOT}</version>
