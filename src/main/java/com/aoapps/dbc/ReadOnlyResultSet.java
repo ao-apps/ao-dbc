@@ -877,7 +877,7 @@ public interface ReadOnlyResultSet extends ResultSet {
    */
   @Deprecated(forRemoval = false)
   @Override
-  void updateObject(int columnIndex, Object x, SQLType targetSqlType, int scaleOrLength)  throws SQLException;
+  void updateObject(int columnIndex, Object x, SQLType targetSqlType, int scaleOrLength) throws SQLException;
 
   /**
    * {@inheritDoc}

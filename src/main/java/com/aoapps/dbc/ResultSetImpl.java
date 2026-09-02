@@ -1724,7 +1724,7 @@ abstract class ResultSetImpl implements ReadOnlySingleResult {
    */
   @Override
   @SuppressWarnings("deprecation")
-  public final void updateObject(int columnIndex, Object x, SQLType targetSqlType, int scaleOrLength)  throws SQLException {
+  public final void updateObject(int columnIndex, Object x, SQLType targetSqlType, int scaleOrLength) throws SQLException {
     wrapped.updateObject(columnIndex, x, targetSqlType, scaleOrLength);
   }
 
