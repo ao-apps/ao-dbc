@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -21,9 +21,6 @@
  * along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
  */
 module com.aoapps.dbc {
-  exports com.aoapps.dbc;
-  exports com.aoapps.dbc.meta;
-  uses java.sql.SQLData; // TODO: This is in different module, can we use it?  Make our own interface that loads it?  "SQLDataFactory"?
   // Direct
   requires com.aoapps.collections; // <groupId>com.aoapps</groupId><artifactId>ao-collections</artifactId>
   requires com.aoapps.concurrent; // <groupId>com.aoapps</groupId><artifactId>ao-concurrent</artifactId>
@@ -37,4 +34,9 @@ module com.aoapps.dbc {
   // Java SE
   requires java.logging;
   requires java.sql;
+
+  exports com.aoapps.dbc;
+  exports com.aoapps.dbc.meta;
+
+  uses java.sql.SQLData; // TODO: This is in different module, can we use it?  Make our own interface that loads it?  "SQLDataFactory"?
 }
