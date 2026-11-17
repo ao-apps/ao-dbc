@@ -43,9 +43,13 @@ import java.util.concurrent.ConcurrentMap;
  * order as the matching constructor.  For unknown classes, will try to find any
  * {@code valueOf(int)} or {@code valueOf(String)} methods to create the object instance.
  *
+ * @deprecated  This automatic factory relies on result set positional parameters, which are fragile and error-prone.
+ *              Lambda implementations of {@link ObjectFactory} are the modern, performant, and robust approach.
+ *
  * @author  AO Industries, Inc.
  */
 // TODO: Recognize valueOf with Optional return?  Generic type erasure could be a pain.
+@Deprecated(forRemoval = false)
 public class AutoObjectFactory<T> implements ObjectFactory<T> {
 
   static final String EOL = System.lineSeparator();

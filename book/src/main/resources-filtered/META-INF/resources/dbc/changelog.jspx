@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T19:31:26-05:00"
-    dateModified="2026-11-17T17:50:54Z"
+    dateModified="2026-11-17T18:30:07Z"
   >
     <c:set var="latestRelease" value="4.1.0" />
     <c:if test="${
@@ -56,8 +56,14 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
         <!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
         <ul>
           <li>
-            Fixed bug in <code>AutoObjectFactory</code> that would use <code>0</code> instead of <code>null</code>
-            for constructor parameters that are <code>Integer</code>.
+            Fixed bug in <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/AutoObjectFactory.html">AutoObjectFactory</ao:a></code>
+            that would use <code>0</code> instead of <code>null</code> for constructor parameters that are <code>Integer</code>.
+          </li>
+          <li>
+            Deprecated <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/AutoObjectFactory.html">AutoObjectFactory</ao:a></code>
+            because it relies on result set positional parameters, which are fragile and error-prone.  Lambda implementations of
+            <code><ao:a href="apidocs/com.aoapps.dbc/com/aoapps/dbc/ObjectFactory.html">ObjectFactory</ao:a></code>
+            are the modern, performant, and robust approach.
           </li>
         </ul>
       </changelog:release>

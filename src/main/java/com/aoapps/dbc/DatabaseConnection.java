@@ -587,6 +587,7 @@ public class DatabaseConnection implements DatabaseAccess, AutoCloseable {
     return c;
   }
 
+  @SuppressWarnings("deprecation")
   protected static void setParam(Connection conn, PreparedStatement pstmt, int pos, Object param) throws SQLException {
     if (param == null) {
       pstmt.setNull(pos, Types.VARCHAR);
