@@ -37,7 +37,7 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
     shortTitle="Changelog"
     tocLevels="1"
     datePublished="2016-10-29T19:31:26-05:00"
-    dateModified="2026-02-02T15:59:16Z"
+    dateModified="2026-11-17T17:50:54Z"
   >
     <c:set var="latestRelease" value="4.1.0" />
     <c:if test="${
@@ -54,6 +54,12 @@ along with ao-dbc.  If not, see <https://www.gnu.org/licenses/>.
       >
         <!-- TODO: queryConsumer and updateConsumer, similar to queryCollection and updateCollection?  Not needed since have stream methods? -->
         <!-- TODO: per-ResultSet and per-Statement SQLWarning logging, via wrapper.  Other warning logging (Connection) via wrapper, too -->
+        <ul>
+          <li>
+            Fixed bug in <code>AutoObjectFactory</code> that would use <code>0</code> instead of <code>null</code>
+            for constructor parameters that are <code>Integer</code>.
+          </li>
+        </ul>
       </changelog:release>
     </c:if>
 

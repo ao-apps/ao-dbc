@@ -1,6 +1,6 @@
 /*
  * ao-dbc - Simplified JDBC access for simplified code.
- * Copyright (C) 2009, 2010, 2011, 2013, 2015, 2016, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2009, 2010, 2011, 2013, 2015, 2016, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -224,8 +224,9 @@ public class AutoObjectFactory<T> implements ObjectFactory<T> {
                   int value = result.getInt(c);
                   if (result.wasNull()) {
                     params[i] = null;
+                  } else {
+                    params[i] = valueOfIntMethod.invoke(null, value);
                   }
-                  params[i] = valueOfIntMethod.invoke(null, value);
                 } else {
                   // Try to find valueOf(String) for unknown types
                   Method valueOfStringMethod = getValueOfStringMethod(paramType);
